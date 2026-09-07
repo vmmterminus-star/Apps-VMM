@@ -127,6 +127,14 @@ button{cursor:pointer;border:none;background:none;padding:0}
   border-left:2px solid var(--accent2);padding-left:11px;white-space:pre-wrap;margin-bottom:9px}
 .fc .parq{font-size:11.5px;color:var(--accent);line-height:1.5;margin:0 0 9px 13px;font-weight:400}
 /* recorte con puntos suspensivos para los textos largos */
+.cita{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border-radius:7px;
+  padding:8px 10px;margin-bottom:6px}
+.cita .t{flex:1;font-size:11.5px;line-height:1.45;color:var(--text);font-weight:300;min-width:0}
+.cita button{flex:none;color:var(--muted);font-size:12px;padding:0 3px}
+.cita button:hover{color:var(--warn)}
+.fc .citas{margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.fc .citas .cl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px}
+.fc .citas div.r1{font-size:10.5px;color:var(--muted);line-height:1.45;margin-bottom:4px;font-weight:300}
 .fc .q.clamp{display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden;cursor:zoom-in}
 .fc .q.clamp.open{display:block;cursor:zoom-out}
 .fc .vermas{font-size:10.5px;color:var(--accent);margin:-4px 0 9px 13px;font-weight:500}
@@ -1143,6 +1151,40 @@ function revisada(id){
   const f=S.fichas.find(x=>x.id===id); if(!f) return;
   f.revTitulo=T().versiones[0].id; save(); schedulePush(); render();
 }
+/* lista de fuentes ya capturadas, para no volver a escribirlas */
+function fuentesUnicas(){
+  const m={};
+  S.fichas.forEach(f=>{ const k=fuenteKey(f); if(!k||m[k])return;
+    const s=f.fuente||{};
+    const et=[s.autor,(s.titulo||s.refCruda||'').slice(0,70),s.anio].filter(Boolean).join(' · ');
+    m[k]={k, s, et:et||'(sin datos)'}; });
+  return Object.values(m).sort((a,b)=>a.et.localeCompare(b.et,'es'));
+}
+function usarFuenteExistente(k){
+  if(!k) return;
+  const f=S.fichas.find(x=>fuenteKey(x)===k); if(!f) return;
+  M.fuente=JSON.parse(JSON.stringify(f.fuente||{tipo:'generica'}));
+  M.auto={};
+  if(!M.archivo && f.archivo) M.archivo=f.archivo;
+  if(!M.confiabilidad && f.confiabilidad) M.confiabilidad=f.confiabilidad;
+  M.banner=['ok','<b>Fuente tomada de tus fichas.</b> Si la corriges aquí, solo cambia en esta ficha — para cambiarla en todas, hazlo desde Bibliografía.'];
+  drawModal();
+}
+function citarFuente(k){
+  if(!k) return;
+  const f=S.fichas.find(x=>fuenteKey(x)===k); if(!f) return;
+  M.fuentes=M.fuentes||[];
+  if(M.fuentes.some(s=>fuenteKey({fuente:s})===k)){ toast('Esa fuente ya está citada'); return; }
+  M.fuentes.push(JSON.parse(JSON.stringify(f.fuente)));
+  drawModal();
+}
+function quitarCita(i){ M.fuentes.splice(i,1); drawModal(); }
+function redactarSobre(id){
+  const f=S.fichas.find(x=>x.id===id); if(!f) return;
+  openFicha(f.apartado,null,null,{clase:'redaccion',tags:f.tags,archivo:f.archivo,
+    confiabilidad:f.confiabilidad, fuentes:[f.fuente]});
+}
+
 /* cuántas fichas comparten la misma fuente */
 function hermanas(f){ const k=fuenteKey(f); if(!k) return 1;
   return S.fichas.filter(x=>fuenteKey(x)===k).length; }
@@ -1166,6 +1208,10 @@ function fichasHTML(fs){
       ${largo?'<button class="vermas" onclick="const q=this.previousElementSibling;q.classList.toggle(\'open\');this.textContent=q.classList.contains(\'open\')?\'ver menos\':\'ver todo\'">ver todo</button>':''}
       ${f.paraQue?`<div class="parq">↳ ${esc(f.paraQue)}</div>`:''}
       ${(f.tags||[]).length?`<div class="tags">${f.tags.map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div>`:''}
+      ${(bor && (f.fuentes||[]).length)?`<div class="citas">
+        <div class="cl">Cita ${f.fuentes.length} fuente${f.fuentes.length>1?'s':''}</div>
+        ${f.fuentes.map(fs=>`<div class="r1">${chicago(fs)}</div>`).join('')}
+      </div>`:''}
       <div class="src" ${(bor && !s.autor && !s.titulo && !s.refCruda)?'style="display:none"':''}>
         <span class="fcref">${chicago(s)}</span>
         ${hermanas(f)>1?`<button class="nfu" onclick="verFuente('${esc(fuenteKey(f))}')"
@@ -1179,6 +1225,7 @@ function fichasHTML(fs){
         ${f.archivo?`<a href="${esc(f.archivo)}${f.pagina?'#page='+encodeURIComponent(f.pagina):''}" target="_blank" rel="noopener" style="color:var(--accent)">abrir documento</a>`:''}
         <button onclick="openFicha(null,'${f.id}')">editar</button>
         <button onclick="dupFicha('${f.id}')">otra de esta fuente</button>
+        ${bor?'':`<button onclick="redactarSobre('${f.id}')">redactar sobre esta</button>`}
         ${viejaTitulo(f)?`<button style="color:var(--warn)" onclick="revisada('${f.id}')">ya la revisé</button>`:''}
       </div>
     </div>`;
@@ -1258,6 +1305,7 @@ function guardarFuente(){
   fs.forEach(f=>{ f.fuente=JSON.parse(JSON.stringify(F.s));
     if(F.conf) f.confiabilidad=F.conf;
     if(F.archivo) f.archivo=F.archivo; });
+  actualizarCitas(F.key, F.s);
   save(); schedulePush(); cerrarFuente(); toast('Fuente actualizada en '+fs.length+' ficha'+(fs.length>1?'s':''));
 }
 function unirFuente(){
@@ -1268,8 +1316,17 @@ function unirFuente(){
     if(F.conf&&!f.confiabilidad) f.confiabilidad=F.conf;
     if(F.archivo&&!f.archivo) f.archivo=F.archivo; });
   fichasDeFuente(F.key).forEach(f=>{ f.fuente=JSON.parse(JSON.stringify(F.s)); });
+  actualizarCitas(F.key, F.s); actualizarCitas(F.merge, F.s);
   save(); schedulePush(); const n=otras.length; cerrarFuente();
   toast(n+' ficha'+(n>1?'s':'')+' se unieron a esta fuente');
+}
+/* las redacciones guardan copias de las fuentes que citan:
+   al editar una fuente hay que actualizarlas también */
+function actualizarCitas(clave, nueva){
+  S.fichas.forEach(f=>{
+    if(!f.fuentes||!f.fuentes.length) return;
+    f.fuentes=f.fuentes.map(s=>fuenteKey({fuente:s})===clave? JSON.parse(JSON.stringify(nueva)) : s);
+  });
 }
 function rowsCamposF(campos,s){
   let h='', buf=[];
@@ -1485,15 +1542,18 @@ function openFicha(apartado, editId, fuenteFija, extras){
     M={modo:'edit', id:f.id, fuente:Object.assign({},f.fuente), extracto:f.extracto, apartado:f.apartado,
        secundarios:(f.secundarios||[]).slice(), pagina:f.pagina, confiabilidad:f.confiabilidad,
        paraQue:f.paraQue, tags:(f.tags||[]).slice(), archivo:f.archivo||'',
-       clase:f.clase||'extracto', auto:{}, banner:null, fija:false}; }
+       clase:f.clase||'extracto', fuentes:(f.fuentes||[]).map(x=>JSON.parse(JSON.stringify(x))),
+       auto:{}, banner:null, fija:false}; }
   else if(fuenteFija){ const x=extras||{};
     M={modo:'nueva', fuente:Object.assign({},fuenteFija), extracto:'', apartado:apartado,
        secundarios:(x.secundarios||[]).slice(), pagina:'', confiabilidad:x.confiabilidad||'',
        paraQue:'', tags:(x.tags||[]).slice(), archivo:x.archivo||'', clase:x.clase||'extracto',
+       fuentes:(x.fuentes||[]).map(y=>JSON.parse(JSON.stringify(y))),
        auto:{}, banner:null, fija:true,
        cuenta:S.fichas.filter(f=>fuenteKey({fuente:f.fuente})===fuenteKey({fuente:fuenteFija})).length}; }
   else M={modo:'nueva', fuente:nuevaFuente(), extracto:'', apartado:apartado, secundarios:[], pagina:'',
        confiabilidad:'', paraQue:'', tags:[], archivo:'', clase:(extras&&extras.clase)||'extracto',
+       fuentes:((extras&&extras.fuentes)||[]).map(y=>JSON.parse(JSON.stringify(y))),
        auto:{}, banner:null, fija:false};
   drawModal();
 }
@@ -1522,7 +1582,21 @@ function drawModal(){
   const pend = !M.fija && !!s.liga && !s.autor && !s.titulo;
 
   let campoHTML='';
-  if(!M.fija){
+  if(M.clase==='redaccion'){
+    const uni=fuentesUnicas();
+    campoHTML = `<div class="grp"><div class="gl">Fuentes que cito
+        <span class="r">${(M.fuentes||[]).length?(M.fuentes.length+' citada'+(M.fuentes.length>1?'s':'')):'ninguna todavía'}</span></div>
+      ${(M.fuentes||[]).length?`<div style="margin-bottom:10px">${M.fuentes.map((fs,i)=>
+        `<div class="cita"><span class="t">${chicago(fs)}</span>
+          <button onclick="quitarCita(${i})" title="quitar">✕</button></div>`).join('')}</div>`:''}
+      ${uni.length?`<select class="in" onchange="citarFuente(this.value);this.value=''">
+          <option value="">agregar una de mis fuentes…</option>
+          ${uni.map(o=>`<option value="${esc(o.k)}">${esc(o.et)}</option>`).join('')}
+        </select>`
+       :`<div class="hint">Todavía no tienes fuentes capturadas. Captura primero un extracto y después la puedes citar aquí.</div>`}
+      <div class="hint" style="margin-top:7px">Solo salen las fuentes que ya tienes. Si te falta una, captúrala como extracto y vuelve — así no se duplican.</div>
+    </div>`;
+  } else if(!M.fija){
     campoHTML = `<div class="grp"><div class="gl">La fuente <span class="r">— tipo</span></div>
       <div class="fld"><div class="chips">${TIPOS.map(t=>
         `<button class="chip ${s.tipo===t[0]?(M.auto.tipo?'autoon':'on'):''}" onclick="setTipo('${t[0]}')">${t[1]}</button>`).join('')}</div></div>
@@ -1563,7 +1637,14 @@ function drawModal(){
         </div>
         ${M.clase==='redaccion'?`<div class="hint" style="margin-top:7px">Un borrador tuyo. La fuente es opcional, y las palabras cuentan para la barra de <b>redacción</b>, no para la de material.</div>`:''}
       </div>
-      ${!M.fija?`<div class="paste">
+      ${(!M.fija && M.clase!=='redaccion' && fuentesUnicas().length)?`<div class="fld" style="margin-bottom:15px">
+        <label>Usar una fuente que ya tengo <span class="hintl">${fuentesUnicas().length} capturadas</span></label>
+        <select class="in" onchange="usarFuenteExistente(this.value)">
+          <option value="">elegir de mis fuentes…</option>
+          ${fuentesUnicas().map(o=>`<option value="${esc(o.k)}" ${fuenteKey({fuente:M.fuente})===o.k?'selected':''}>${esc(o.et)}</option>`).join('')}
+        </select>
+      </div>`:''}
+      ${(!M.fija && M.clase!=='redaccion')?`<div class="paste">
         <div class="t">⌁ Pegar y que se llene solo</div>
         <textarea class="in" id="pasteIn" rows="2" style="min-height:0;resize:vertical"
           placeholder="Una referencia ya hecha, una liga, un DOI o un BibTeX…"
@@ -1593,7 +1674,7 @@ function drawModal(){
 }
 /* aviso de duplicado — no bloquea, solo avisa */
 function dupAviso(){
-  if(!M || M.fija) return '';
+  if(!M || M.fija || M.clase==='redaccion') return '';
   const s=M.fuente||{};
   if(!(s.autor||s.titulo||s.liga)) return '';
   const k=fuenteKey({fuente:s});
@@ -1692,7 +1773,8 @@ function guardarFicha(otra){
   const f={id:M.id||uid(), fuente:Object.assign({},M.fuente), extracto:M.extracto.trim(),
     apartado:M.apartado||'', secundarios:(M.secundarios||[]).slice(), pagina:M.pagina||'',
     confiabilidad:M.confiabilidad||'', paraQue:M.paraQue||'', tags:(M.tags||[]).slice(),
-    archivo:M.archivo||'', clase:M.clase||'extracto', creada:M.modo==='edit'?undefined:new Date().toISOString()};
+    archivo:M.archivo||'', clase:M.clase||'extracto',
+    fuentes:(M.clase==='redaccion'?(M.fuentes||[]):[]).map(y=>JSON.parse(JSON.stringify(y))), creada:M.modo==='edit'?undefined:new Date().toISOString()};
   if(f.creada===undefined) delete f.creada;
   if(M.modo==='edit'){ const i=S.fichas.findIndex(x=>x.id===M.id); S.fichas[i]=Object.assign(S.fichas[i],f); }
   else S.fichas.unshift(f);
@@ -2523,6 +2605,8 @@ function viewAvance(){
         <div class="n">${id} — ${nn} · ${esc(etiquetaFicha(f))}</div>
         <div class="tx">${bor?esc(f.extracto):'“'+esc(f.extracto)+'”'}</div>
         ${(!bor&&tieneRef)?`<div class="rf">${ref}${f.pagina?', '+esc(f.pagina):''}</div>`:''}
+        ${(bor&&(f.fuentes||[]).length)?`<div class="rf" style="margin-top:4px">
+          <b style="font-weight:600">Fuentes citadas:</b> ${f.fuentes.map(fs=>chicago(fs)).join(' ')}</div>`:''}
         ${f.paraQue?`<div class="us">${bor?'':'Uso: '}${esc(f.paraQue)}</div>`
           :(bor?'<div class="us">Borrador propio · sujeto a revisión</div>':'')}
       </div>`;
@@ -2533,7 +2617,9 @@ function viewAvance(){
 
   /* bibliografía */
   const map={};
-  aps.forEach(id=>fichasDeAvance(id).forEach(f=>{ const k=fuenteKey(f); if(!k) return; map[k]=f.fuente; }));
+  aps.forEach(id=>fichasDeAvance(id).forEach(f=>{
+    const k=fuenteKey(f); if(k) map[k]=f.fuente;
+    (f.fuentes||[]).forEach(s=>{ const k2=fuenteKey({fuente:s}); if(k2) map[k2]=s; }); }));
   const refs=Object.values(map).sort((x,y)=>(x.autor||x.refCruda||'zzz').localeCompare(y.autor||y.refCruda||'zzz','es'));
   if(refs.length){
     doc+=`<div class="pv-hoja"><div class="pv-sec">Bibliografía</div>
