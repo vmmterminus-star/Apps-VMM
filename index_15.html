@@ -227,6 +227,7 @@ label{display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.0
 .in::placeholder{color:var(--ph)}
 .in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,82,102,.09)}
 .in.tall{min-height:92px;resize:vertical}
+.in.auto{min-height:42px;resize:none;overflow:hidden}
 .in.filled{background:var(--oksoft);border-color:var(--okline)}
 .in.pend{background:var(--warnsoft);border-color:var(--warnline)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -1044,7 +1045,7 @@ function drawTitulo(){
       <span class="sp"></span><span class="hint">Esc para cerrar</span>
     </div>
    </div></div>`;
-  devuelveScroll(_y);
+  devuelveScroll(_y); autoAltoTodo();
 }
 
 /* =========================================================
@@ -1382,6 +1383,10 @@ function closeModal(){ M=null; document.getElementById('modalRoot').innerHTML=''
 
 /* Al redibujar un modal se perdía el scroll y saltaba hasta arriba.
    Guardamos la posición antes de reemplazar el HTML y la devolvemos después. */
+/* textarea que crece con el texto: nada de escribir a ciegas en una sola línea */
+function autoAlto(el){ if(!el) return; el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+function autoAltoTodo(){ document.querySelectorAll('.in.auto').forEach(autoAlto); }
+
 function guardaScroll(){ const e=document.querySelector('.mbody'); return e?e.scrollTop:0; }
 function devuelveScroll(y){ const e=document.querySelector('.mbody'); if(e&&y) e.scrollTop=y; }
 
@@ -1462,7 +1467,7 @@ function drawModal(){
       ${M.modo==='edit'?`<button class="btn g" onclick="borrarFicha()">borrar</button>`:`<span class="hint">Esc para cerrar</span>`}
     </div>
   </div></div>`;
-  devuelveScroll(_y);
+  devuelveScroll(_y); autoAltoTodo();
   const e=document.getElementById('extIn'); if(e && M.fija) e.focus();
 }
 /* aviso de duplicado — no bloquea, solo avisa */
@@ -1536,8 +1541,9 @@ function detallesHTML(){
     <div class="fld"><label><span class="op">opc.</span> Liga al documento
         <span class="hintl">Drive, repositorio, PDF — se abre en la página que pusiste arriba</span></label>
       <input class="in" value="${esc(M.archivo||'')}" placeholder="https://drive.google.com/…" oninput="M.archivo=this.value"></div>
-    <div class="fld" style="margin-bottom:0"><label><span class="op">opc.</span> Para qué me sirve <span class="hintl">una línea tuya, no de la fuente</span></label>
-      <input class="in" value="${esc(M.paraQue||'')}" placeholder="Esto sostiene el argumento de que…" oninput="M.paraQue=this.value"></div>
+    <div class="fld" style="margin-bottom:0"><label><span class="op">opc.</span> Para qué me sirve <span class="hintl">tuyo, no de la fuente</span></label>
+      <textarea class="in auto" placeholder="Esto sostiene el argumento de que…"
+        oninput="M.paraQue=this.value;autoAlto(this)">${esc(M.paraQue||'')}</textarea></div>
   </div>`;
 }
 function addSec(v){ if(!v) return; M.secundarios=M.secundarios||[]; if(!M.secundarios.includes(v)) M.secundarios.push(v); drawModal(); }
@@ -1720,12 +1726,13 @@ function drawAtoro(){
       <div class="fld"><label><span class="op">opc.</span> Qué términos usaste <span class="hintl">para que Claude no repita tus búsquedas</span></label>
         <input class="in" placeholder="vivienda evolutiva definición, adaptable housing…" oninput="A.terminos=this.value" value="${esc(A.terminos)}"></div>
       <div class="fld" style="margin-bottom:0"><label><span class="op">opc.</span> Nota</label>
-        <input class="in" placeholder="Dónde buscaste, qué encontraste a medias…" oninput="A.notas=this.value" value="${esc(A.notas)}"></div>
+        <textarea class="in auto" placeholder="Dónde buscaste, qué encontraste a medias…"
+          oninput="A.notas=this.value;autoAlto(this)">${esc(A.notas)}</textarea></div>
     </div>
     <div class="mfoot"><button class="btn" onclick="guardarAtoro()">marcar y seguir</button>
       <span class="sp"></span><span class="hint">Esc para cerrar</span></div>
   </div></div>`;
-  devuelveScroll(_y);
+  devuelveScroll(_y); autoAltoTodo();
 }
 function cerrarAtoro(){ A=null; document.getElementById('modalRoot').innerHTML=''; render(); }
 function guardarAtoro(){ if(!A.titulo.trim()){ toast('Escribe qué buscabas'); return; }
