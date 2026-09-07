@@ -1234,11 +1234,121 @@ function copiarAtorados(){
   copiar(t); toast('Lista copiada — pégamela en el chat');
 }
 
+
+/* =========================================================
+   EDITAR UNA FUENTE — cambia en todas sus fichas de golpe
+   La fuente vive copiada dentro de cada ficha, así que editar
+   aquí reescribe el bloque de fuente de todas las que comparten
+   la misma clave. Así ninguna se despega de sus hermanas.
+   ========================================================= */
+let F=null;
+function fichasDeFuente(k){ return S.fichas.filter(f=>fuenteKey(f)===k); }
+function openFuente(k){
+  const fs=fichasDeFuente(k); if(!fs.length){ toast('Esa fuente ya no tiene fichas'); return; }
+  const base=fs[0];
+  F={key:k, s:JSON.parse(JSON.stringify(base.fuente||{tipo:'generica'})),
+     conf:base.confiabilidad||'', archivo:base.archivo||'', n:fs.length, merge:''};
+  drawFuente();
+}
+function cerrarFuente(){ F=null; document.getElementById('modalRoot').innerHTML=''; render(); }
+function setF(k,v){ F.s[k]=v; }
+function setFtipo(t){ F.s.tipo=t; drawFuente(); }
+function guardarFuente(){
+  const fs=fichasDeFuente(F.key);
+  fs.forEach(f=>{ f.fuente=JSON.parse(JSON.stringify(F.s));
+    if(F.conf) f.confiabilidad=F.conf;
+    if(F.archivo) f.archivo=F.archivo; });
+  save(); schedulePush(); cerrarFuente(); toast('Fuente actualizada en '+fs.length+' ficha'+(fs.length>1?'s':''));
+}
+function unirFuente(){
+  if(!F.merge || F.merge===F.key){ toast('Elige con cuál unirla'); return; }
+  if(window._unir!==F.merge){ window._unir=F.merge; toast('Toca otra vez para confirmar la unión'); setTimeout(()=>window._unir=null,5000); return; }
+  const otras=fichasDeFuente(F.merge);
+  otras.forEach(f=>{ f.fuente=JSON.parse(JSON.stringify(F.s));
+    if(F.conf&&!f.confiabilidad) f.confiabilidad=F.conf;
+    if(F.archivo&&!f.archivo) f.archivo=F.archivo; });
+  fichasDeFuente(F.key).forEach(f=>{ f.fuente=JSON.parse(JSON.stringify(F.s)); });
+  save(); schedulePush(); const n=otras.length; cerrarFuente();
+  toast(n+' ficha'+(n>1?'s':'')+' se unieron a esta fuente');
+}
+function rowsCamposF(campos,s){
+  let h='', buf=[];
+  const flush=()=>{ if(!buf.length)return; h+= buf.length>1?`<div class="two">${buf.join('')}</div>`:buf[0]; buf=[]; };
+  campos.forEach(c=>{
+    const [k,lbl,req,sz]=c;
+    const fld=`<div class="fld"><label>${req?'<span class="req">obligatorio</span>':'<span class="op">opc.</span>'} ${lbl}</label>
+      <input class="in" value="${esc(s[k]||'')}" oninput="setF('${k}',this.value)"></div>`;
+    if(sz==='sm'){ buf.push(fld); if(buf.length>=3) flush(); } else { flush(); h+=fld; }
+  });
+  flush(); return h;
+}
+function drawFuente(){
+  const _y=guardaScroll();
+  const s=F.s, campos=CAMPOS[s.tipo]||CAMPOS.generica;
+  const otras=[]; const vistos={};
+  S.fichas.forEach(f=>{ const k=fuenteKey(f); if(!k||k===F.key||vistos[k])return; vistos[k]=1;
+    otras.push({k, txt:(f.fuente.autor||'')+' · '+(f.fuente.titulo||f.fuente.refCruda||'sin título')}); });
+  const aps=[...new Set(fichasDeFuente(F.key).map(f=>f.apartado).filter(Boolean))].sort();
+
+  document.getElementById('modalRoot').innerHTML=`<div class="overlay" onclick="if(event.target===this)cerrarFuente()">
+   <div class="modal" style="max-width:600px">
+    <div class="mtop"><b>Editar la fuente</b>
+      <span class="apto">${F.n} ficha${F.n>1?'s':''}${aps.length?' · '+aps.join(' · '):''}</span>
+      <button class="x" onclick="cerrarFuente()">✕</button></div>
+    <div class="mbody">
+      <div class="banner lo"><span>⋯</span><span>Lo que cambies aquí se aplica a <b>las ${F.n} fichas</b> de esta fuente. Los extractos no se tocan.</span></div>
+
+      <div class="grp"><div class="gl">Tipo</div>
+        <div class="fld"><div class="chips">${TIPOS.map(t=>
+          `<button class="chip ${s.tipo===t[0]?'on':''}" onclick="setFtipo('${t[0]}')">${t[1]}</button>`).join('')}</div></div>
+
+        ${s.refCruda!==undefined?`<div class="fld">
+          <label><span class="auto">pegada</span> Referencia completa</label>
+          <textarea class="in auto" oninput="setF('refCruda',this.value);autoAlto(this)">${esc(s.refCruda||'')}</textarea>
+          <div class="chips" style="margin-top:8px">
+            <button class="chip ${s.usarCruda?'on':''}" onclick="setF('usarCruda',true);drawFuente()">usarla tal cual</button>
+            <button class="chip ${s.usarCruda?'':'on'}" onclick="setF('usarCruda',false);drawFuente()">armarla con los campos</button>
+          </div></div>`:''}
+
+        ${rowsCamposF(campos,s)}
+      </div>
+
+      <div class="grp"><div class="gl">Cómo va a quedar</div>
+        <div class="lock"><div style="flex:1;min-width:0"><div class="t">${chicago(s)}</div></div></div>
+      </div>
+
+      <div class="grp"><div class="gl">Se aplica a todas <span class="r">— solo si lo llenas</span></div>
+        <div class="fld"><label>Confiabilidad</label>
+          <div class="chips">${['Alta','Media','Baja'].map(c=>
+            `<button class="chip ${F.conf===c?'on':''}" onclick="F.conf=(F.conf==='${c}'?'':'${c}');drawFuente()">${c}</button>`).join('')}</div></div>
+        <div class="fld" style="margin-bottom:0"><label><span class="op">opc.</span> Liga al documento</label>
+          <input class="in" value="${esc(F.archivo)}" placeholder="https://drive.google.com/…" oninput="F.archivo=this.value"></div>
+      </div>
+
+      ${otras.length?`<div class="grp" style="margin-bottom:0"><div class="gl">Unir con otra fuente
+        <span class="r">— si la capturaste dos veces distinto</span></div>
+        <select class="in" onchange="F.merge=this.value">
+          <option value="">elegir la fuente duplicada…</option>
+          ${otras.map(o=>`<option value="${esc(o.k)}">${esc(o.txt.slice(0,90))}</option>`).join('')}
+        </select>
+        <button class="btn g sm" style="margin-top:9px" onclick="unirFuente()">unir a esta</button>
+        <div class="hint" style="margin-top:6px">Las fichas de la otra fuente pasan a tener <b>esta</b> fuente. No se borra ninguna ficha.</div>
+      </div>`:''}
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="guardarFuente()">guardar en las ${F.n} fichas</button>
+      <button class="btn g" onclick="cerrarFuente()">cancelar</button>
+      <span class="sp"></span><span class="hint">Esc para cerrar</span>
+    </div>
+   </div></div>`;
+  devuelveScroll(_y); autoAltoTodo();
+}
+
 /* ---------- bibliografía ---------- */
 function viewBiblio(){
   const map={};
   S.fichas.forEach(f=>{ const k=fuenteKey(f); if(!k)return;
-    if(!map[k]) map[k]={s:f.fuente||{},n:0}; map[k].n++; });
+    if(!map[k]) map[k]={k, s:f.fuente||{},n:0}; map[k].n++; });
   const refs=Object.values(map);
   const inc=refs.filter(r=>faltan(r.s).length).length;
   refs.sort((a,b)=>(a.s.autor||'zz').localeCompare(b.s.autor||'zz','es'));
@@ -1257,7 +1367,8 @@ function viewBiblio(){
     h+=`<div class="ref ${fal.length?'inc':''}">
       <div class="txt">${chicago(r.s)}
         <div class="rule">${fal.length?'⚠ Le falta: '+fal.join(', ')+'. Complétala antes de usarla.':(REGLAS[r.s.tipo]||REGLAS.generica)}</div></div>
-      <div class="used">${r.n} ficha${r.n>1?'s':''}</div></div>`;
+      <div class="used">${r.n} ficha${r.n>1?'s':''}<br>
+        <button style="color:var(--accent);font-size:10.5px" onclick="openFuente('${esc(r.k)}')">editar</button></div></div>`;
   });
   h+=`<div style="border:1px solid var(--line);border-radius:9px;padding:14px 16px;margin-top:22px;background:var(--panel)">
     <div class="capt">Los patrones de Chicago que usa la app</div>
@@ -1938,7 +2049,8 @@ function viewFuentes(){
       <td class="num">${esc(g.s.anio||'')}</td>
       <td class="ap">${[...g.aps].sort().join(' · ')||'—'}</td>
       <td class="num">${g.pal}</td>
-      <td><button class="hint" style="color:var(--accent)" onclick="srcFiltro='${esc(g.k)}';fModo='fichas';render()">ver sus fichas</button></td>
+      <td><button class="hint" style="color:var(--accent)" onclick="srcFiltro='${esc(g.k)}';fModo='fichas';render()">ver fichas</button>
+        <button class="hint" style="color:var(--accent);margin-left:9px" onclick="openFuente('${esc(g.k)}')">editar</button></td>
     </tr>`;}).join('')}
   </table>`;
 }
@@ -2481,7 +2593,7 @@ function viewAvance(){
    ARRANQUE
    ========================================================= */
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ if(M)closeModal(); else if(A)cerrarAtoro(); else if(TT)cerrarTitulo(); }
+  if(e.key==='Escape'){ if(M)closeModal(); else if(A)cerrarAtoro(); else if(TT)cerrarTitulo(); else if(F)cerrarFuente(); }
   if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&M){ const s=M.fuente;
     if((M.clase==='redaccion'||M.fija||(s.autor||s.titulo||s.liga||s.refCruda))&&M.extracto.trim()) guardarFicha(true); }
 });
