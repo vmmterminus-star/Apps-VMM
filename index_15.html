@@ -1179,6 +1179,11 @@ function citarFuente(k){
   drawModal();
 }
 function quitarCita(i){ M.fuentes.splice(i,1); drawModal(); }
+function otraRedaccion(id){
+  const f=S.fichas.find(x=>x.id===id); if(!f) return;
+  openFicha(f.apartado,null,null,{clase:'redaccion',tags:f.tags,archivo:f.archivo,
+    confiabilidad:f.confiabilidad, fuentes:(f.fuentes||[]), secundarios:f.secundarios});
+}
 function redactarSobre(id){
   const f=S.fichas.find(x=>x.id===id); if(!f) return;
   openFicha(f.apartado,null,null,{clase:'redaccion',tags:f.tags,archivo:f.archivo,
@@ -1194,7 +1199,8 @@ function fichasHTML(fs){
   if(!fs.length) return `<div class="empty">Todavía no hay fichas aquí.<br><br>
     <button class="btn o" onclick="openFicha('${sel}')">capturar la primera</button></div>`;
   return `<div class="grid">${fs.map(f=>{
-    const s=f.fuente||{}, fal=faltan(s);
+    const s=f.fuente||{};
+    const fal = f.clase==='redaccion' ? [] : faltan(s);
     const prestada = sel && f.apartado!==sel && (f.secundarios||[]).includes(sel);
     const bor = f.clase==='redaccion';
     const largo = (f.extracto||'').length>380;
@@ -1224,8 +1230,9 @@ function fichasHTML(fs){
         <span class="sp"></span>
         ${f.archivo?`<a href="${esc(f.archivo)}${f.pagina?'#page='+encodeURIComponent(f.pagina):''}" target="_blank" rel="noopener" style="color:var(--accent)">abrir documento</a>`:''}
         <button onclick="openFicha(null,'${f.id}')">editar</button>
-        <button onclick="dupFicha('${f.id}')">otra de esta fuente</button>
-        ${bor?'':`<button onclick="redactarSobre('${f.id}')">redactar sobre esta</button>`}
+        ${bor?`<button onclick="otraRedaccion('${f.id}')">otra redacción igual</button>`
+             :`<button onclick="dupFicha('${f.id}')">otra de esta fuente</button>
+               <button onclick="redactarSobre('${f.id}')">redactar sobre esta</button>`}
         ${viejaTitulo(f)?`<button style="color:var(--warn)" onclick="revisada('${f.id}')">ya la revisé</button>`:''}
       </div>
     </div>`;
