@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>COSTOS — Control Técnico de Obra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#123C47; --teal:#3D8A8A; --mint:#D8ECEA; --wash:#F4F9F9;
+  --terra:#C47A5A; --ink:#1F3339; --soft:#6E8288; --line:#DDE8E8;
+  --paper:#FFFFFF; --bg:#EEF5F5;
+  --ok:#2E7D6B; --amber:#C08A2E; --red:#B4503A;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Alexandria',system-ui,-apple-system,sans-serif;font-weight:300;font-size:12.5px;line-height:1.5}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+.app{max-width:1280px;margin:0 auto;padding:0 0 92px}
+header{background:var(--deep);color:#E6F2F2;padding:13px 16px;padding-top:calc(13px + env(safe-area-inset-top))}
+.hd-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-size:11px;letter-spacing:.22em;font-weight:600;opacity:.72}
+.hd-obra{font-size:14px;font-weight:400}
+.hd-tot{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:#fff}
+.hd-tot small{display:block;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-family:'Alexandria',sans-serif}
+
+nav{display:flex;overflow-x:auto;background:#0D2F38;scrollbar-width:none;position:sticky;top:0;z-index:49}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;background:none;border:none;color:#8FB3B8;font-family:inherit;font-size:11px;padding:11px 14px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent}
+nav button.on{color:#fff;border-bottom-color:var(--terra);background:rgba(255,255,255,.04)}
+nav button .badge{display:inline-block;min-width:15px;height:15px;line-height:15px;background:var(--terra);color:#fff;border-radius:8px;font-size:8.5px;margin-left:5px;padding:0 4px;vertical-align:1px}
+
+main{padding:16px 16px 0}
+section{display:none;animation:fade .16s ease}
+section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.panel-hd{padding:11px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--wash)}
+.panel-hd h2{margin:0;font-size:12px;font-weight:600;color:var(--deep)}
+.panel-hd .sub{font-size:10px;color:var(--soft);margin-left:auto}
+.panel-bd{padding:13px 15px}
+.panel-bd.flush{padding:0}
+
+button.btn{font-family:inherit;font-size:11px;padding:7px 13px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--deep);cursor:pointer}
+button.btn:hover{border-color:var(--teal);color:var(--teal)}
+button.btn.solid{background:var(--deep);border-color:var(--deep);color:#fff}
+button.btn.solid:hover{background:var(--teal);border-color:var(--teal)}
+button.btn.ghost{border-style:dashed;color:var(--soft);width:100%;padding:9px}
+button.btn.ghost:hover{color:var(--teal);border-color:var(--teal)}
+button.btn.mini{padding:5px 10px;font-size:10px}
+button.icon{background:none;border:none;cursor:pointer;color:#BFD1D1;font-size:12px;line-height:1;padding:3px 4px;font-family:inherit}
+button.icon:hover{color:var(--terra)}
+button.icon.x{font-size:15px}
+button.icon.on{color:var(--terra);font-weight:600}
+.lnk{color:var(--teal);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+
+select.sel{font-family:inherit;font-size:12.5px;font-weight:300;padding:7px 28px 7px 10px;border:1px solid var(--line);border-radius:6px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%236E8288'/></svg>") no-repeat right 10px center;color:var(--ink);appearance:none;max-width:100%}
+select.sel:focus{outline:none;border-color:var(--teal)}
+
+.ed{outline:none;cursor:text;border-bottom:1px dotted transparent;min-width:14px;display:inline-block}
+.ed:hover{border-bottom-color:currentColor;opacity:.85}
+.ed:focus{border-bottom-color:var(--terra);background:rgba(196,122,90,.12);border-radius:2px}
+thead .ed:focus{background:rgba(255,255,255,.16)}
+
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:600px}
+thead th{background:var(--deep);color:#DCEBEB;text-align:left;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;padding:7px;white-space:nowrap}
+tbody td{border-bottom:1px solid var(--line);padding:0;vertical-align:middle}
+tbody tr:nth-child(even) td{background:var(--wash)}
+tbody tr:hover td{background:var(--mint)}
+td.num,th.num{text-align:right} td.mid,th.mid{text-align:center}
+td.act{width:94px;text-align:right;white-space:nowrap;padding-right:5px} th.act{text-align:right}
+
+td input,td select{width:100%;border:none;background:transparent;font-family:'Alexandria',sans-serif;font-weight:300;font-size:12.5px;padding:6px 7px;color:var(--ink);outline:none}
+td input.n{font-family:'IBM Plex Mono',monospace;text-align:right;font-weight:400}
+td input:focus{background:#fff;box-shadow:inset 0 0 0 1.5px var(--teal);border-radius:3px}
+td input::placeholder{color:#BCCACA;font-weight:200}
+td .ro{padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
+td .ro.b{color:var(--deep);font-weight:500}
+td .ro.txt{font-family:'Alexandria',sans-serif;font-size:11px;font-weight:300;color:var(--ink);white-space:normal}
+/* iPhone: 16px en los campos evita el zoom automático al enfocar */
+@media(max-width:820px){
+  td input,td select,select.sel,.pc-in,.cfg input,.f-in{font-size:16px!important}
+}
+
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;padding:2px 6px;border-radius:20px;background:var(--mint);color:#1A6B6B;white-space:nowrap}
+.tag.mat{background:#E3EEF5;color:#2B5F7E}
+.tag.mo{background:#F5E9E1;color:#A55C3A}
+.tag.eq{background:#E8EEE4;color:#4A6B3A}
+.tag.pct{background:#EDE7F2;color:#5C4A7E}
+.tag.aux{background:#DCE9E0;color:#2F6B4A}
+
+tr.grp td{background:var(--mint)!important;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);font-weight:600;padding:5px 7px}
+tr.tot td{background:var(--deep)!important;color:#fff;font-weight:500;font-size:11.5px;padding:8px 7px;border:none}
+tr.sub td{background:#E9F3F3!important;font-weight:500;color:var(--deep);padding:6px 7px}
+tr.ded td{background:#FBF2ED!important}
+tr.ded td .ro,tr.ded td input{color:#8A4E32}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}
+.kpi{background:var(--wash);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 12px}
+.kpi small{display:block;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:3px}
+.kpi b{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--deep)}
+.kpi.accent{border-left-color:var(--terra)} .kpi.accent b{color:var(--terra)}
+
+.pu-box{background:var(--wash);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.pu-line{display:flex;align-items:center;gap:10px;padding:6px 13px;border-bottom:1px solid var(--line);font-size:11px}
+.pu-line:last-child{border-bottom:none}
+.pu-line .lbl{flex:1;color:var(--soft);min-width:0}
+.pu-line .pc{width:118px;text-align:right;white-space:nowrap}
+.pu-line .vl{width:112px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:500}
+.pu-line.strong{background:#E9F3F3;font-weight:500} .pu-line.strong .lbl{color:var(--deep)}
+.pu-line.final{background:var(--deep);border:none}
+.pu-line.final .lbl,.pu-line.final .vl{color:#fff;font-weight:600;font-size:13px}
+.pc-in{width:66px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;border:1px solid var(--line);border-radius:4px;padding:3px 6px;background:#fff;color:var(--ink);outline:none}
+.pc-in:focus{border-color:var(--teal)}
+.pc-ro{font-family:'IBM Plex Mono',monospace;color:var(--teal);font-weight:500}
+
+details.help{margin:0 0 13px;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+details.help summary{cursor:pointer;padding:8px 13px;font-size:10.5px;color:var(--teal);list-style:none;display:flex;align-items:center;gap:7px}
+details.help summary::-webkit-details-marker{display:none}
+details.help summary::before{content:"?";display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--mint);color:var(--deep);font-size:9px;font-weight:600;flex-shrink:0}
+details.help[open] summary{border-bottom:1px solid var(--line);background:var(--wash)}
+details.help .hb{padding:11px 13px;font-size:11px;line-height:1.62}
+details.help .hb code{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--mint);padding:1px 5px;border-radius:3px;color:var(--deep)}
+details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
+
+.hint{font-size:10.5px;color:var(--soft);padding:9px 15px;background:var(--wash);border-top:1px solid var(--line)}
+.empty{padding:30px 16px;text-align:center;color:var(--soft);font-size:11.5px}
+.empty b{display:block;color:var(--deep);font-weight:500;margin-bottom:4px;font-size:12.5px}
+
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px 16px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft)}
+.f-in{font-family:inherit;font-size:12.5px;font-weight:300;border:1px solid var(--line);border-radius:5px;padding:6px 9px;color:var(--ink);outline:none;background:#fff;width:100%}
+.f-in:focus{border-color:var(--teal)}
+.f.wide{grid-column:1/-1}
+.cfg{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--soft);padding:4px 0;border-bottom:1px solid var(--line)}
+.cfg span{flex:0 0 110px;font-size:9px;letter-spacing:.07em;text-transform:uppercase}
+.cfg input{flex:1;min-width:0;font-family:inherit;font-size:12.5px;font-weight:300;border:1px solid var(--line);border-radius:5px;padding:5px 8px;color:var(--ink);outline:none;background:#fff}
+.cfg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:6px 16px}
+
+.prog{height:7px;background:var(--mint);border-radius:4px;overflow:hidden;display:flex}
+.prog i{display:block;height:100%}
+.prog i.a{background:var(--teal)} .prog i.b{background:var(--terra);opacity:.55}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:var(--soft);margin-top:7px}
+.leg em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.leg em::before{content:'';width:8px;height:8px;border-radius:2px;background:var(--teal)}
+.leg em.b::before{background:var(--terra);opacity:.55}
+.leg em.c::before{background:var(--mint)}
+
+.val{display:flex;gap:11px;padding:11px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+.val:last-child{border-bottom:none}
+.val .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.val.r .dot{background:var(--red)} .val.a .dot{background:var(--amber)} .val.v .dot{background:var(--ok)}
+.val .tx{flex:1;min-width:0}
+.val .tt{font-size:11.5px;font-weight:500;color:var(--deep);margin-bottom:2px}
+.val.r .tt{color:var(--red)} .val.a .tt{color:#8A6420}
+.val .ds{font-size:10.5px;color:var(--soft);line-height:1.55}
+.sem{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sem div{flex:1;min-width:96px;padding:9px 12px;border-radius:8px;text-align:center}
+.sem b{display:block;font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600}
+.sem small{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;opacity:.8}
+.sem .r{background:#FBEEEA;color:var(--red)} .sem .a{background:#FBF5E8;color:#8A6420} .sem .v{background:#E8F4F0;color:var(--ok)}
+
+.dock{position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:9px 16px calc(9px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center}
+.dock .status{flex:1;font-size:10px;color:var(--soft);display:flex;align-items:center;gap:6px;min-width:0}
+.dock .status i{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0}
+.dock .status span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:600px){.dock .status span{display:none}}
+
+.print-hd{display:none}
+.print-ft{display:none}
+@media print{
+  @page{size:letter;margin:13mm 11mm}
+  body{background:#fff;font-size:8pt}
+  header,nav,.dock,details.help,.hint,button,.panel-hd .sub,.kpis,.act,th.act,.leg,.prog,.sem{display:none!important}
+  .app{max-width:none;padding:0} main{padding:0}
+  section{display:none!important} section.on{display:block!important}
+  #s-inicio,#s-ajustes{display:none!important}
+  .panel{border:none;margin:0 0 5mm;border-radius:0}
+  .panel-hd{display:none} .panel-bd{padding:0}
+  .tbl-wrap{overflow:visible}
+  table{min-width:0;font-size:7.5pt}
+  thead{display:table-header-group}
+  thead th{background:#fff!important;color:#000!important;border-top:1pt solid #000;border-bottom:.5pt solid #000;font-size:6.5pt;padding:4pt 3pt}
+  tbody td{border-bottom:.25pt solid #999}
+  tbody tr{break-inside:avoid}
+  tbody tr:nth-child(even) td{background:#fff!important}
+  td input,td select,td .ro{font-size:7.5pt!important;padding:3pt;color:#000!important}
+  td input.n,td .ro{font-family:'IBM Plex Mono',monospace}
+  td input{border:none!important;box-shadow:none!important}
+  tr.ded td{background:#F6F6F6!important}
+  .ed{border:none!important;background:none!important}
+  .tag{background:#fff!important;color:#000!important;border:.25pt solid #666;font-size:6.5pt}
+  tr.grp td{background:#EEE!important;color:#000!important;font-size:6.5pt;border-top:.5pt solid #000}
+  tr.tot td{background:#fff!important;color:#000!important;border-top:1pt solid #000;font-weight:700;font-size:8pt}
+  tr.sub td{background:#F4F4F4!important;color:#000!important}
+  .pu-box{border:.5pt solid #000;background:#fff}
+  .pu-line{border-bottom:.25pt solid #999;padding:3pt 6pt;font-size:7.5pt}
+  .pu-line.strong{background:#F4F4F4!important}
+  .pu-line.final{background:#fff!important;border-top:1pt solid #000}
+  .pu-line.final .lbl,.pu-line.final .vl{color:#000!important;font-size:9pt}
+  .pc-in,.f-in{border:none!important;background:transparent!important;color:#000!important;font-size:7.5pt;width:auto;padding:0}
+  .f label{font-size:6pt}
+  .print-hd{display:block!important;border:.75pt solid #000;padding:2.5mm 3mm;margin-bottom:4mm}
+  .print-hd .r1{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:.5pt solid #000;padding-bottom:1.5mm;margin-bottom:1.5mm}
+  .print-hd .emp{font-size:10pt;font-weight:600}
+  .print-hd .doc{font-size:9pt;font-weight:600;text-align:right}
+  .print-hd .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5mm 4mm;font-size:6.8pt}
+  .print-hd .g b{font-weight:600}
+  .print-ft{display:flex!important;justify-content:space-between;margin-top:4mm;border-top:.5pt solid #000;padding-top:2mm;font-size:6.8pt}
+  .empty,.cfg-grid{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header>
+  <div class="hd-row">
+    <div>
+      <div class="brand"><span class="ed" contenteditable spellcheck="false" onblur="setLbl('brand',this.textContent)">COSTOS</span></div>
+      <div class="hd-obra" id="hdObra">—</div>
+    </div>
+    <div class="hd-tot" style="margin-left:auto;text-align:right">
+      <small>Total con IVA</small><span id="hdTot">—</span>
+    </div>
+  </div>
+</header>
+
+<nav id="nav"></nav>
+<main>
+
+<!-- ================= INICIO ================= -->
+<section id="s-inicio">
+  <div class="panel">
+    <div class="panel-hd"><h2>Estado del trabajo</h2><div class="sub" id="stFecha"></div></div>
+    <div class="panel-bd" id="estadoBody"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Datos de obra</h2><div class="sub">Se imprimen en el membrete de todos los formatos</div></div>
+    <div class="panel-bd"><div class="f-grid" id="obraForm"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Respaldo</h2></div>
+    <div class="panel-bd">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportJSON()">Descargar respaldo (.json)</button>
+        <button class="btn" onclick="document.getElementById('fileIn').click()">Cargar respaldo</button>
+        <button class="btn" onclick="exportCSV()">Exportar presupuesto (.csv)</button>
+        <button class="btn" onclick="resetAll()" style="color:var(--terra);border-color:#EBD5CA">Reiniciar con el ejemplo</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los datos viven en este navegador. Descarga el respaldo antes de cambiar de compu o limpiar el historial. El CSV lo abre Excel directo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSUMOS ================= -->
+<section id="s-insumos">
+  <div class="print-hd" data-doc="Catálogo de insumos"></div>
+  <details class="help"><summary>Insumos, salario real y auxiliares</summary><div class="hb">
+    <p>El insumo es el ladrillo del sistema: todo lo que se compra, se paga o se renta, con su <b>costo unitario puesto en obra</b> — sin indirectos, sin utilidad, sin IVA.</p>
+    <p>En mano de obra el costo que entra a la matriz no es el salario nominal, es el <b>salario real</b>: <code>nominal × FSR</code>. El factor de salario real (1.5 a 1.9) cubre lo que cuesta un trabajador además de su sueldo — IMSS, INFONAVIT, aguinaldo, vacaciones, días no laborados. Si lo omites, tu mano de obra queda subvaluada como 40% y es de lo primero que te cuestionan.</p>
+    <p>Los <b>auxiliares</b> o básicos son matrices chicas que se usan dentro de otras: mortero, concreto hecho en obra. Se calculan una vez y se insertan como si fueran un insumo más. Sin esto acabas recapturando el mortero en doce matrices y con doce precios distintos.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tInsumos',this.textContent)">Catálogo de insumos</span></h2><div class="sub" id="insCount"></div></div>
+    <div class="panel-bd flush">
+      <div class="tbl-wrap"><table id="tInsumos"></table></div>
+      <div style="padding:9px 11px"><button class="btn ghost" onclick="addInsumo()">+ Agregar insumo</button></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Auxiliares / básicos</h2><select class="sel" id="selAux" onchange="renderAux()"></select>
+      <button class="btn mini" onclick="addAuxiliar()">+ Nuevo auxiliar</button></div>
+    <div class="panel-bd flush" id="auxBody"></div>
+  </div>
+</section>
+
+<!-- ================= CONCEPTOS ================= -->
+<section id="s-conceptos">
+  <div class="print-hd" data-doc="Catálogo de conceptos"></div>
+  <details class="help"><summary>Cómo se redacta y se codifica un concepto</summary><div class="hb">
+    <p>Un concepto tiene <b>una sola unidad de medida</b>. Por eso la dala son tres conceptos: concreto en m³, acero en kg y cimbra en m². No se suman entre sí; se vuelven a juntar hasta el presupuesto.</p>
+    <p>La clave es <code>PARTIDA-##</code>, correlativa dentro de cada partida. El patrón de redacción que no falla:</p>
+    <p><code>[verbo] + [elemento] + [especificación: dimensiones, material, proporción, f'c/fy] + "Incluye:" + [subactividades] + [mano de obra, herramienta, equipo] + "y todo lo necesario para su correcta ejecución."</code></p>
+    <p>Esa última frase es la que blinda el concepto: lo que no enlistaste queda cubierto y no da pie a reclamación de obra extra.</p>
+    <p>La <b>descripción corta</b> es la que va en el programa de obra, de una sola línea.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2>Partidas</h2><div class="sub">Prefijo de clave y orden en el presupuesto</div></div>
+    <div class="panel-bd flush">
+      <div class="tbl-wrap"><table id="tPartidas"></table></div>
+      <div style="padding:9px 11px"><button class="btn ghost" onclick="addPartida()">+ Agregar partida</button></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tConceptos',this.textContent)">Catálogo de conceptos</span></h2><div class="sub" id="conCount"></div></div>
+    <div class="panel-bd flush">
+      <div class="tbl-wrap"><table id="tConceptos"></table></div>
+      <div style="padding:9px 11px"><button class="btn ghost" onclick="addConcepto()">+ Agregar concepto</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GENERADORES ================= -->
+<section id="s-generadores">
+  <div class="print-hd" data-doc="Números generadores"></div>
+  <details class="help"><summary>Cómo se llena un generador y cómo se deduce</summary><div class="hb">
+    <p>El generador es la <b>memoria de cálculo de las cantidades</b>: de dónde salió cada número. Una cantidad sin generador no se puede defender ni revisar en obra.</p>
+    <p>Cada renglón se ubica con una referencia (eje, tramo, nivel, plano) y se multiplican todas las columnas numéricas:</p>
+    <p><code>Parcial = No. × Largo × Ancho × Alto × Factor</code></p>
+    <p>Las casillas vacías valen 1: para <b>volumen</b> usas las tres dimensiones, para <b>superficie</b> largo y alto, para <b>longitud</b> solo largo. El <b>factor</b> convierte cuando la unidad no es geométrica — la varilla del #3 pesa <code>0.557 kg/m</code>, la del #2 <code>0.248</code>, la del #4 <code>0.994</code> — o aplica desperdicio (1.05 = 5%).</p>
+    <p>El botón <b>−</b> de cada renglón lo convierte en <b>deducción</b>: se resta en vez de sumar. Ahí van los vanos de puertas y ventanas que se descuentan de muros y aplanados. Es lo primero que pregunta un profesor y en tu entrega pasada no estaba documentado.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tGen',this.textContent)">Números generadores</span></h2><select class="sel" id="selGen" onchange="renderGen()"></select></div>
+    <div class="panel-bd flush" id="genBody"></div>
+  </div>
+</section>
+
+<!-- ================= MATRICES ================= -->
+<section id="s-matrices">
+  <div class="print-hd" data-doc="Análisis de precio unitario"></div>
+  <details class="help"><summary>Cómo se arma un precio unitario</summary><div class="hb">
+    <p>La pregunta es: <b>¿cuánto material, gente y equipo necesito para producir UNA unidad?</b> Un m³ de concreto, un kg de acero, un m² de cimbra.</p>
+    <p>En materiales la cantidad es consumo directo. En mano de obra la cantidad es <code>1 / rendimiento</code>: si una cuadrilla levanta 8 m² de muro por jornada, la cantidad es 0.125 jornadas por m². Puedes capturar el rendimiento y la app saca la cantidad, o al revés.</p>
+    <p>La <b>herramienta menor</b> no se cuantifica, se cobra como porcentaje de la mano de obra — 3% es lo típico. Por eso existe el tipo de insumo porcentual.</p>
+    <p>La suma de los bloques es el <b>costo directo unitario</b>. Los cargos que lo convierten en precio de venta no se aplican aquí: se calculan una sola vez para toda la obra.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tMatriz',this.textContent)">Análisis de precio unitario</span></h2><select class="sel" id="selMatriz" onchange="renderMatriz()"></select></div>
+    <div class="panel-bd flush" id="matrizBody"></div>
+  </div>
+</section>
+
+<!-- ================= INDIRECTOS ================= -->
+<section id="s-indirectos">
+  <div class="print-hd" data-doc="Análisis de costos indirectos"></div>
+  <details class="help"><summary>Qué son los indirectos y por qué se prorratean</summary><div class="hb">
+    <p>Indirectos son los gastos que la obra necesita pero que no se pueden cargar a un concepto en particular: sueldos de oficina, renta, papelería, seguros, fianzas, el letrero de obra.</p>
+    <p>Se separan en <b>administración central</b> (la oficina, que sirve a varias obras a la vez) y <b>administración de obra</b> (lo que existe solo por esta obra).</p>
+    <p>El gasto de oficina se prorratea, porque esta obra no se come el año completo del director general:</p>
+    <p><code>Total = importe mensual × meses de obra ÷ proyectos simultáneos</code></p>
+    <p>El porcentaje sale de dividir entre el costo directo <b>sin IVA</b>. Ese fue el error del semestre pasado: se dividió entre el costo directo con IVA, así que el porcentaje quedó más bajo de lo real. Aquí el denominador es siempre el subtotal.</p>
+    <p>Esta pantalla es la <b>única fuente</b>: el resumen central/obra se genera desde el desglose, no se captura aparte. Así no vuelven a diferir por $133,000.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2>Parámetros del prorrateo</h2></div>
+    <div class="panel-bd"><div class="f-grid" id="indParams"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Desglose de indirectos</h2><div class="sub" id="indCount"></div></div>
+    <div class="panel-bd flush">
+      <div class="tbl-wrap"><table id="tIndirectos"></table></div>
+      <div style="padding:9px 11px"><button class="btn ghost" onclick="addRubro()">+ Agregar renglón</button></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Resumen — se genera solo desde el desglose</h2></div>
+    <div class="panel-bd flush"><div class="tbl-wrap"><table id="tIndResumen"></table></div></div>
+  </div>
+</section>
+
+<!-- ================= CARGOS ================= -->
+<section id="s-cargos">
+  <div class="print-hd" data-doc="Análisis del cargo por utilidad"></div>
+  <details class="help"><summary>Utilidad integrada y factor de sobrecosto</summary><div class="hb">
+    <p>La utilidad que quieres ganar <b>neta</b> no es la que cargas al precio, porque sobre ella pagas ISR y repartes PTU. Hay que integrarla:</p>
+    <p><code>UI = UEN ÷ (1 − (ISR + PTU))</code> — con 10% de utilidad esperada, 30% de ISR y 10% de PTU: <code>0.10 / (1 − 0.40) = 16.67%</code></p>
+    <p>El <b>factor de sobrecosto</b> es lo que convierte costo directo en precio de venta:</p>
+    <p><code>(1 + %IND) × (1 + %UI) × (1 + %FIN) × (1 + %CA)</code></p>
+    <p>Financiamiento es lo que cuesta adelantar el dinero mientras el cliente paga. Cargos adicionales son los 5 al millar de inspección y vigilancia, y el ISN si aplica.</p>
+    <p>Aquí está el error grande del semestre pasado: el factor que realmente se aplicó fue 1.1715, o sea <b>solo la utilidad</b>. Los 48% de indirectos que calculaste nunca llegaron al precio. La app ya no lo permite: el factor se arma solo y se muestra desglosado.</p>
+  </div></details>
+  <div class="panel">
+    <div class="panel-hd"><h2>Utilidad</h2></div>
+    <div class="panel-bd"><div class="pu-box" id="utilBox"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Factor de sobrecosto</h2><div class="sub">Se aplica a todos los conceptos</div></div>
+    <div class="panel-bd"><div class="pu-box" id="factorBox"></div></div>
+  </div>
+</section>
+
+<!-- ================= PRESUPUESTO ================= -->
+<section id="s-presupuesto">
+  <div class="print-hd" data-doc="Presupuesto"></div>
+  <details class="help"><summary>De dónde sale cada columna</summary><div class="hb">
+    <p>Aquí no se captura nada: la <b>cantidad</b> viene del generador, el <b>precio unitario</b> del costo directo por el factor de sobrecosto, y el <b>importe</b> es la multiplicación.</p>
+    <p>Las cantidades y los precios son <b>clicables</b>: te llevan al generador o a la matriz que los produjo. Esa trazabilidad es lo que en Excel no existía y lo que más te ahorra en las correcciones.</p>
+    <p>El botón <b>Ver costo directo</b> cambia la columna de precio de venta a costo directo sin cargos: es la segunda hoja que pide el formato, del mismo dato.</p>
+  </div></details>
+  <div id="presupBody"></div>
+</section>
+
+<!-- ================= VALIDACIONES ================= -->
+<section id="s-validaciones">
+  <div class="print-hd" data-doc="Revisión de consistencia"></div>
+  <details class="help"><summary>Qué revisa esta pantalla</summary><div class="hb">
+    <p>Son las alertas que salieron de revisar tu entrega del semestre pasado. Rojo es error que cambia el resultado, ámbar es algo que hay que revisar a mano, verde es que pasó.</p>
+    <p>No te obliga a nada: hay casos legítimos que caen en ámbar. La idea es que ningún error llegue a la impresión sin que lo hayas visto.</p>
+  </div></details>
+  <div id="valBody"></div>
+</section>
+
+<!-- ================= AJUSTES ================= -->
+<section id="s-ajustes">
+  <details class="help" open><summary>Todo lo que se puede renombrar</summary><div class="hb">
+    <p>Los títulos de las tablas y los encabezados de columna se editan <b>haciendo clic sobre el texto</b> en cada pantalla; se guardan al salir del campo.</p>
+    <p>Aquí abajo está lo que no vive en una tabla.</p>
+  </div></details>
+  <div class="panel"><div class="panel-hd"><h2>Nombres de las pestañas</h2></div><div class="panel-bd"><div class="cfg-grid" id="cfgTabs"></div></div></div>
+  <div class="panel"><div class="panel-hd"><h2>Títulos de los formatos impresos</h2></div><div class="panel-bd"><div class="cfg-grid" id="cfgDocs"></div></div></div>
+  <div class="panel"><div class="panel-hd"><h2>Grupos de insumos</h2><div class="sub">Nombre del grupo y etiqueta corta</div></div><div class="panel-bd"><div class="cfg-grid" id="cfgTipos"></div></div></div>
+  <div class="panel">
+    <div class="panel-hd"><h2>Unidades permitidas</h2><div class="sub">Lista cerrada — evita el texto libre</div></div>
+    <div class="panel-bd">
+      <input class="f-in" id="unidInput" placeholder="M2, M3, ML, PZA, KG…" oninput="setUnidades(this.value)">
+      <div style="font-size:10.5px;color:var(--soft);margin-top:7px">Sepáralas con comas. Una unidad que ya esté en uso no se borra del concepto aunque la quites de aquí.</div>
+    </div>
+  </div>
+  <div class="panel"><div class="panel-hd"><h2>Métrica de referencia</h2><div class="sub">Costo unitario global del presupuesto</div></div><div class="panel-bd"><div class="cfg-grid" id="cfgMetrica"></div></div></div>
+</section>
+
+</main>
+<div class="print-ft" id="printFt"></div>
+</div>
+
+<div class="dock">
+  <div class="status"><i></i><span id="statusTxt">Guardado automático</span></div>
+  <button class="btn mini" onclick="exportJSON()">Exportar</button>
+  <button class="btn mini" onclick="document.getElementById('fileIn').click()">Importar</button>
+  <button class="btn mini solid" onclick="window.print()">Imprimir</button>
+  <input type="file" id="fileIn" accept=".json" style="display:none" onchange="importJSON(event)">
+</div>
+
+<script>
+/* ==================================================================
+   1. MODELO
+   ================================================================== */
+const KEY='costos_v3';
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+const DEF_LABELS={
+  brand:'COSTOS',
+  navInicio:'Inicio', navInsumos:'Insumos', navConceptos:'Conceptos', navGeneradores:'Generadores',
+  navMatrices:'Matrices P.U.', navIndirectos:'Indirectos', navCargos:'Utilidad y cargos',
+  navPresupuesto:'Presupuesto', navValidaciones:'Validaciones', navAjustes:'Ajustes',
+  docInsumos:'Catálogo de insumos', docConceptos:'Catálogo de conceptos',
+  docGeneradores:'Números generadores', docMatrices:'Análisis de precio unitario',
+  docIndirectos:'Análisis de costos indirectos', docCargos:'Análisis del cargo por utilidad',
+  docPresupuesto:'Presupuesto', docValidaciones:'Revisión de consistencia',
+  tInsumos:'Catálogo de insumos', tConceptos:'Catálogo de conceptos',
+  tMatriz:'Análisis de precio unitario', tGen:'Números generadores',
+  iClave:'Clave', iDesc:'Descripción', iUnidad:'Unidad', iTipo:'Tipo', iCosto:'Costo', iFsr:'FSR', iReal:'Real', iFuente:'Fuente',
+  pClave:'Clave', pPartida:'Partida', pDesc:'Descripción', pCorta:'Desc. corta', pUnidad:'Unidad', pCD:'C.D.', pPU:'P.U.',
+  mClave:'Clave', mInsumo:'Insumo', mUnidad:'Unidad', mRend:'Rendim.', mCant:'Cantidad', mCosto:'Costo', mImporte:'Importe',
+  mCD:'Costo directo por', mSub:'Subtotal',
+  gRef:'Referencia', gNota:'Observaciones / plano', gParcial:'Parcial', gTotal:'Total generado',
+  bClave:'Clave', bConcepto:'Concepto', bUnidad:'Unidad', bCant:'Cantidad', bPU:'Precio unitario', bImporte:'Importe',
+  bSubtotal:'Subtotal', bTotal:'Total', bSinPartida:'Sin partida',
+  kInd:'Costos indirectos', kUti:'Cargo por utilidad', kFin:'Costo por financiamiento',
+  kCa:'Cargos adicionales', kIva:'I.V.A.',
+  metNombre:'Cantidad de referencia', metUnidad:'ml', kpiMetrica:'Costo por unidad de referencia'
+};
+
+const RUBROS_GRUPOS=['HONORARIOS, SUELDOS Y PRESTACIONES','DEPRECIACIÓN, MANTENIMIENTO Y RENTAS',
+  'GASTOS DE OFICINA','SERVICIOS PROFESIONALES','FLETES Y ACARREOS','TRABAJOS PREVIOS Y AUXILIARES','SEGUROS Y FIANZAS'];
+const RUBROS_SUG=['Personal directivo','Personal técnico','Personal administrativo','Cuota patronal del Seguro Social',
+  'Prestaciones que obliga la LFT, INFONAVIT y SAR','Impuesto estatal sobre nómina','Pasajes y viáticos',
+  'Edificios y locales','Bodegas','Instalaciones generales','Mobiliario y equipo','Depreciación o renta y operación de vehículos',
+  'Papelería y consumibles','Comunicaciones','Copias e impresiones','Gas, electricidad y otros servicios',
+  'Consultores, asesores y estudios técnicos','Auditorías administrativas','Servicios de seguridad e higiene',
+  'De equipos de construcción','De equipos para instalaciones','De mobiliario',
+  'Construcción y conservación de caminos de acceso','Letrero de información de obra',
+  'Señalamientos y dispositivos de protección','Montaje y desmontaje de equipo',
+  'Primas por seguros','Primas por fianzas','Seguro de vehículos',
+  'Residente de obra','Auxiliar de oficina','Velador'];
+
+function seed(){
+  const I=(clave,desc,unidad,tipo,costo,fsr,fuente)=>({id:uid(),clave,desc,unidad,tipo,costo,fsr:fsr||'',fuente:fuente||''});
+  const ins=[
+    I('MAT-01','Cemento gris CPC 30R, saco 50 kg','SAC','mat',215,'','Referencia GDL 2026'),
+    I('MAT-02','Arena de río cribada','M3','mat',380,'','Referencia GDL 2026'),
+    I('MAT-03','Grava de 3/4", puesta en obra','M3','mat',420,'','Referencia GDL 2026'),
+    I('MAT-04','Agua para construcción','M3','mat',45,'',''),
+    I('MAT-05','Varilla corrugada #3, fy=4200 kg/cm²','KG','mat',23.5,'','Referencia GDL 2026'),
+    I('MAT-06','Alambre recocido calibre 16','KG','mat',32,'',''),
+    I('MAT-07','Madera de pino de 3ª (5 usos)','PT','mat',28,'',''),
+    I('MAT-08','Clavo con cabeza de 2 1/2"','KG','mat',34,'',''),
+    I('MAT-09','Diesel como desmoldante','LT','mat',26,'',''),
+    I('MO-01','Oficial albañil','JOR','mo',480,1.72,'Salario nominal de zona'),
+    I('MO-02','Oficial fierrero','JOR','mo',500,1.72,'Salario nominal de zona'),
+    I('MO-03','Oficial carpintero de obra negra','JOR','mo',500,1.72,'Salario nominal de zona'),
+    I('MO-04','Peón / ayudante general','JOR','mo',320,1.72,'Salario nominal de zona'),
+    I('EQ-01','Revolvedora de 1 saco','JOR','eq',650,'',''),
+    I('EQ-02','Herramienta menor','%','pct',0,'','3% sobre mano de obra')
+  ];
+  const f=c=>ins.find(x=>x.clave===c).id;
+
+  const partidas=[
+    {id:uid(),clave:'PRE',nombre:'Preliminares'},
+    {id:uid(),clave:'DREN',nombre:'Drenaje e instalación sanitaria'},
+    {id:uid(),clave:'CIM',nombre:'Cimentación'},
+    {id:uid(),clave:'EST',nombre:'Estructura'},
+    {id:uid(),clave:'ALB',nombre:'Albañilería'},
+    {id:uid(),clave:'ACB',nombre:'Acabados'}
+  ];
+  const pCIM=partidas[2].id;
+
+  const con=[
+    {id:uid(),clave:'CIM-01',partida:pCIM,unidad:'M3',
+     desc:"Concreto hecho en obra f'c=200 kg/cm² en dala de desplante de 15×20 cm. Incluye: acarreos, colado, vibrado, curado, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.",
+     descCorta:"Concreto f'c=200 en dala 15×20"},
+    {id:uid(),clave:'CIM-02',partida:pCIM,unidad:'KG',
+     desc:'Acero de refuerzo fy=4200 kg/cm², varilla del #3 corrida y estribos del #2 a cada 20 cm, habilitado y armado en dala de desplante. Incluye: cortes, dobleces, ganchos, traslapes, amarres con alambre recocido, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.',
+     descCorta:'Acero de refuerzo #3 y estribos #2 en dala'},
+    {id:uid(),clave:'CIM-03',partida:pCIM,unidad:'M2',
+     desc:'Cimbra común aparente en costados de dala de desplante. Incluye: habilitado de la madera, colocación, aplicación de desmoldante, descimbrado, limpieza, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.',
+     descCorta:'Cimbra común en costados de dala'}
+  ];
+  const c1=con[0].id,c2=con[1].id,c3=con[2].id;
+  const G=(ref,nota,v,ded)=>({id:uid(),ref,nota,ded:!!ded,v});
+  const M=(ref,cant)=>({id:uid(),ref,cant});
+
+  return {
+    v:3,
+    obra:{empresa:'',nombre:'Dala de desplante — ejercicio de clase',ubic:'Guadalajara, Jal.',
+          contrato:'',cliente:'',elab:'',fecha:new Date().toISOString().slice(0,10),
+          fInicio:'',fTermino:'',fApertura:'',razonSocial:'',descTrabajos:''},
+    unidades:['M2','M3','ML','PZA','KG','JOR','SAC','LT','TON','HR','PT','%'],
+    cargos:{isr:30,ptu:10,uen:10,fin:0,ca:0.5,iva:16,indModo:'auto',indManual:0,met:12.40},
+    labels:{...DEF_LABELS},
+    tipos:[{k:'mat',label:'Materiales',tag:'MAT'},{k:'mo',label:'Mano de obra',tag:'M.O.'},
+           {k:'eq',label:'Herramienta y equipo',tag:'EQ'},{k:'pct',label:'Cargos porcentuales',tag:'% M.O.'},
+           {k:'aux',label:'Auxiliares',tag:'AUX'}],
+    genCols:[{id:'n',label:'No.'},{id:'l',label:'Largo'},{id:'a',label:'Ancho'},{id:'h',label:'Alto'},{id:'fx',label:'Factor'}],
+    insumos:ins,
+    auxiliares:[{id:uid(),clave:'AUX-01',desc:'Mortero cemento-arena proporción 1:5',unidad:'M3',
+      comp:[M(f('MAT-01'),4.40),M(f('MAT-02'),1.10),M(f('MO-04'),0.80),M(f('EQ-02'),3.00)]}],
+    partidas, conceptos:con,
+    matrices:{
+      [c1]:[M(f('MAT-01'),7.00),M(f('MAT-02'),0.51),M(f('MAT-03'),0.68),M(f('MAT-04'),0.20),
+            M(f('MO-01'),0.35),M(f('MO-04'),1.10),M(f('EQ-01'),0.30),M(f('EQ-02'),3.00)],
+      [c2]:[M(f('MAT-05'),1.05),M(f('MAT-06'),0.035),M(f('MO-02'),0.008),M(f('MO-04'),0.008),M(f('EQ-02'),3.00)],
+      [c3]:[M(f('MAT-07'),1.10),M(f('MAT-08'),0.05),M(f('MAT-09'),0.05),M(f('MO-03'),0.12),M(f('MO-04'),0.12),M(f('EQ-02'),3.00)]
+    },
+    generadores:{
+      [c1]:[G('Eje A (1-3)','Dala perimetral · plano E-01',{n:1,l:4.20,a:0.15,h:0.20,fx:''}),
+            G('Eje C (1-3)','Plano E-01',{n:1,l:4.20,a:0.15,h:0.20,fx:''}),
+            G('Eje 1 (A-C)','Plano E-01',{n:1,l:2.00,a:0.15,h:0.20,fx:''}),
+            G('Eje 3 (A-C)','Plano E-01',{n:1,l:2.00,a:0.15,h:0.20,fx:''})],
+      [c2]:[G('Varilla long. #3','4 corridas + 5% de traslape · 0.557 kg/m',{n:4,l:13.02,a:'',h:'',fx:0.557}),
+            G('Estribos #2','63 pzas @ 20 cm, desarrollo 0.64 m · 0.248 kg/m',{n:63,l:0.64,a:'',h:'',fx:0.248})],
+      [c3]:[G('Costados de dala','2 caras × altura 0.20 m',{n:2,l:12.40,a:'',h:0.20,fx:''})]
+    },
+    indirectos:{meses:6,proyectos:4,
+      rubros:[{id:uid(),grupo:RUBROS_GRUPOS[0],desc:'Personal directivo',mensual:0,admin:'central'},
+              {id:uid(),grupo:RUBROS_GRUPOS[0],desc:'Residente de obra',mensual:0,admin:'obra'},
+              {id:uid(),grupo:RUBROS_GRUPOS[2],desc:'Papelería y consumibles',mensual:0,admin:'central'},
+              {id:uid(),grupo:RUBROS_GRUPOS[6],desc:'Primas por fianzas',mensual:0,admin:'obra'}]},
+    ui:{tab:'inicio',lastCid:'',lastTab:''}
+  };
+}
+
+let db;
+try{const raw=localStorage.getItem(KEY);db=raw?JSON.parse(raw):seed();}catch(e){db=seed();}
+db.labels={...DEF_LABELS,...(db.labels||{})};
+(function(){const s=seed();['unidades','partidas','auxiliares','genCols','tipos','cargos','indirectos','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});})();
+
+let saveTimer;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{localStorage.setItem(KEY,JSON.stringify(db));
+      flash('Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}));
+    }catch(e){flash('No se pudo guardar');}
+  },250);
+}
+const flash=t=>{document.getElementById('statusTxt').textContent=t;};
+
+const L=k=>db.labels[k]??DEF_LABELS[k]??'';
+function setLbl(k,v){db.labels[k]=(v||'').trim()||DEF_LABELS[k]||'';save();renderNav();printHeads();}
+const eh=k=>`<span class="ed" contenteditable spellcheck="false" onblur="setLbl('${k}',this.textContent)">${esc(L(k))}</span>`;
+
+/* ==================================================================
+   2. CÁLCULO
+   ================================================================== */
+const N=v=>{const x=parseFloat(v);return isNaN(x)?0:x;};
+const money=n=>'$'+(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dec=(n,d=2)=>(n||0).toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s??'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,'').trim();
+const partidaOf=id=>db.partidas.find(p=>p.id===id);
+
+function resolveRef(ref,stack){
+  const i=db.insumos.find(x=>x.id===ref);
+  if(i){
+    const costo=(i.tipo==='mo')?N(i.costo)*(N(i.fsr)||1):N(i.costo);
+    return {id:i.id,clave:i.clave,desc:i.desc,unidad:i.unidad,tipo:i.tipo,costo};
+  }
+  const a=db.auxiliares.find(x=>x.id===ref);
+  if(a){
+    stack=stack||[];
+    if(stack.includes(a.id))return {id:a.id,clave:a.clave,desc:a.desc,unidad:a.unidad,tipo:'aux',costo:0};
+    return {id:a.id,clave:a.clave,desc:a.desc,unidad:a.unidad,tipo:'aux',costo:calcRows(a.comp||[],stack.concat(a.id)).total};
+  }
+  return null;
+}
+function calcRows(rows,stack){
+  const det=[];let mo=0;
+  (rows||[]).forEach(r=>{const o=resolveRef(r.ref,stack);if(!o||o.tipo==='pct')return;
+    const imp=N(r.cant)*o.costo;if(o.tipo==='mo')mo+=imp;det.push({row:r,o,imp});});
+  (rows||[]).forEach(r=>{const o=resolveRef(r.ref,stack);if(!o||o.tipo!=='pct')return;
+    det.push({row:r,o,imp:mo*N(r.cant)/100});});
+  return {det,mo,total:det.reduce((s,d)=>s+d.imp,0)};
+}
+
+const parcialRaw=r=>db.genCols.reduce((p,c)=>{const v=(r.v||{})[c.id];const x=parseFloat(v);
+  return p*((isNaN(x)||v===''||v==null)?1:x);},1);
+const parcial=r=>(r.ded?-1:1)*parcialRaw(r);
+const cantidad=cid=>(db.generadores[cid]||[]).reduce((s,r)=>s+parcial(r),0);
+const cdu=cid=>calcRows(db.matrices[cid]||[]).total;
+
+const costoDirectoTotal=()=>db.conceptos.reduce((s,c)=>s+cantidad(c.id)*cdu(c.id),0);
+const prorrateo=r=>N(r.mensual)*N(db.indirectos.meses)/(N(db.indirectos.proyectos)||1);
+const totalIndirectos=()=>(db.indirectos.rubros||[]).reduce((s,r)=>s+prorrateo(r),0);
+const indPorAdmin=a=>(db.indirectos.rubros||[]).filter(r=>r.admin===a).reduce((s,r)=>s+prorrateo(r),0);
+
+function pctIndirectos(){
+  const g=db.cargos;
+  if(g.indModo==='manual')return N(g.indManual)/100;
+  const cd=costoDirectoTotal();
+  return cd?totalIndirectos()/cd:0;
+}
+const utilidadIntegrada=()=>{const g=db.cargos;const d=1-(N(g.isr)+N(g.ptu))/100;
+  return d>0?(N(g.uen)/100)/d:0;};
+function factorSobrecosto(){const g=db.cargos;
+  return (1+pctIndirectos())*(1+utilidadIntegrada())*(1+N(g.fin)/100)*(1+N(g.ca)/100);}
+const puVenta=cid=>cdu(cid)*factorSobrecosto();
+
+function totalesObra(){
+  let cd=0,venta=0;
+  db.conceptos.forEach(c=>{const q=cantidad(c.id);cd+=q*cdu(c.id);venta+=q*puVenta(c.id);});
+  const iva=venta*N(db.cargos.iva)/100;
+  return {cd,venta,iva,total:venta+iva};
+}
+
+/* ==================================================================
+   3. NAVEGACIÓN
+   ================================================================== */
+const TABS=[['inicio','navInicio'],['insumos','navInsumos'],['conceptos','navConceptos'],
+  ['generadores','navGeneradores'],['matrices','navMatrices'],['indirectos','navIndirectos'],
+  ['cargos','navCargos'],['presupuesto','navPresupuesto'],['validaciones','navValidaciones'],['ajustes','navAjustes']];
+let tab=(db.ui&&db.ui.tab)||'inicio';
+
+function pendientes(){
+  let g=0,m=0;
+  db.conceptos.forEach(c=>{if(!(db.generadores[c.id]||[]).length)g++;if(!(db.matrices[c.id]||[]).length)m++;});
+  return {generadores:g,matrices:m,validaciones:validar().filter(x=>x.n==='r').length};
+}
+function renderNav(){
+  const p=pendientes();
+  document.getElementById('nav').innerHTML=TABS.map(([id,lk])=>{
+    const b=p[id]?`<span class="badge">${p[id]}</span>`:'';
+    return `<button class="${id===tab?'on':''}" onclick="go('${id}')">${esc(L(lk))}${b}</button>`;
+  }).join('');
+}
+function go(id,cid){
+  tab=id;db.ui.tab=id;
+  if(cid){
+    db.ui.lastCid=cid;
+    if(id==='generadores'){document.getElementById('selGen').value=cid;renderGen();}
+    if(id==='matrices'){document.getElementById('selMatriz').value=cid;renderMatriz();}
+  }
+  save();
+  document.querySelectorAll('main section').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  renderNav();window.scrollTo({top:0});
+}
+const enterAdd=fn=>`if(event.key==='Enter'){event.preventDefault();${fn}}`;
+const rowBtns=(up,dn,dup,del)=>
+  `<button class="icon" onclick="${up}" title="Subir">&#8593;</button>
+   <button class="icon" onclick="${dn}" title="Bajar">&#8595;</button>
+   <button class="icon" onclick="${dup}" title="Duplicar">&#9109;</button>
+   <button class="icon x" onclick="${del}" title="Eliminar">&times;</button>`;
+function move(arr,i,d){const j=i+d;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];}
+const unidSel=(val,on)=>`<select onchange="${on}">${db.unidades.map(u=>`<option ${u===val?'selected':''}>${esc(u)}</option>`).join('')}${db.unidades.includes(val)?'':`<option selected>${esc(val)}</option>`}</select>`;
+
+/* ==================================================================
+   4. INICIO
+   ================================================================== */
+const OBRA_F=[['empresa','Empresa'],['nombre','Obra'],['ubic','Ubicación'],['contrato','Contrato'],
+  ['cliente','Cliente'],['elab','Elaboró'],['razonSocial','Razón social del licitante'],
+  ['fecha','Fecha',1],['fInicio','Fecha de inicio',1],['fTermino','Fecha de término',1],['fApertura','Fecha de apertura',1],
+  ['descTrabajos','Descripción general de los trabajos',0,1]];
+
+function renderObraForm(){
+  document.getElementById('obraForm').innerHTML=OBRA_F.map(([k,lbl,isDate,wide])=>
+    `<div class="f${wide?' wide':''}"><label>${esc(lbl)}</label>
+      <input class="f-in" type="${isDate?'date':'text'}" value="${esc(db.obra[k]||'')}" oninput="upObra('${k}',this.value)"></div>`).join('');
+}
+function upObra(k,v){db.obra[k]=v;save();printHeads();renderHeader();}
+function renderHeader(){
+  document.getElementById('hdObra').textContent=db.obra.nombre||'—';
+  document.getElementById('hdTot').textContent=money(totalesObra().total);
+}
+function renderEstado(){
+  const t=db.conceptos.length;
+  let cg=0,cm=0,comp=0;
+  db.conceptos.forEach(c=>{const g=(db.generadores[c.id]||[]).length>0,m=(db.matrices[c.id]||[]).length>0;
+    if(g)cg++;if(m)cm++;if(g&&m)comp++;});
+  const medias=cg+cm-2*comp;
+  const tt=totalesObra(),pI=pctIndirectos(),ui=utilidadIntegrada();
+  const pc=t?comp/t*100:0,pm=t?medias/t*100:0;
+  const last=db.ui.lastCid?db.conceptos.find(c=>c.id===db.ui.lastCid):null;
+  document.getElementById('stFecha').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('estadoBody').innerHTML=`
+    <div style="font-size:11.5px;color:var(--soft);margin-bottom:7px">${comp} de ${t} conceptos completos — con generador y con matriz</div>
+    <div class="prog"><i class="a" style="width:${pc}%"></i><i class="b" style="width:${pm}%"></i></div>
+    <div class="leg"><em>Completos ${comp}</em><em class="b">A medias ${medias}</em><em class="c">Sin empezar ${t-comp-medias}</em></div>
+    ${last?`<div style="margin-top:13px"><button class="btn" onclick="go('${db.ui.lastTab||'generadores'}','${last.id}')">Continuar en ${esc(last.clave)} — ${esc((last.descCorta||last.desc)).slice(0,42)}…</button></div>`:''}
+    <div class="kpis" style="margin-top:14px">
+      <div class="kpi"><small>Costo directo</small><b>${money(tt.cd)}</b></div>
+      <div class="kpi"><small>Subtotal de venta</small><b>${money(tt.venta)}</b></div>
+      <div class="kpi accent"><small>Total con IVA</small><b>${money(tt.total)}</b></div>
+      <div class="kpi"><small>Indirectos</small><b>${dec(pI*100,2)}%</b></div>
+      <div class="kpi"><small>Utilidad integrada</small><b>${dec(ui*100,2)}%</b></div>
+      <div class="kpi"><small>Factor de sobrecosto</small><b>${dec(factorSobrecosto(),4)}</b></div>
+    </div>`;
+}
+
+/* ==================================================================
+   5. INSUMOS Y AUXILIARES
+   ================================================================== */
+function renderInsumos(){
+  document.getElementById('tInsumos').innerHTML=
+  `<thead><tr>
+    <th style="width:76px">${eh('iClave')}</th><th>${eh('iDesc')}</th>
+    <th style="width:58px" class="mid">${eh('iUnidad')}</th><th style="width:86px" class="mid">${eh('iTipo')}</th>
+    <th style="width:88px" class="num">${eh('iCosto')}</th><th style="width:62px" class="num">${eh('iFsr')}</th>
+    <th style="width:88px" class="num">${eh('iReal')}</th><th style="width:145px">${eh('iFuente')}</th><th class="act"></th>
+  </tr></thead><tbody>${
+    db.insumos.map((i,ix)=>{const o=resolveRef(i.id);return `<tr>
+      <td><input value="${esc(i.clave)}" oninput="upIns('${i.id}','clave',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="MAT-00"></td>
+      <td><input value="${esc(i.desc)}" oninput="upIns('${i.id}','desc',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="Descripción del insumo"></td>
+      <td>${unidSel(i.unidad,`upIns('${i.id}','unidad',this.value)`)}</td>
+      <td class="mid"><select onchange="upIns('${i.id}','tipo',this.value)">
+        ${db.tipos.filter(t=>t.k!=='aux').map(t=>`<option value="${t.k}" ${i.tipo===t.k?'selected':''}>${esc(t.tag)}</option>`).join('')}</select></td>
+      <td>${i.tipo==='pct'?`<div class="ro" style="text-align:right">auto</div>`
+        :`<input class="n" value="${i.costo}" inputmode="decimal" oninput="upIns('${i.id}','costo',this.value)">`}</td>
+      <td>${i.tipo==='mo'?`<input class="n" value="${i.fsr}" inputmode="decimal" placeholder="1.72" oninput="upIns('${i.id}','fsr',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
+      <td><div class="ro b" style="text-align:right">${i.tipo==='pct'?'—':dec(o?o.costo:0)}</div></td>
+      <td><input value="${esc(i.fuente)}" oninput="upIns('${i.id}','fuente',this.value)" placeholder="Cotización, fecha"></td>
+      <td class="act">${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
+    </tr>`;}).join('')
+  }</tbody>`;
+  document.getElementById('insCount').textContent=db.insumos.length+' insumos';
+}
+function upIns(id,k,v){
+  const i=db.insumos.find(x=>x.id===id);if(!i)return;
+  i[k]=(k==='costo'||k==='fsr')?(v===''?'':N(v)):v;save();
+  if(['costo','fsr','tipo'].includes(k)){renderInsumos();renderAux();recalc();}
+}
+function addInsumo(){db.insumos.push({id:uid(),clave:'',desc:'',unidad:db.unidades[0],tipo:'mat',costo:0,fsr:'',fuente:''});
+  save();renderInsumos();const n=document.querySelectorAll('#tInsumos tbody tr:last-child input');if(n[0])n[0].focus();}
+function dupIns(ix){db.insumos.splice(ix+1,0,{...db.insumos[ix],id:uid()});save();renderInsumos();}
+function movIns(ix,d){move(db.insumos,ix,d);save();renderInsumos();}
+function delIns(id){
+  const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id))||db.auxiliares.some(a=>(a.comp||[]).some(x=>x.ref===id));
+  if(uso&&!confirm('Este insumo se usa en alguna matriz o auxiliar. ¿Eliminarlo de todas formas?'))return;
+  db.insumos=db.insumos.filter(i=>i.id!==id);
+  Object.keys(db.matrices).forEach(k=>db.matrices[k]=db.matrices[k].filter(r=>r.ref!==id));
+  db.auxiliares.forEach(a=>a.comp=(a.comp||[]).filter(r=>r.ref!==id));
+  save();renderInsumos();renderAux();recalc();
+}
+function refOptions(sel,excludeAux){
+  const gI=db.insumos.map(i=>`<option value="${i.id}" ${i.id===sel?'selected':''}>${esc(i.clave)} · ${esc(i.desc)}</option>`).join('');
+  const gA=db.auxiliares.filter(a=>a.id!==excludeAux).map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${esc(a.clave)} · ${esc(a.desc)}</option>`).join('');
+  return `<optgroup label="Insumos">${gI}</optgroup>${gA?`<optgroup label="Auxiliares">${gA}</optgroup>`:''}`;
+}
+function fillAuxSel(){
+  const s=document.getElementById('selAux'),v=s.value;
+  s.innerHTML=db.auxiliares.map(a=>`<option value="${a.id}">${esc(a.clave)} — ${esc(a.desc).slice(0,50)}</option>`).join('');
+  if(db.auxiliares.some(a=>a.id===v))s.value=v;
+}
+function renderAux(){
+  const box=document.getElementById('auxBody');
+  const a=db.auxiliares.find(x=>x.id===document.getElementById('selAux').value);
+  if(!a){box.innerHTML='<div class="empty"><b>Sin auxiliares</b>Los básicos como mortero o concreto hecho en obra se capturan una vez y se reusan.</div>';return;}
+  a.comp=a.comp||[];
+  const m=calcRows(a.comp);
+  box.innerHTML=`
+  <div style="padding:12px 15px 4px" class="f-grid">
+    <div class="f"><label>Clave</label><input class="f-in" value="${esc(a.clave)}" oninput="upAux('${a.id}','clave',this.value)"></div>
+    <div class="f"><label>Unidad</label><input class="f-in" value="${esc(a.unidad)}" oninput="upAux('${a.id}','unidad',this.value)"></div>
+    <div class="f wide"><label>Descripción</label><input class="f-in" value="${esc(a.desc)}" oninput="upAux('${a.id}','desc',this.value)"></div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:74px">Clave</th><th>Componente</th><th style="width:54px" class="mid">Unidad</th>
+      <th style="width:86px" class="num">Cantidad</th><th style="width:88px" class="num">Costo</th>
+      <th style="width:96px" class="num">Importe</th><th class="act"></th></tr></thead>
+    <tbody>${a.comp.map((r,ix)=>{const o=resolveRef(r.ref);const d=m.det.find(x=>x.row.id===r.id);return `<tr>
+      <td><span class="tag ${o?o.tipo:''}" style="margin-left:7px">${esc(o?o.clave:'?')}</span></td>
+      <td><select onchange="upAuxRow('${a.id}','${r.id}','ref',this.value)">${refOptions(r.ref,a.id)}</select></td>
+      <td class="mid"><div class="ro" style="text-align:center">${esc(o?o.unidad:'')}</div></td>
+      <td><input class="n" value="${r.cant}" inputmode="decimal" oninput="upAuxRow('${a.id}','${r.id}','cant',this.value)" onkeydown="${enterAdd(`addAuxRow('${a.id}')`)}"></td>
+      <td><div class="ro" style="text-align:right">${o&&o.tipo==='pct'?'—':dec(o?o.costo:0)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(d?d.imp:0)}</div></td>
+      <td class="act">${rowBtns(`movAuxRow('${a.id}',${ix},-1)`,`movAuxRow('${a.id}',${ix},1)`,`dupAuxRow('${a.id}',${ix})`,`delAuxRow('${a.id}','${r.id}')`)}</td>
+    </tr>`;}).join('')||`<tr><td colspan="7"><div class="empty">Sin componentes.</div></td></tr>`}
+      <tr class="tot"><td colspan="5">Costo por ${esc(a.unidad)}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
+    </tbody></table></div>
+  <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
+    <button class="btn ghost" onclick="addAuxRow('${a.id}')">+ Agregar componente</button>
+    <button class="btn mini" onclick="delAuxiliar('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar auxiliar</button>
+  </div>`;
+}
+function upAux(id,k,v){const a=db.auxiliares.find(x=>x.id===id);if(!a)return;a[k]=v;save();fillAuxSel();recalc();}
+function upAuxRow(aid,rid,k,v){const a=db.auxiliares.find(x=>x.id===aid);const r=a.comp.find(x=>x.id===rid);if(!r)return;
+  r[k]=(k==='cant')?N(v):v;save();renderAux();recalc();}
+function addAuxRow(aid){const a=db.auxiliares.find(x=>x.id===aid);if(!db.insumos.length)return;
+  a.comp.push({id:uid(),ref:db.insumos[0].id,cant:0});save();renderAux();recalc();}
+function dupAuxRow(aid,ix){const a=db.auxiliares.find(x=>x.id===aid);a.comp.splice(ix+1,0,{...a.comp[ix],id:uid()});save();renderAux();recalc();}
+function movAuxRow(aid,ix,d){const a=db.auxiliares.find(x=>x.id===aid);move(a.comp,ix,d);save();renderAux();}
+function delAuxRow(aid,rid){const a=db.auxiliares.find(x=>x.id===aid);a.comp=a.comp.filter(r=>r.id!==rid);save();renderAux();recalc();}
+function addAuxiliar(){const a={id:uid(),clave:'AUX-'+String(db.auxiliares.length+1).padStart(2,'0'),desc:'',unidad:'M3',comp:[]};
+  db.auxiliares.push(a);save();fillAuxSel();document.getElementById('selAux').value=a.id;renderAux();}
+function delAuxiliar(id){
+  const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id));
+  if(uso&&!confirm('Este auxiliar se usa en alguna matriz. ¿Eliminarlo?'))return;
+  db.auxiliares=db.auxiliares.filter(a=>a.id!==id);
+  Object.keys(db.matrices).forEach(k=>db.matrices[k]=db.matrices[k].filter(r=>r.ref!==id));
+  save();fillAuxSel();renderAux();recalc();
+}
+
+/* ==================================================================
+   6. PARTIDAS Y CONCEPTOS
+   ================================================================== */
+function renderPartidas(){
+  document.getElementById('tPartidas').innerHTML=
+  `<thead><tr><th style="width:90px">Prefijo</th><th>Nombre de la partida</th>
+    <th style="width:84px" class="num">Conceptos</th><th style="width:116px" class="num">Importe</th><th class="act"></th></tr></thead>
+  <tbody>${db.partidas.map((p,ix)=>{
+    const cs=db.conceptos.filter(c=>c.partida===p.id);
+    const imp=cs.reduce((s,c)=>s+cantidad(c.id)*puVenta(c.id),0);
+    return `<tr>
+      <td><input value="${esc(p.clave)}" oninput="upPar('${p.id}','clave',this.value)" onkeydown="${enterAdd('addPartida()')}" placeholder="PRE"></td>
+      <td><input value="${esc(p.nombre)}" oninput="upPar('${p.id}','nombre',this.value)" onkeydown="${enterAdd('addPartida()')}" placeholder="Preliminares"></td>
+      <td><div class="ro" style="text-align:right">${cs.length}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(imp)}</div></td>
+      <td class="act">${rowBtns(`movPar(${ix},-1)`,`movPar(${ix},1)`,`dupPar(${ix})`,`delPar('${p.id}')`)}</td>
+    </tr>`;}).join('')}</tbody>`;
+}
+function upPar(id,k,v){const p=partidaOf(id);if(!p)return;p[k]=v;save();renderConceptos();renderPresup();}
+function addPartida(){db.partidas.push({id:uid(),clave:'',nombre:''});save();renderPartidas();renderConceptos();}
+function dupPar(ix){db.partidas.splice(ix+1,0,{...db.partidas[ix],id:uid()});save();renderPartidas();}
+function movPar(ix,d){move(db.partidas,ix,d);save();renderPartidas();renderPresup();}
+function delPar(id){
+  if(db.conceptos.some(c=>c.partida===id)){alert('Esta partida tiene conceptos. Muévelos o elimínalos primero.');return;}
+  db.partidas=db.partidas.filter(p=>p.id!==id);save();renderPartidas();renderConceptos();
+}
+function nextClave(pid){
+  const p=partidaOf(pid);if(!p)return '';
+  return p.clave+'-'+String(db.conceptos.filter(c=>c.partida===pid).length+1).padStart(2,'0');
+}
+function renderConceptos(){
+  document.getElementById('tConceptos').innerHTML=
+  `<thead><tr>
+    <th style="width:78px">${eh('pClave')}</th><th style="width:98px">${eh('pPartida')}</th>
+    <th>${eh('pDesc')}</th><th style="width:145px">${eh('pCorta')}</th>
+    <th style="width:56px" class="mid">${eh('pUnidad')}</th>
+    <th style="width:80px" class="num">${eh('pCD')}</th><th style="width:84px" class="num">${eh('pPU')}</th><th class="act"></th>
+  </tr></thead><tbody>${
+    db.conceptos.map((c,ix)=>`<tr>
+      <td><input value="${esc(c.clave)}" oninput="upCon('${c.id}','clave',this.value)" onkeydown="${enterAdd('addConcepto()')}"></td>
+      <td><select onchange="upCon('${c.id}','partida',this.value)">
+        <option value="">—</option>
+        ${db.partidas.map(p=>`<option value="${p.id}" ${c.partida===p.id?'selected':''}>${esc(p.clave)}</option>`).join('')}</select></td>
+      <td><input value="${esc(c.desc)}" oninput="upCon('${c.id}','desc',this.value)" placeholder="Descripción normativa completa"></td>
+      <td><input value="${esc(c.descCorta||'')}" oninput="upCon('${c.id}','descCorta',this.value)" placeholder="Una línea"></td>
+      <td>${unidSel(c.unidad,`upCon('${c.id}','unidad',this.value)`)}</td>
+      <td><div class="ro" style="text-align:right">${dec(cdu(c.id))}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(puVenta(c.id))}</div></td>
+      <td class="act">${rowBtns(`movCon(${ix},-1)`,`movCon(${ix},1)`,`dupCon(${ix})`,`delCon('${c.id}')`)}</td>
+    </tr>`).join('')
+  }</tbody>`;
+  document.getElementById('conCount').textContent=db.conceptos.length+' conceptos';
+}
+function upCon(id,k,v){const c=db.conceptos.find(x=>x.id===id);if(!c)return;c[k]=v;save();fillSelects();renderPresup();renderPartidas();}
+function addConcepto(){
+  const pid=db.partidas[0]?db.partidas[0].id:'';
+  const c={id:uid(),clave:nextClave(pid),partida:pid,desc:'',descCorta:'',unidad:db.unidades[0]};
+  db.conceptos.push(c);db.matrices[c.id]=[];db.generadores[c.id]=[];
+  save();renderConceptos();fillSelects();renderNav();renderPresup();
+  const n=document.querySelectorAll('#tConceptos tbody tr:last-child input');if(n[0])n[0].focus();
+}
+function dupCon(ix){
+  const o=db.conceptos[ix],c={...o,id:uid(),clave:o.clave+'-B'};
+  db.conceptos.splice(ix+1,0,c);
+  db.matrices[c.id]=(db.matrices[o.id]||[]).map(r=>({...r,id:uid()}));
+  db.generadores[c.id]=(db.generadores[o.id]||[]).map(r=>({...r,id:uid(),v:{...r.v}}));
+  save();renderConceptos();fillSelects();renderNav();renderPresup();
+}
+function movCon(ix,d){move(db.conceptos,ix,d);save();renderConceptos();fillSelects();renderPresup();}
+function delCon(id){
+  if(!confirm('Se elimina el concepto con su matriz y su generador. ¿Seguro?'))return;
+  db.conceptos=db.conceptos.filter(c=>c.id!==id);delete db.matrices[id];delete db.generadores[id];
+  save();renderConceptos();fillSelects();renderMatriz();renderGen();renderNav();renderPresup();
+}
+function fillSelects(){
+  const opts=db.conceptos.map(c=>`<option value="${c.id}">${esc(c.clave)} — ${esc(c.descCorta||c.desc).slice(0,54)}</option>`).join('');
+  ['selMatriz','selGen'].forEach(id=>{const s=document.getElementById(id),v=s.value;
+    s.innerHTML=opts;if(db.conceptos.some(c=>c.id===v))s.value=v;});
+}
+
+/* ==================================================================
+   7. GENERADORES
+   ================================================================== */
+function renderGen(){
+  const cid=document.getElementById('selGen').value;
+  const box=document.getElementById('genBody');
+  const c=db.conceptos.find(x=>x.id===cid);
+  if(!c){box.innerHTML='<div class="empty"><b>Sin conceptos</b>Agrega uno en la pestaña de conceptos.</div>';return;}
+  db.ui.lastCid=cid;db.ui.lastTab='generadores';
+  db.generadores[cid]=db.generadores[cid]||[];
+  const rows=db.generadores[cid],cols=db.genCols;
+  const sum=rows.filter(r=>!r.ded).reduce((s,r)=>s+parcialRaw(r),0);
+  const ded=rows.filter(r=>r.ded).reduce((s,r)=>s+parcialRaw(r),0);
+  const th=cols.map((col,i)=>`<th style="width:72px" class="num">
+    <span class="ed" contenteditable spellcheck="false" onblur="setGenCol(${i},this.textContent)">${esc(col.label)}</span>
+    ${cols.length>1?`<button class="icon" style="font-size:10px;padding:0 2px" onclick="delGenCol(${i})" title="Quitar columna">&times;</button>`:''}</th>`).join('');
+
+  box.innerHTML=`
+  <div style="padding:12px 15px 5px">
+    <div style="font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)">${esc(c.clave)} · resultado en ${esc(c.unidad)}</div>
+    <div style="font-size:12px;color:var(--deep);margin-top:3px;line-height:1.45">${esc(c.desc)}</div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30px" class="mid">#</th><th style="width:128px">${eh('gRef')}</th><th>${eh('gNota')}</th>
+      ${th}<th style="width:90px" class="num">${eh('gParcial')}</th>
+      <th class="act"><button class="icon" onclick="addGenCol()" title="Agregar columna">+col</button></th></tr></thead>
+    <tbody>${rows.length?rows.map((r,ix)=>`<tr class="${r.ded?'ded':''}">
+      <td class="mid"><div class="ro" style="text-align:center">${ix+1}</div></td>
+      <td><input value="${esc(r.ref)}" oninput="upGen('${cid}','${r.id}','ref',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}" placeholder="Eje / tramo"></td>
+      <td><input value="${esc(r.nota)}" oninput="upGen('${cid}','${r.id}','nota',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}" placeholder="Plano, nivel, nota"></td>
+      ${cols.map(col=>`<td><input class="n" value="${esc((r.v||{})[col.id]??'')}" inputmode="decimal" placeholder="—" oninput="upGenV('${cid}','${r.id}','${col.id}',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}"></td>`).join('')}
+      <td><div class="ro b gp" style="text-align:right">${dec(parcial(r),3)}</div></td>
+      <td class="act"><button class="icon ${r.ded?'on':''}" onclick="togDed('${cid}','${r.id}')" title="Deducción">&minus;</button>${rowBtns(`movGen('${cid}',${ix},-1)`,`movGen('${cid}',${ix},1)`,`dupGen('${cid}',${ix})`,`delGen('${cid}','${r.id}')`)}</td>
+    </tr>`).join(''):`<tr><td colspan="${cols.length+5}"><div class="empty"><b>Generador vacío</b>Cada renglón es un tramo medido en planos.</div></td></tr>`}
+      ${ded?`<tr class="sub"><td colspan="${cols.length+3}">Suma</td><td class="num mono">${dec(sum,3)}</td><td></td></tr>
+             <tr class="sub"><td colspan="${cols.length+3}">Deducciones</td><td class="num mono">&minus;${dec(ded,3)}</td><td></td></tr>`:''}
+      <tr class="tot"><td colspan="${cols.length+3}">${esc(L('gTotal'))}</td><td class="num mono" id="genTot">${dec(cantidad(cid),3)} ${esc(c.unidad)}</td><td></td></tr>
+    </tbody></table></div>
+  <div style="padding:9px 11px"><button class="btn ghost" onclick="addGen('${cid}')">+ Agregar renglón · Enter también</button></div>
+  <div class="hint">Las casillas vacías valen 1 y todas las columnas numéricas se multiplican. El botón &minus; convierte el renglón en deducción (vanos de puertas y ventanas). Renombra una columna haciendo clic en su título.</div>`;
+}
+function upGen(cid,rid,k,v){const r=db.generadores[cid].find(x=>x.id===rid);if(!r)return;r[k]=v;save();}
+function refreshGenTotals(cid){
+  const rows=db.generadores[cid],cells=document.querySelectorAll('#genBody tbody .gp');
+  rows.forEach((r,i)=>{if(cells[i])cells[i].textContent=dec(parcial(r),3);});
+  const c=db.conceptos.find(x=>x.id===cid),gt=document.getElementById('genTot');
+  if(gt)gt.textContent=dec(cantidad(cid),3)+' '+(c?c.unidad:'');
+  renderHeader();renderPresup();
+}
+function upGenV(cid,rid,col,v){const r=db.generadores[cid].find(x=>x.id===rid);if(!r)return;
+  r.v=r.v||{};r.v[col]=v;save();refreshGenTotals(cid);}
+function togDed(cid,rid){const r=db.generadores[cid].find(x=>x.id===rid);r.ded=!r.ded;save();renderGen();recalc();}
+function addGen(cid){(db.generadores[cid]=db.generadores[cid]||[]).push({id:uid(),ref:'',nota:'',ded:false,v:{}});
+  save();renderGen();renderNav();renderPresup();
+  const n=document.querySelectorAll('#genBody tbody tr:nth-last-child(2) input');if(n[0])n[0].focus();}
+function dupGen(cid,ix){const o=db.generadores[cid][ix];db.generadores[cid].splice(ix+1,0,{...o,id:uid(),v:{...o.v}});save();renderGen();recalc();}
+function movGen(cid,ix,d){move(db.generadores[cid],ix,d);save();renderGen();}
+function delGen(cid,rid){db.generadores[cid]=db.generadores[cid].filter(r=>r.id!==rid);save();renderGen();renderNav();recalc();}
+function setGenCol(i,v){db.genCols[i].label=(v||'').trim()||'Col';save();}
+function addGenCol(){db.genCols.push({id:'c'+uid(),label:'Nueva'});save();renderGen();}
+function delGenCol(i){
+  if(db.genCols.length<=1)return;
+  if(!confirm('Se quita la columna "'+db.genCols[i].label+'" de todos los generadores. ¿Seguro?'))return;
+  const id=db.genCols[i].id;db.genCols.splice(i,1);
+  Object.values(db.generadores).forEach(rows=>rows.forEach(r=>{if(r.v)delete r.v[id];}));
+  save();renderGen();recalc();
+}
+
+/* ==================================================================
+   8. MATRICES
+   ================================================================== */
+function renderMatriz(){
+  const cid=document.getElementById('selMatriz').value;
+  const box=document.getElementById('matrizBody');
+  const c=db.conceptos.find(x=>x.id===cid);
+  if(!c){box.innerHTML='<div class="empty"><b>Sin conceptos</b>Agrega uno en la pestaña de conceptos.</div>';return;}
+  db.ui.lastCid=cid;db.ui.lastTab='matrices';
+  db.matrices[cid]=db.matrices[cid]||[];
+  const m=calcRows(db.matrices[cid]);
+
+  let body='';
+  db.tipos.forEach(t=>{
+    const g=m.det.filter(d=>d.o.tipo===t.k);if(!g.length)return;
+    body+=`<tr class="grp"><td colspan="8">${esc(t.label)}</td></tr>`;
+    body+=g.map(d=>{const ix=db.matrices[cid].indexOf(d.row);const esMO=d.o.tipo==='mo';
+      return `<tr>
+      <td><span class="tag ${d.o.tipo}" style="margin-left:7px">${esc(d.o.clave)}</span></td>
+      <td><select onchange="upMat('${cid}','${d.row.id}','ref',this.value)">${refOptions(d.o.id)}</select></td>
+      <td class="mid"><div class="ro" style="text-align:center">${esc(d.o.unidad)}</div></td>
+      <td>${esMO?`<input class="n" value="${N(d.row.cant)?dec(1/N(d.row.cant),2):''}" inputmode="decimal" placeholder="—" oninput="upRend('${cid}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
+      <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upMat('${cid}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addMat('${cid}')`)}"></td>
+      <td><div class="ro" style="text-align:right">${d.o.tipo==='pct'?'—':dec(d.o.costo)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
+      <td class="act">${rowBtns(`movMat('${cid}',${ix},-1)`,`movMat('${cid}',${ix},1)`,`dupMat('${cid}',${ix})`,`delMat('${cid}','${d.row.id}')`)}</td>
+    </tr>`;}).join('');
+    body+=`<tr class="sub"><td colspan="6">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((s,d)=>s+d.imp,0))}</td><td></td></tr>`;
+  });
+
+  const cd=m.total,fs=factorSobrecosto(),pu=cd*fs,g=db.cargos;
+  const pI=pctIndirectos(),ui=utilidadIntegrada();
+  const pc=v=>cd?dec(v/cd*100,1)+'%':'—';
+  box.innerHTML=`
+  <div style="padding:12px 15px 5px">
+    <div style="font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)">${esc(c.clave)} · por ${esc(c.unidad)}</div>
+    <div style="font-size:12px;color:var(--deep);margin-top:3px;line-height:1.45">${esc(c.desc)}</div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:76px">${eh('mClave')}</th><th>${eh('mInsumo')}</th>
+      <th style="width:54px" class="mid">${eh('mUnidad')}</th><th style="width:76px" class="num">${eh('mRend')}</th>
+      <th style="width:88px" class="num">${eh('mCant')}</th><th style="width:86px" class="num">${eh('mCosto')}</th>
+      <th style="width:96px" class="num">${eh('mImporte')}</th><th class="act"></th></tr></thead>
+    <tbody>${body||`<tr><td colspan="8"><div class="empty"><b>Matriz vacía</b>Agrega lo que se necesita para producir un ${esc(c.unidad)}.</div></td></tr>`}
+      <tr class="tot"><td colspan="6">${esc(L('mCD'))} ${esc(c.unidad)}</td><td class="num mono">${dec(cd)}</td><td></td></tr>
+    </tbody></table></div>
+  <div style="padding:9px 11px"><button class="btn ghost" onclick="addMat('${cid}')">+ Agregar renglón · Enter también</button></div>
+  <div style="padding:0 15px 15px">
+    <div class="pu-box">
+      <div class="pu-line strong"><div class="lbl">Costo directo unitario</div><div class="pc"></div><div class="vl">${dec(cd)}</div></div>
+      <div class="pu-line"><div class="lbl">${esc(L('kInd'))}</div><div class="pc"><span class="pc-ro">${dec(pI*100,2)}%</span></div><div class="vl">${dec(cd*pI)}</div></div>
+      <div class="pu-line"><div class="lbl">${esc(L('kUti'))} — integrada</div><div class="pc"><span class="pc-ro">${dec(ui*100,2)}%</span></div><div class="vl">${dec(cd*(1+pI)*ui)}</div></div>
+      <div class="pu-line"><div class="lbl">${esc(L('kFin'))}</div><div class="pc"><span class="pc-ro">${dec(N(g.fin),2)}%</span></div><div class="vl">${dec(cd*(1+pI)*(1+ui)*N(g.fin)/100)}</div></div>
+      <div class="pu-line"><div class="lbl">${esc(L('kCa'))}</div><div class="pc"><span class="pc-ro">${dec(N(g.ca),2)}%</span></div><div class="vl">${dec(cd*(1+pI)*(1+ui)*(1+N(g.fin)/100)*N(g.ca)/100)}</div></div>
+      <div class="pu-line final"><div class="lbl">Precio unitario por ${esc(c.unidad)}</div><div class="pc"></div><div class="vl">${money(pu)}</div></div>
+    </div>
+    <div class="kpis" style="margin-top:11px">
+      <div class="kpi"><small>Incidencia materiales</small><b>${pc(m.det.filter(d=>['mat','aux'].includes(d.o.tipo)).reduce((s,d)=>s+d.imp,0))}</b></div>
+      <div class="kpi"><small>Incidencia mano de obra</small><b>${pc(m.mo)}</b></div>
+      <div class="kpi accent"><small>Factor de sobrecosto</small><b>${dec(fs,4)}</b></div>
+      <div class="kpi"><small>Cantidad generada</small><b>${dec(cantidad(cid),3)}</b></div>
+    </div>
+    <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los porcentajes no se capturan aquí: salen de <span class="lnk" onclick="go('indirectos')">Indirectos</span> y de <span class="lnk" onclick="go('cargos')">Utilidad y cargos</span>, y son los mismos para toda la obra.</div>
+  </div>`;
+}
+function upMat(cid,rid,k,v){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
+  r[k]=(k==='cant')?N(v):v;save();renderMatriz();recalc();}
+function upRend(cid,rid,v){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
+  const x=N(v);r.cant=x?+(1/x).toFixed(6):0;save();renderMatriz();recalc();}
+function addMat(cid){if(!db.insumos.length){alert('Primero agrega insumos.');return;}
+  (db.matrices[cid]=db.matrices[cid]||[]).push({id:uid(),ref:db.insumos[0].id,cant:0});
+  save();renderMatriz();renderNav();recalc();}
+function dupMat(cid,ix){db.matrices[cid].splice(ix+1,0,{...db.matrices[cid][ix],id:uid()});save();renderMatriz();recalc();}
+function movMat(cid,ix,d){move(db.matrices[cid],ix,d);save();renderMatriz();}
+function delMat(cid,rid){db.matrices[cid]=db.matrices[cid].filter(r=>r.id!==rid);save();renderMatriz();renderNav();recalc();}
+
+/* ==================================================================
+   9. INDIRECTOS
+   ================================================================== */
+function renderIndirectos(){
+  const I=db.indirectos;
+  document.getElementById('indParams').innerHTML=`
+    <div class="f"><label>Duración de la obra (meses)</label><input class="f-in" value="${I.meses}" inputmode="decimal" oninput="upInd('meses',this.value)"></div>
+    <div class="f"><label>Proyectos en ejecución simultánea</label><input class="f-in" value="${I.proyectos}" inputmode="decimal" oninput="upInd('proyectos',this.value)"></div>
+    <div class="f wide"><label>Fórmula del prorrateo</label>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);padding:5px 0">Total = importe mensual × ${dec(N(I.meses),0)} meses ÷ ${dec(N(I.proyectos),0)} proyectos</div></div>`;
+
+  document.getElementById('tIndirectos').innerHTML=
+  `<thead><tr><th style="width:180px">Grupo</th><th>Concepto</th>
+    <th style="width:104px" class="mid">Administración</th>
+    <th style="width:106px" class="num">Importe mensual</th><th style="width:116px" class="num">Total prorrateado</th><th class="act"></th></tr></thead>
+  <tbody>${(I.rubros||[]).map((r,ix)=>`<tr>
+    <td><select onchange="upRubro('${r.id}','grupo',this.value)">
+      ${RUBROS_GRUPOS.map(g=>`<option ${r.grupo===g?'selected':''}>${esc(g)}</option>`).join('')}
+      ${RUBROS_GRUPOS.includes(r.grupo)?'':`<option selected>${esc(r.grupo)}</option>`}</select></td>
+    <td><input value="${esc(r.desc)}" oninput="upRubro('${r.id}','desc',this.value)" onkeydown="${enterAdd('addRubro()')}" list="rubrosList" placeholder="Puesto o concepto"></td>
+    <td class="mid"><select onchange="upRubro('${r.id}','admin',this.value)">
+      <option value="central" ${r.admin==='central'?'selected':''}>Central</option>
+      <option value="obra" ${r.admin==='obra'?'selected':''}>Obra</option></select></td>
+    <td><input class="n" value="${r.mensual}" inputmode="decimal" oninput="upRubro('${r.id}','mensual',this.value)" onkeydown="${enterAdd('addRubro()')}"></td>
+    <td><div class="ro b" style="text-align:right">${dec(prorrateo(r))}</div></td>
+    <td class="act">${rowBtns(`movRubro(${ix},-1)`,`movRubro(${ix},1)`,`dupRubro(${ix})`,`delRubro('${r.id}')`)}</td>
+  </tr>`).join('')||`<tr><td colspan="6"><div class="empty">Sin renglones.</div></td></tr>`}</tbody>
+  <datalist id="rubrosList">${RUBROS_SUG.map(d=>`<option>${esc(d)}</option>`).join('')}</datalist>`;
+  document.getElementById('indCount').textContent=(I.rubros||[]).length+' renglones';
+
+  const cd=costoDirectoTotal(),ce=indPorAdmin('central'),ob=indPorAdmin('obra'),tt=ce+ob;
+  const p=v=>cd?dec(v/cd*100,2)+'%':'—';
+  document.getElementById('tIndResumen').innerHTML=
+  `<thead><tr><th>Concepto</th><th style="width:126px" class="num">Administración central</th>
+    <th style="width:126px" class="num">Administración de obra</th><th style="width:116px" class="num">Total</th></tr></thead>
+  <tbody>
+    <tr><td><div class="ro txt">Suma de gastos indirectos prorrateados</div></td>
+      <td><div class="ro" style="text-align:right">${dec(ce)}</div></td>
+      <td><div class="ro" style="text-align:right">${dec(ob)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(tt)}</div></td></tr>
+    <tr class="sub"><td>Porcentaje sobre el costo directo — ${money(cd)}, sin IVA</td>
+      <td class="num mono">${p(ce)}</td><td class="num mono">${p(ob)}</td><td class="num mono">${p(tt)}</td></tr>
+    <tr class="tot"><td colspan="3">Total de gastos indirectos</td><td class="num mono">${p(tt)}</td></tr>
+  </tbody>`;
+}
+function upInd(k,v){db.indirectos[k]=N(v);save();renderIndirectos();recalc();}
+function upRubro(id,k,v){const r=db.indirectos.rubros.find(x=>x.id===id);if(!r)return;
+  r[k]=(k==='mensual')?N(v):v;save();renderIndirectos();recalc();}
+function addRubro(){db.indirectos.rubros.push({id:uid(),grupo:RUBROS_GRUPOS[0],desc:'',mensual:0,admin:'central'});
+  save();renderIndirectos();const n=document.querySelectorAll('#tIndirectos tbody tr:last-child input');if(n[0])n[0].focus();}
+function dupRubro(ix){db.indirectos.rubros.splice(ix+1,0,{...db.indirectos.rubros[ix],id:uid()});save();renderIndirectos();recalc();}
+function movRubro(ix,d){move(db.indirectos.rubros,ix,d);save();renderIndirectos();}
+function delRubro(id){db.indirectos.rubros=db.indirectos.rubros.filter(r=>r.id!==id);save();renderIndirectos();recalc();}
+
+/* ==================================================================
+   10. UTILIDAD Y CARGOS
+   ================================================================== */
+function renderCargos(){
+  const g=db.cargos,ui=utilidadIntegrada(),pI=pctIndirectos(),fs=factorSobrecosto();
+  const row=(lbl,k)=>`<div class="pu-line"><div class="lbl">${lbl}</div>
+    <div class="pc"><input class="pc-in" value="${g[k]}" inputmode="decimal" oninput="upCargo('${k}',this.value)"> %</div></div>`;
+  document.getElementById('utilBox').innerHTML=
+    row('ISR — impuesto sobre la renta','isr')+
+    row('PTU — participación de los trabajadores','ptu')+
+    row('UEN — utilidad esperada neta','uen')+
+    `<div class="pu-line final"><div class="lbl">UI — utilidad integrada = UEN ÷ (1 − (ISR + PTU))</div>
+      <div class="pc"></div><div class="vl">${dec(ui*100,2)}%</div></div>`;
+
+  document.getElementById('factorBox').innerHTML=`
+    <div class="pu-line">
+      <div class="lbl">Indirectos —
+        <select class="sel" style="padding:2px 20px 2px 6px;font-size:10.5px;margin-left:4px" onchange="upCargo('indModo',this.value)">
+          <option value="auto" ${g.indModo==='auto'?'selected':''}>del desglose</option>
+          <option value="manual" ${g.indModo==='manual'?'selected':''}>a mano</option></select></div>
+      <div class="pc">${g.indModo==='manual'
+        ?`<input class="pc-in" value="${g.indManual}" inputmode="decimal" oninput="upCargo('indManual',this.value)"> %`
+        :`<span class="pc-ro">${dec(pI*100,2)}%</span>`}</div>
+      <div class="vl">${dec(1+pI,4)}</div></div>
+    <div class="pu-line"><div class="lbl">Utilidad integrada</div><div class="pc"><span class="pc-ro">${dec(ui*100,2)}%</span></div><div class="vl">${dec(1+ui,4)}</div></div>
+    <div class="pu-line"><div class="lbl">Financiamiento</div><div class="pc"><input class="pc-in" value="${g.fin}" inputmode="decimal" oninput="upCargo('fin',this.value)"> %</div><div class="vl">${dec(1+N(g.fin)/100,4)}</div></div>
+    <div class="pu-line"><div class="lbl">Cargos adicionales — 5 al millar de inspección y vigilancia</div><div class="pc"><input class="pc-in" value="${g.ca}" inputmode="decimal" oninput="upCargo('ca',this.value)"> %</div><div class="vl">${dec(1+N(g.ca)/100,4)}</div></div>
+    <div class="pu-line final"><div class="lbl">Factor de sobrecosto — precio de venta ÷ costo directo</div><div class="pc"></div><div class="vl">${dec(fs,4)}</div></div>
+    <div class="pu-line"><div class="lbl">I.V.A.</div><div class="pc"><input class="pc-in" value="${g.iva}" inputmode="decimal" oninput="upCargo('iva',this.value)"> %</div><div class="vl">—</div></div>
+    <div class="pu-line strong"><div class="lbl">Costo directo total de la obra</div><div class="pc"></div><div class="vl">${dec(costoDirectoTotal())}</div></div>`;
+}
+function upCargo(k,v){db.cargos[k]=(k==='indModo')?v:N(v);save();renderCargos();recalc();}
+
+/* ==================================================================
+   11. PRESUPUESTO
+   ================================================================== */
+let modoCD=false;
+function numeroALetra(n){
+  const U=['','UN','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ','ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE','VEINTE'];
+  const D=['','','VEINTI','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const C=['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+  const c3=x=>{if(!x)return'';if(x===100)return'CIEN';let s='';const c=Math.floor(x/100),r=x%100;
+    if(c)s+=C[c]+' ';if(r<=20)s+=U[r];else{const d=Math.floor(r/10),u=r%10;s+=(d===2)?'VEINTI'+U[u]:D[d]+(u?' Y '+U[u]:'');}return s.trim();};
+  const ent=Math.floor(n),cts=Math.round((n-ent)*100);let t='';
+  const mi=Math.floor(ent/1000000),ml=Math.floor((ent%1000000)/1000),rs=ent%1000;
+  if(mi)t+=(mi===1?'UN MILLÓN ':c3(mi)+' MILLONES ');
+  if(ml)t+=(ml===1?'MIL ':c3(ml)+' MIL ');
+  if(rs)t+=c3(rs);
+  return (t.trim()||'CERO')+' PESOS '+String(cts).padStart(2,'0')+'/100 M.N.';
+}
+function renderPresup(){
+  const box=document.getElementById('presupBody');
+  if(!db.conceptos.length){box.innerHTML='<div class="panel"><div class="empty"><b>Sin conceptos</b>El presupuesto se arma cuando haya conceptos con generador y matriz.</div></div>';return;}
+  const orden=[...db.partidas,{id:'',clave:'',nombre:L('bSinPartida')}];
+  let total=0,body='';
+  orden.forEach(p=>{
+    const list=db.conceptos.filter(c=>(c.partida||'')===p.id);
+    if(!list.length)return;
+    let sub=0;
+    body+=`<tr class="grp"><td colspan="6">${esc(p.clave?p.clave+' · '+p.nombre:p.nombre)}</td></tr>`;
+    body+=list.map(c=>{
+      const q=cantidad(c.id),pu=modoCD?cdu(c.id):puVenta(c.id),imp=q*pu;sub+=imp;
+      return `<tr>
+        <td><span class="tag" style="margin-left:7px">${esc(c.clave)}</span></td>
+        <td><div class="ro txt">${esc(c.desc)}</div></td>
+        <td class="mid"><div class="ro" style="text-align:center">${esc(c.unidad)}</div></td>
+        <td><div class="ro lnk" style="text-align:right" onclick="go('generadores','${c.id}')" title="Ver el generador que la produjo">${dec(q,3)}</div></td>
+        <td><div class="ro lnk" style="text-align:right" onclick="go('matrices','${c.id}')" title="Ver la matriz">${dec(pu)}</div></td>
+        <td><div class="ro b" style="text-align:right">${dec(imp)}</div></td></tr>`;
+    }).join('');
+    body+=`<tr class="sub"><td colspan="5">${esc(L('mSub'))} ${esc((p.nombre||'').toLowerCase())}</td><td class="num mono">${dec(sub)}</td></tr>`;
+    total+=sub;
+  });
+  const iva=total*N(db.cargos.iva)/100,gran=total+iva,met=N(db.cargos.met);
+  box.innerHTML=`
+  <div class="panel">
+    <div class="panel-hd"><h2>${modoCD?'Costo directo':esc(L('docPresupuesto'))}</h2>
+      <button class="btn mini ${modoCD?'solid':''}" onclick="modoCD=!modoCD;renderPresup()">${modoCD?'Ver precio de venta':'Ver costo directo'}</button>
+      <div class="sub">${db.conceptos.length} conceptos</div></div>
+    <div class="panel-bd flush">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:74px">${eh('bClave')}</th><th>${eh('bConcepto')}</th>
+          <th style="width:52px" class="mid">${eh('bUnidad')}</th><th style="width:84px" class="num">${eh('bCant')}</th>
+          <th style="width:98px" class="num">${modoCD?'Costo directo':eh('bPU')}</th><th style="width:108px" class="num">${eh('bImporte')}</th></tr></thead>
+        <tbody>${body}
+          <tr class="sub"><td colspan="5">${esc(L('bSubtotal'))}</td><td class="num mono">${dec(total)}</td></tr>
+          ${modoCD?'':`<tr class="sub"><td colspan="5">${esc(L('kIva'))} ${dec(N(db.cargos.iva),0)}%</td><td class="num mono">${dec(iva)}</td></tr>
+          <tr class="tot"><td colspan="5">${esc(L('bTotal'))}</td><td class="num mono">${money(gran)}</td></tr>`}
+        </tbody></table></div>
+      ${modoCD?'<div class="hint">El costo directo no se factura: esta hoja va sin IVA a propósito.</div>'
+             :`<div class="hint" style="font-style:italic">(${numeroALetra(gran)})</div>`}
+    </div>
+  </div>
+  <div class="kpis" style="margin-bottom:14px">
+    <div class="kpi accent"><small>${esc(L('kpiMetrica'))}</small><b>${met?money(total/met):'—'}</b></div>
+    <div class="kpi"><small>Costo directo de la obra</small><b>${money(costoDirectoTotal())}</b></div>
+    <div class="kpi"><small>Factor de sobrecosto</small><b>${dec(factorSobrecosto(),4)}</b></div>
+  </div>`;
+  renderHeader();
+}
+
+/* ==================================================================
+   12. VALIDACIONES
+   ================================================================== */
+/* El orden importa: gana la primera que coincida, así que van primero
+   las que hablan del material (acero, concreto) y hasta el final las
+   que solo nombran el elemento (dala, castillo), para no marcar en falso
+   un "concreto en dala" como si fuera metro lineal. */
+const UNID_ESPERADA=[
+  [/acero de refuerzo|varilla|malla electrosold|estribo/,'KG'],
+  [/cimbra|aplanado|repellado|impermeab|pintura|azulejo|loseta|firme|piso|losa/,'M2'],
+  [/concreto|excavaci|relleno|mamposter|plantilla|terracer/,'M3'],
+  [/limpieza|desyerbe|despalme|trazo|nivelaci/,'M2'],
+  [/muro/,'M2'],
+  [/castillo|dala|cadena|zavaleta|trabe|tuber|zanja|guarnici|rodapi/,'ML'],
+  [/registro|lavabo|mueble|puerta|ventana|luminaria|contacto|apagador/,'PZA']
+];
+function validar(){
+  const out=[],cd=costoDirectoTotal(),tt=totalesObra();
+  const add=(n,t,d)=>out.push({n,t,d:d||''});
+
+  const indCap=totalIndirectos(),pI=pctIndirectos();
+  if(indCap>0&&pI===0)
+    add('r','Los indirectos no están llegando al precio','Capturaste '+money(indCap)+' de indirectos pero el porcentaje aplicado es 0%. Es el mismo error del semestre pasado: el factor solo llevaba la utilidad.');
+  else if(indCap===0&&db.cargos.indModo==='auto')
+    add('a','Sin indirectos capturados','El desglose está en ceros, así que el precio de venta solo lleva utilidad. Captura los rubros o cambia a porcentaje manual.');
+  else add('v','Indirectos aplicados al precio',dec(pI*100,2)+'% cargado a todos los conceptos.');
+
+  add('v','El % de indirectos se calcula sin IVA','Denominador: costo directo total '+money(cd)+', subtotal sin impuestos.');
+
+  if(pI>1)add('a','Los indirectos superan el costo directo',dec(pI*100,2)+'% es desproporcionado. Casi siempre significa que faltan conceptos en el presupuesto, o que el prorrateo tiene mal los meses o los proyectos simultáneos.');
+
+  const sinG=db.conceptos.filter(c=>!(db.generadores[c.id]||[]).length);
+  const sinM=db.conceptos.filter(c=>!(db.matrices[c.id]||[]).length);
+  if(sinG.length)add('a',sinG.length+' concepto(s) sin generador',sinG.map(c=>c.clave).join(', ')+' — su cantidad es cero.');
+  if(sinM.length)add('a',sinM.length+' concepto(s) sin matriz',sinM.map(c=>c.clave).join(', ')+' — su precio unitario es cero.');
+  if(!sinG.length&&!sinM.length&&db.conceptos.length)add('v','Todos los conceptos tienen generador y matriz');
+
+  const pzaDec=db.conceptos.filter(c=>c.unidad==='PZA'&&Math.abs(cantidad(c.id)-Math.round(cantidad(c.id)))>1e-6);
+  if(pzaDec.length)add('r','Piezas con decimales',pzaDec.map(c=>c.clave+' = '+dec(cantidad(c.id),3)).join(' · ')+'. Una pieza no se parte: revisa el generador.');
+  else if(db.conceptos.some(c=>c.unidad==='PZA'))add('v','Ninguna cantidad en PZA tiene decimales');
+
+  if(tt.venta>0&&db.conceptos.length>6){   // con pocos conceptos todos pesan mucho: no aplica
+    const gordos=db.conceptos.filter(c=>cantidad(c.id)*puVenta(c.id)/tt.venta>0.15);
+    if(gordos.length)add('a','Concepto(s) que pesan más del 15% del presupuesto',
+      gordos.map(c=>c.clave+' = '+dec(cantidad(c.id)*puVenta(c.id)/tt.venta*100,1)+'%').join(' · ')+'. Puede ser correcto, pero es donde se esconden los errores de cantidad o de unidad.');
+    else add('v','Ningún concepto rebasa el 15% del total');
+  }
+
+  const dup=[];
+  for(let i=0;i<db.conceptos.length;i++)for(let j=i+1;j<db.conceptos.length;j++){
+    const a=norm(db.conceptos[i].desc).slice(0,40),b=norm(db.conceptos[j].desc).slice(0,40);
+    if(a&&a===b)dup.push(db.conceptos[i].clave+' ≈ '+db.conceptos[j].clave);
+  }
+  if(dup.length)add('r','Conceptos posiblemente duplicados',dup.join(' · ')+'. Las primeras 40 letras coinciden — se pagaría dos veces el mismo trabajo.');
+  else if(db.conceptos.length>1)add('v','Sin conceptos duplicados');
+
+  const malU=[];
+  db.conceptos.forEach(c=>{const d=norm(c.desc);
+    for(const [re,u] of UNID_ESPERADA){
+      if(!re.test(d))continue;                                   // no aplica esta regla
+      if(c.unidad!==u)malU.push(c.clave+': '+c.unidad+' → ¿'+u+'?');
+      break;                                                     // gana la primera que coincida
+    }});
+  if(malU.length)add('a','Unidades que no cuadran con la descripción',malU.join(' · ')+'. Es una sugerencia por palabras clave, revísalo tú.');
+  else if(db.conceptos.length)add('v','Unidades congruentes con la descripción');
+
+  const rep=[];
+  for(let i=0;i<db.conceptos.length;i++)for(let j=i+1;j<db.conceptos.length;j++){
+    const a=db.conceptos[i],b=db.conceptos[j],qa=cantidad(a.id),qb=cantidad(b.id);
+    if(qa>0&&Math.abs(qa-qb)<1e-6&&a.unidad!==b.unidad)rep.push(a.clave+' y '+b.clave+' = '+dec(qa,2));
+  }
+  if(rep.length)add('a','Misma cantidad con unidades distintas',rep.join(' · ')+'. Suele significar que se copió la cantidad de un concepto a otro.');
+
+  const cero=db.conceptos.filter(c=>(db.generadores[c.id]||[]).length&&cantidad(c.id)<=0);
+  if(cero.length)add('r','Cantidad cero o negativa con generador lleno',cero.map(c=>c.clave).join(', ')+'. Revisa si las deducciones se comieron la suma.');
+
+  const flojos=db.conceptos.filter(c=>cdu(c.id)>0&&puVenta(c.id)<=cdu(c.id));
+  if(flojos.length)add('r','Precio de venta igual o menor al costo directo',flojos.map(c=>c.clave).join(', ')+'. Estarías trabajando gratis.');
+
+  const sinF=db.insumos.filter(i=>i.tipo==='mo'&&!N(i.fsr));
+  if(sinF.length)add('a','Mano de obra sin factor de salario real',sinF.map(i=>i.clave).join(', ')+'. Sin FSR cargas solo el salario nominal, como 40% menos de lo que cuesta.');
+  else if(db.insumos.some(i=>i.tipo==='mo'))add('v','Toda la mano de obra tiene FSR');
+
+  const sinC=db.insumos.filter(i=>i.tipo!=='pct'&&!N(i.costo));
+  if(sinC.length)add('a','Insumos en cero',sinC.map(i=>i.clave||'(sin clave)').join(', '));
+
+  return out;
+}
+function renderVal(){
+  const v=validar();
+  const c={r:v.filter(x=>x.n==='r').length,a:v.filter(x=>x.n==='a').length,v:v.filter(x=>x.n==='v').length};
+  document.getElementById('valBody').innerHTML=`
+    <div class="sem">
+      <div class="r"><b>${c.r}</b><small>Errores</small></div>
+      <div class="a"><b>${c.a}</b><small>Por revisar</small></div>
+      <div class="v"><b>${c.v}</b><small>Correctos</small></div>
+    </div>
+    <div class="panel"><div class="panel-hd"><h2>Revisión de consistencia</h2></div>
+      <div class="panel-bd flush">${v.map(x=>`<div class="val ${x.n}"><div class="dot"></div>
+        <div class="tx"><div class="tt">${esc(x.t)}</div>${x.d?`<div class="ds">${esc(x.d)}</div>`:''}</div></div>`).join('')}</div></div>`;
+}
+
+/* ==================================================================
+   13. AJUSTES
+   ================================================================== */
+const cfgRow=(lbl,key)=>`<label class="cfg"><span>${esc(lbl)}</span><input value="${esc(L(key))}" oninput="setLbl('${key}',this.value)"></label>`;
+function renderAjustes(){
+  document.getElementById('cfgTabs').innerHTML=TABS.map(([id,lk])=>cfgRow(id,lk)).join('');
+  document.getElementById('cfgDocs').innerHTML=['docInsumos','docConceptos','docGeneradores','docMatrices','docIndirectos','docCargos','docPresupuesto','docValidaciones']
+    .map(k=>cfgRow(k.replace('doc',''),k)).join('');
+  document.getElementById('cfgTipos').innerHTML=db.tipos.map((t,i)=>`<label class="cfg"><span>${esc(t.tag)}</span>
+    <input value="${esc(t.label)}" oninput="setTipo(${i},'label',this.value)">
+    <input value="${esc(t.tag)}" oninput="setTipo(${i},'tag',this.value)" style="flex:0 0 68px;text-align:center"></label>`).join('');
+  document.getElementById('unidInput').value=db.unidades.join(', ');
+  document.getElementById('cfgMetrica').innerHTML=cfgRow('Nombre','metNombre')+cfgRow('Unidad','metUnidad')+cfgRow('Título del KPI','kpiMetrica')+
+    `<label class="cfg"><span>Cantidad</span><input value="${db.cargos.met}" inputmode="decimal" oninput="upCargo('met',this.value)"></label>`;
+}
+function setTipo(i,k,v){db.tipos[i][k]=v;save();renderInsumos();renderMatriz();}
+function setUnidades(v){db.unidades=v.split(',').map(s=>s.trim()).filter(Boolean);save();}
+function resetAll(){if(!confirm('Se borra todo lo capturado y vuelve el ejemplo de la dala. ¿Seguro?'))return;
+  db=seed();save();boot();flash('Reiniciado con el ejemplo');}
+
+/* ==================================================================
+   14. IMPRESIÓN Y RESPALDO
+   ================================================================== */
+function printHeads(){
+  const o=db.obra;
+  const fd=s=>s?new Date(s+'T12:00').toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';
+  document.querySelectorAll('.print-hd').forEach(el=>{
+    el.innerHTML=`
+    <div class="r1"><div class="emp">${esc(o.empresa||'—')}</div><div class="doc">${esc(el.dataset.doc||'')}</div></div>
+    <div class="g">
+      <div><b>Obra:</b> ${esc(o.nombre||'—')}</div><div><b>Contrato:</b> ${esc(o.contrato||'—')}</div><div><b>Fecha:</b> ${fd(o.fecha)}</div>
+      <div><b>Ubicación:</b> ${esc(o.ubic||'—')}</div><div><b>Cliente:</b> ${esc(o.cliente||'—')}</div><div><b>Elaboró:</b> ${esc(o.elab||'—')}</div>
+      <div><b>Inicio:</b> ${fd(o.fInicio)}</div><div><b>Término:</b> ${fd(o.fTermino)}</div><div><b>Apertura:</b> ${fd(o.fApertura)}</div>
+      ${o.descTrabajos?`<div style="grid-column:1/-1"><b>Descripción de los trabajos:</b> ${esc(o.descTrabajos)}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('printFt').innerHTML=
+    `<div>Razón social del licitante: <b>${esc(o.razonSocial||'________________________')}</b></div><div>Firma: ________________________</div>`;
+}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  const n=(db.obra.nombre||'costos').replace(/[^\w\sáéíóúñ-]/gi,'').trim().replace(/\s+/g,'-').toLowerCase();
+  a.download=n+'-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);flash('Respaldo descargado');
+}
+function exportCSV(){
+  const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';
+  const r=[['CLAVE','PARTIDA','DESCRIPCIÓN','UNIDAD','CANTIDAD','COSTO DIRECTO','PRECIO UNITARIO','IMPORTE'].map(q).join(',')];
+  db.conceptos.forEach(c=>{const p=partidaOf(c.partida),qty=cantidad(c.id);
+    r.push([c.clave,p?p.clave:'',c.desc,c.unidad,qty.toFixed(3),cdu(c.id).toFixed(2),puVenta(c.id).toFixed(2),(qty*puVenta(c.id)).toFixed(2)].map(q).join(','));});
+  const t=totalesObra();
+  r.push('');
+  r.push([q('SUBTOTAL'),'','','','','','',q(t.venta.toFixed(2))].join(','));
+  r.push([q('IVA'),'','','','','','',q(t.iva.toFixed(2))].join(','));
+  r.push([q('TOTAL'),'','','','','','',q(t.total.toFixed(2))].join(','));
+  const blob=new Blob(['﻿'+r.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='presupuesto-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);flash('CSV descargado');
+}
+function importJSON(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=e=>{try{
+      const d=JSON.parse(e.target.result);
+      if(!d.conceptos||!d.insumos)throw 0;
+      if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
+      db=d;db.labels={...DEF_LABELS,...(db.labels||{})};
+      const s=seed();['unidades','partidas','auxiliares','genCols','tipos','cargos','indirectos','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});
+      save();boot();flash('Datos importados');
+    }catch(err){alert('El archivo no tiene el formato esperado.');}};
+  rd.readAsText(f);ev.target.value='';
+}
+
+/* ==================================================================
+   15. RECÁLCULO Y ARRANQUE
+   ================================================================== */
+function recalc(){
+  renderHeader();renderPartidas();renderConceptos();renderPresup();renderCargos();renderVal();renderNav();renderEstado();
+}
+function boot(){
+  renderObraForm();printHeads();
+  renderInsumos();fillAuxSel();renderAux();
+  renderPartidas();renderConceptos();fillSelects();
+  renderGen();renderMatriz();renderIndirectos();renderCargos();
+  renderPresup();renderVal();renderAjustes();renderEstado();renderHeader();
+  document.querySelectorAll('.panel-hd .ed').forEach(el=>{
+    const m=(el.getAttribute('onblur')||'').match(/setLbl\('([^']+)'/);if(m)el.textContent=L(m[1]);});
+  const b=document.querySelector('.brand .ed');if(b)b.textContent=L('brand');
+  go(tab);
+}
+boot();
+</script>
+</body>
+</html>
