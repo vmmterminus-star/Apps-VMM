@@ -59,6 +59,11 @@ section.on{display:block}
 .panel-hd{padding:11px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--wash)}
 .panel-hd h2{margin:0;font-size:12px;font-weight:600;color:var(--deep)}
 .panel-hd .sub{font-size:10px;color:var(--soft);margin-left:auto}
+button.icon.pleg{font-size:11px;color:var(--soft);padding:2px 5px;transition:transform .14s;margin-left:4px}
+button.icon.pleg:hover{color:var(--deep)}
+.panel.plegado>.panel-bd{display:none}
+.panel.plegado>.panel-hd{border-bottom:0}
+.panel.plegado button.icon.pleg{transform:rotate(-90deg)}
 .panel-bd{padding:13px 15px}
 .panel-bd.flush{padding:0}
 
@@ -250,6 +255,8 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   .croq-grid img{height:auto!important;max-height:190pt;object-fit:contain!important}
   .croq-grid figcaption input{display:none!important}
   .croq-pie{display:block!important;padding:3pt 4pt;font-size:6.5pt;color:#000}
+  /* al imprimir se muestra todo, aunque lo tengas plegado en pantalla */
+  .panel.plegado>.panel-bd{display:block!important}
   tr.nota td{background:#fff!important;font-size:6.5pt;color:#000!important;padding:0 4pt 3pt!important}
   .nota-in{border:0!important;color:#000!important;font-style:italic;font-size:6.5pt}
   .notag{padding:3pt 0 0!important}
@@ -365,10 +372,11 @@ create policy "acceso abierto" on costos_sync for all using (true) with check (t
     <p>La cadena completa son cuatro escalones: <b>1.</b> APU de cada básico, que da su importe por unidad. <b>2.</b> APU de cada concepto, que multiplica la cantidad de cada básico por su importe y da el costo unitario del concepto. <b>3.</b> Generador, que mide cuántas unidades del concepto hay. <b>4.</b> Importe del concepto en el presupuesto: cantidad del generador × precio unitario. Los indirectos y la utilidad entran una sola vez, entre el escalón 2 y el 4 — nunca dentro del básico, o cobrarías utilidad sobre utilidad.</p>
     <p>El <b>costo horario</b> del equipo, por ahora, se captura como un insumo de tipo EQ con unidad HR y su costo por hora ya calculado. El análisis completo — inversión, depreciación, seguro, mantenimiento, combustibles, lubricantes, llantas y operación — vive en el Excel y se puede traer después.</p>
   </div></details>
-  <div class="panel">
+  <div class="panel" id="pInsumos">
     <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tInsumos',this.textContent)">Catálogo de insumos</span></h2>
       <span id="insCtrl" style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"></span>
-      <div class="sub" id="insCount"></div></div>
+      <div class="sub" id="insCount"></div>
+      <button class="icon pleg" onclick="togPanel('pInsumos')" title="Mostrar u ocultar">&#9660;</button></div>
     <div class="panel-bd flush">
       <div class="tbl-wrap"><table id="tInsumos"></table></div>
       <div style="padding:9px 11px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -378,16 +386,20 @@ create policy "acceso abierto" on costos_sync for all using (true) with check (t
       </div>
     </div>
   </div>
-  <div class="panel">
+  <div class="panel" id="pCuadrillas">
     <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tCuadrillas',this.textContent)">Cuadrillas</span></h2>
       <select class="sel" id="selCuad" onchange="renderCuad()"></select>
-      <button class="btn mini" onclick="addCuadrilla()">+ Nueva cuadrilla</button></div>
+      <button class="btn mini" onclick="addCuadrilla()">+ Nueva</button>
+      <div class="sub" id="cuadCount"></div>
+      <button class="icon pleg" onclick="togPanel('pCuadrillas')" title="Mostrar u ocultar">&#9660;</button></div>
     <div class="panel-bd flush" id="cuadBody"></div>
   </div>
-  <div class="panel">
+  <div class="panel" id="pBasicos">
     <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tBasicos',this.textContent)">Básicos</span></h2>
       <select class="sel" id="selAux" onchange="renderAux()"></select>
-      <button class="btn mini" onclick="addAuxiliar()">+ Nuevo básico</button></div>
+      <button class="btn mini" onclick="addAuxiliar()">+ Nuevo</button>
+      <div class="sub" id="auxCount"></div>
+      <button class="icon pleg" onclick="togPanel('pBasicos')" title="Mostrar u ocultar">&#9660;</button></div>
     <div class="panel-bd flush" id="auxBody"></div>
   </div>
 </section>
@@ -1332,6 +1344,8 @@ function fillAuxSel(){
   const s=document.getElementById('selAux'),v=s.value;
   s.innerHTML=db.auxiliares.map(a=>`<option value="${a.id}">${esc(a.clave)} — ${esc(a.desc).slice(0,50)}</option>`).join('');
   if(db.auxiliares.some(a=>a.id===v))s.value=v;
+  const c=document.getElementById('auxCount');
+  if(c)c.textContent=db.auxiliares.length+' básicos';
 }
 function renderAux(){
   const box=document.getElementById('auxBody');
@@ -1376,6 +1390,7 @@ function renderAux(){
     </tbody></table></div>
   <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
     <button class="btn ghost" onclick="addAuxRow('${a.id}')">+ Agregar componente</button>
+    <button class="btn mini" onclick="dupAuxiliar('${a.id}')" style="flex:0 0 auto;white-space:nowrap">Duplicar básico</button>
     <button class="btn mini" onclick="delAuxiliar('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar básico</button>
   </div>
   ${notaGral(a.notaGral,`upAux('${a.id}','notaGral',this.value)`)}
@@ -1424,11 +1439,73 @@ function irAnalisis(tipo,id){
   if(tipo==='cuad')renderCuad();else renderAux();
   setTimeout(()=>{const p=sel.closest('.panel');if(p)p.scrollIntoView({behavior:'smooth',block:'start'});},60);
 }
+/* ------------------------------------------------------------------
+   PANELES PLEGABLES
+   Se guarda cuáles dejaste cerrados, para que la próxima vez que
+   entres esté como lo dejaste. Al imprimir se abren todos solos.
+   ------------------------------------------------------------------ */
+function togPanel(id){
+  db.ui.plegado=db.ui.plegado||{};
+  db.ui.plegado[id]=!db.ui.plegado[id];
+  save();aplicarPlegado();
+}
+function aplicarPlegado(){
+  const p=db.ui.plegado||{};
+  ['pInsumos','pCuadrillas','pBasicos'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.toggle('plegado',!!p[id]);
+  });
+}
+
+/* Clave libre para un duplicado: si termina en número, lo aumenta
+   respetando los ceros de adelante (MOR-01 → MOR-02); si no, le pone
+   "copia". Nunca pisa una clave que ya existe. */
+function claveLibre(base,usadas){
+  base=String(base||'').trim()||'SIN CLAVE';
+  if(!usadas.includes(base))return base;
+  const m=base.match(/^(.*?)(\d+)$/);
+  if(m){
+    const pre=m[1],ancho=m[2].length;let x=parseInt(m[2],10);
+    for(let i=0;i<999;i++){
+      x++;const c=pre+String(x).padStart(ancho,'0');
+      if(!usadas.includes(c))return c;
+    }
+  }
+  for(let i=1;i<99;i++){
+    const c=base+' copia'+(i>1?' '+i:'');
+    if(!usadas.includes(c))return c;
+  }
+  return base+' copia';
+}
+/* El duplicado copia los componentes con identificadores nuevos, para
+   que editar uno no toque al otro. Queda justo abajo del original. */
+function dupAuxiliar(id){
+  const i=db.auxiliares.findIndex(a=>a.id===id);if(i<0)return;
+  const o=db.auxiliares[i];
+  const nuevo={...o,id:uid(),clave:claveLibre(o.clave,db.auxiliares.map(a=>a.clave)),
+    comp:(o.comp||[]).map(r=>({...r,id:uid()}))};
+  db.auxiliares.splice(i+1,0,nuevo);
+  save();fillAuxSel();document.getElementById('selAux').value=nuevo.id;
+  renderAux();renderMatriz();recalc();flash('Básico duplicado como '+nuevo.clave);
+}
+function dupCuadrilla(id){
+  db.cuadrillas=db.cuadrillas||[];
+  const i=db.cuadrillas.findIndex(a=>a.id===id);if(i<0)return;
+  const o=db.cuadrillas[i];
+  const nuevo={...o,id:uid(),clave:claveLibre(o.clave,db.cuadrillas.map(a=>a.clave)),
+    comp:(o.comp||[]).map(r=>({...r,id:uid()}))};
+  db.cuadrillas.splice(i+1,0,nuevo);
+  save();fillCuadSel();document.getElementById('selCuad').value=nuevo.id;
+  renderCuad();renderMatriz();recalc();flash('Cuadrilla duplicada como '+nuevo.clave);
+}
+
 function fillCuadSel(){
   const s=document.getElementById('selCuad');if(!s)return;
   const v=s.value;
   s.innerHTML=(db.cuadrillas||[]).map(a=>`<option value="${a.id}">${esc(a.clave)} — ${esc(a.desc).slice(0,50)}</option>`).join('');
   if((db.cuadrillas||[]).some(a=>a.id===v))s.value=v;
+  const c=document.getElementById('cuadCount');
+  if(c)c.textContent=(db.cuadrillas||[]).length+' cuadrillas';
 }
 function renderCuad(){
   const box=document.getElementById('cuadBody');if(!box)return;
@@ -1468,6 +1545,7 @@ function renderCuad(){
     </tbody></table></div>
   <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
     <button class="btn ghost" onclick="addCuadRow('${a.id}')">+ Agregar integrante · Enter también</button>
+    <button class="btn mini" onclick="dupCuadrilla('${a.id}')" style="flex:0 0 auto;white-space:nowrap">Duplicar cuadrilla</button>
     <button class="btn mini" onclick="delCuadrilla('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar cuadrilla</button>
   </div>
   ${notaGral(a.notaGral,`upCuad('${a.id}','notaGral',this.value)`)}
@@ -2367,7 +2445,7 @@ function recalc(){
 }
 function boot(){
   renderObraForm();printHeads();
-  renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();
+  renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();aplicarPlegado();
   renderPartidas();renderConceptos();fillSelects();
   renderGen();renderMatriz();renderIndirectos();renderCargos();
   renderPresup();renderVal();renderAjustes();renderEstado();renderHeader();
