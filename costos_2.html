@@ -93,6 +93,28 @@ td .ro.txt{font-family:'Alexandria',sans-serif;font-size:11px;font-weight:300;co
 .tag.eq{background:#E8EEE4;color:#4A6B3A}
 .tag.pct{background:#EDE7F2;color:#5C4A7E}
 .tag.aux{background:#DCE9E0;color:#2F6B4A}
+.tag.cuad{background:#F1E3D9;color:#8A4A28}
+.avisos{padding:0 11px 11px;display:flex;flex-direction:column;gap:7px}
+.aviso{display:flex;gap:10px;align-items:center;background:#FBF3EE;border:1px solid #EBD5CA;border-radius:9px;padding:9px 11px;font-size:10.5px;line-height:1.5;color:var(--ink)}
+.aviso b{color:var(--terra);font-weight:600}
+.aviso .btn{flex:0 0 auto;margin-left:auto;white-space:nowrap}
+.desc-larga{font-size:12px;color:var(--deep);margin-top:3px;line-height:1.5;max-width:78ch}
+.croq{margin:0 11px 12px;border:1px dashed #CFE0DE;border-radius:10px;background:var(--wash);transition:background .15s,border-color .15s}
+.croq.drag{border-color:var(--teal);background:var(--mint)}
+.croq-hd{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:9px 11px;font-size:10.5px;color:var(--soft)}
+.croq-hd b{font-size:11px;color:var(--deep);font-weight:600}
+.croq-hd .pes{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9.5px}
+.croq-vacio{padding:0 11px 12px;font-size:10.5px;color:var(--soft)}
+.croq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:0 11px 11px}
+.croq-grid figure{margin:0;background:#fff;border:1px solid #DDE9E8;border-radius:9px;overflow:hidden}
+.croq-grid img{display:block;width:100%;height:132px;object-fit:cover;cursor:zoom-in;background:#fff}
+.croq-grid figcaption{display:flex;align-items:center;gap:5px;padding:5px 6px;border-top:1px solid #EDF4F3}
+.croq-grid figcaption input{border:0;background:transparent;flex:1;min-width:0}
+.croq-pie{display:none}
+.lightbox{position:fixed;inset:0;z-index:99;background:rgba(18,60,71,.92);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;padding:24px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:86vh;object-fit:contain;background:#fff;border-radius:6px}
+.lightbox .lb-cap{color:#fff;font-size:11px;text-align:center;max-width:70ch}
 
 tr.grp td{background:var(--mint)!important;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);font-weight:600;padding:5px 7px}
 tr.tot td{background:var(--deep)!important;color:#fff;font-weight:500;font-size:11.5px;padding:8px 7px;border:none}
@@ -177,7 +199,7 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
 @media print{
   @page{size:letter;margin:13mm 11mm}
   body{background:#fff;font-size:8pt}
-  header,nav,.dock,details.help,.hint,button,.panel-hd .sub,.kpis,.act,th.act,.leg,.prog,.sem{display:none!important}
+  header,nav,.dock,details.help,.hint,button,.panel-hd .sub,.kpis,.act,th.act,.leg,.prog,.sem,.avisos,.croq-hd,.croq-vacio,.lightbox{display:none!important}
   .app{max-width:none;padding:0} main{padding:0}
   section{display:none!important} section.on{display:block!important}
   #s-inicio,#s-ajustes{display:none!important}
@@ -196,6 +218,12 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   tr.ded td{background:#F6F6F6!important}
   .ed{border:none!important;background:none!important}
   .tag{background:#fff!important;color:#000!important;border:.25pt solid #666;font-size:6.5pt}
+  .croq{border:0!important;background:#fff!important;margin:6pt 0 0!important}
+  .croq-grid{grid-template-columns:1fr 1fr!important;gap:6pt!important;padding:0!important}
+  .croq-grid figure{break-inside:avoid;page-break-inside:avoid;border:.5pt solid #999!important;border-radius:0!important}
+  .croq-grid img{height:auto!important;max-height:190pt;object-fit:contain!important}
+  .croq-grid figcaption input{display:none!important}
+  .croq-pie{display:block!important;padding:3pt 4pt;font-size:6.5pt;color:#000}
   tr.grp td{background:#EEE!important;color:#000!important;font-size:6.5pt;border-top:.5pt solid #000}
   tr.tot td{background:#fff!important;color:#000!important;border-top:1pt solid #000;font-weight:700;font-size:8pt}
   tr.sub td{background:#F4F4F4!important;color:#000!important}
@@ -213,7 +241,7 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   .print-hd .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5mm 4mm;font-size:6.8pt}
   .print-hd .g b{font-weight:600}
   .print-ft{display:flex!important;justify-content:space-between;margin-top:4mm;border-top:.5pt solid #000;padding-top:2mm;font-size:6.8pt}
-  .empty,.cfg-grid{display:none!important}
+  .empty,.cfg-grid,.int{display:none!important}
 }
 </style>
 </head>
@@ -247,7 +275,7 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
     <div class="panel-bd"><div class="f-grid" id="obraForm"></div></div>
   </div>
   <div class="panel">
-    <div class="panel-hd"><h2>Respaldo</h2></div>
+    <div class="panel-hd"><h2>Respaldo en archivo</h2></div>
     <div class="panel-bd">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" onclick="exportJSON()">Descargar respaldo (.json)</button>
@@ -255,7 +283,41 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
         <button class="btn" onclick="exportCSV()">Exportar presupuesto (.csv)</button>
         <button class="btn" onclick="resetAll()" style="color:var(--terra);border-color:#EBD5CA">Reiniciar con el ejemplo</button>
       </div>
-      <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los datos viven en este navegador. Descarga el respaldo antes de cambiar de compu o limpiar el historial. El CSV lo abre Excel directo.</div>
+      <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los datos viven en este navegador. El CSV lo abre Excel directo.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd"><h2>Sincronización en la nube</h2><div class="sub" id="syncEstado">—</div></div>
+    <div class="panel-bd">
+      <div id="syncUI"></div>
+      <details class="help" style="margin:12px 0 0"><summary>Cómo se configura, una sola vez</summary><div class="hb">
+        <p><b>1 · Base de datos.</b> Entra a supabase.com, crea un proyecto gratis y en <i>SQL Editor</i> pega esto y córrelo:</p>
+        <p><code style="display:block;white-space:pre-wrap;padding:8px;line-height:1.6">create table if not exists costos_sync (
+  code text primary key,
+  data jsonb,
+  updated_at timestamptz default now()
+);
+alter table costos_sync enable row level security;
+create policy "acceso abierto" on costos_sync for all using (true) with check (true);</code></p>
+        <p><b>2 · Credenciales.</b> En <i>Settings → API</i> copia el <b>Project URL</b> y la <b>anon public key</b> y pégalas aquí abajo. La anon key es pública por diseño, va en el archivo. La <code>service_role</code> nunca.</p>
+        <p><b>3 · Código secreto.</b> Inventa uno largo (por ejemplo <code>valen-costos-2026-x7k2</code>) y conéctalo. En cada dispositivo pones el mismo código y ven los mismos datos. Ese código es la única llave: quien lo tenga ve tus datos, así que que no sea corto ni adivinable.</p>
+        <p><b>4 · Publicar.</b> Renombra el archivo a <code>index.html</code> y arrástralo a app.netlify.com/drop. Esa URL es la app de verdad; en el celular la abres y le das <i>Añadir a inicio</i>. Para actualizarla, arrastra el archivo nuevo en la pestaña <i>Deploys</i> del mismo sitio — misma URL y los datos no se pierden.</p>
+        <p style="color:var(--terra)"><b>Ojo:</b> si abres el archivo con doble clic desde tu carpeta, la sincronización puede fallar por seguridad del navegador. Funciona bien desde la URL publicada. Mientras tanto, el puente por código sirve igual.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd"><h2>Puente por código</h2><div class="sub">Para mover los datos entre esta versión y la publicada</div></div>
+    <div class="panel-bd">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:9px">
+        <button class="btn" onclick="exportCode()">Generar código</button>
+        <button class="btn solid" onclick="importCode()">Importar el código pegado</button>
+        <button class="btn" onclick="copiarCodigo()">Copiar</button>
+      </div>
+      <textarea class="f-in" id="codeArea" rows="4" spellcheck="false" placeholder="Aquí aparece el código al generarlo, o pega uno para importarlo" style="font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical"></textarea>
+      <div style="font-size:10.5px;color:var(--soft);margin-top:7px">Generas el código aquí, lo pegas allá y le das Importar. Reemplaza todo lo que haya en el destino.</div>
     </div>
   </div>
 </section>
@@ -263,21 +325,37 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
 <!-- ================= INSUMOS ================= -->
 <section id="s-insumos">
   <div class="print-hd" data-doc="Catálogo de insumos"></div>
-  <details class="help"><summary>Insumos, salario real y auxiliares</summary><div class="hb">
+  <details class="help"><summary>Insumos, salario real, cuadrillas y básicos</summary><div class="hb">
     <p>El insumo es el ladrillo del sistema: todo lo que se compra, se paga o se renta, con su <b>costo unitario puesto en obra</b> — sin indirectos, sin utilidad, sin IVA.</p>
     <p>En mano de obra el costo que entra a la matriz no es el salario nominal, es el <b>salario real</b>: <code>nominal × FSR</code>. El factor de salario real (1.5 a 1.9) cubre lo que cuesta un trabajador además de su sueldo — IMSS, INFONAVIT, aguinaldo, vacaciones, días no laborados. Si lo omites, tu mano de obra queda subvaluada como 40% y es de lo primero que te cuestionan.</p>
-    <p>Los <b>auxiliares</b> o básicos son matrices chicas que se usan dentro de otras: mortero, concreto hecho en obra. Se calculan una vez y se insertan como si fueran un insumo más. Sin esto acabas recapturando el mortero en doce matrices y con doce precios distintos.</p>
+    <p>La <b>cuadrilla</b> es el siguiente escalón de la mano de obra: junta las categorías que trabajan juntas — oficial y ayudante, cada uno con cantidad 1.0 — y encima les carga la <b>herramienta menor (3%)</b> y el <b>equipo de seguridad (2%)</b>, ambos sobre el subtotal de mano de obra. El resultado es un <b>costo por jornada</b>, y en la matriz entra en un solo renglón con su rendimiento. Si ya usas cuadrilla, la matriz <b>no</b> debe volver a cargar herramienta menor por fuera: se pagaría dos veces.</p>
+    <p>Los <b>básicos</b> son análisis de precio unitario de lo que usas muchas veces: mortero, concreto hecho en obra, cimbra. Se analizan una vez, dan su importe por unidad, y ese importe entra a la matriz de cada concepto multiplicado por la cantidad que le toque. Sin esto acabas recapturando el mortero en doce matrices y con doce precios distintos.</p>
+    <p>La cadena completa son cuatro escalones: <b>1.</b> APU de cada básico, que da su importe por unidad. <b>2.</b> APU de cada concepto, que multiplica la cantidad de cada básico por su importe y da el costo unitario del concepto. <b>3.</b> Generador, que mide cuántas unidades del concepto hay. <b>4.</b> Importe del concepto en el presupuesto: cantidad del generador × precio unitario. Los indirectos y la utilidad entran una sola vez, entre el escalón 2 y el 4 — nunca dentro del básico, o cobrarías utilidad sobre utilidad.</p>
+    <p>El <b>costo horario</b> del equipo, por ahora, se captura como un insumo de tipo EQ con unidad HR y su costo por hora ya calculado. El análisis completo — inversión, depreciación, seguro, mantenimiento, combustibles, lubricantes, llantas y operación — vive en el Excel y se puede traer después.</p>
   </div></details>
   <div class="panel">
-    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tInsumos',this.textContent)">Catálogo de insumos</span></h2><div class="sub" id="insCount"></div></div>
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tInsumos',this.textContent)">Catálogo de insumos</span></h2>
+      <span id="insCtrl" style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"></span>
+      <div class="sub" id="insCount"></div></div>
     <div class="panel-bd flush">
       <div class="tbl-wrap"><table id="tInsumos"></table></div>
-      <div style="padding:9px 11px"><button class="btn ghost" onclick="addInsumo()">+ Agregar insumo</button></div>
+      <div style="padding:9px 11px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn ghost" onclick="addInsumo()">+ Agregar insumo</button>
+        <button class="btn mini" style="flex:0 0 auto;white-space:nowrap" onclick="cargarSalarios()">Cargar tabulador de salarios</button>
+        <button class="btn mini" style="flex:0 0 auto;white-space:nowrap" onclick="sembrarExcel()">Sembrar insumos, cuadrillas, básicos y equipo</button>
+      </div>
     </div>
   </div>
   <div class="panel">
-    <div class="panel-hd"><h2>Auxiliares / básicos</h2><select class="sel" id="selAux" onchange="renderAux()"></select>
-      <button class="btn mini" onclick="addAuxiliar()">+ Nuevo auxiliar</button></div>
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tCuadrillas',this.textContent)">Cuadrillas</span></h2>
+      <select class="sel" id="selCuad" onchange="renderCuad()"></select>
+      <button class="btn mini" onclick="addCuadrilla()">+ Nueva cuadrilla</button></div>
+    <div class="panel-bd flush" id="cuadBody"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tBasicos',this.textContent)">Básicos</span></h2>
+      <select class="sel" id="selAux" onchange="renderAux()"></select>
+      <button class="btn mini" onclick="addAuxiliar()">+ Nuevo básico</button></div>
     <div class="panel-bd flush" id="auxBody"></div>
   </div>
 </section>
@@ -313,10 +391,29 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   <div class="print-hd" data-doc="Números generadores"></div>
   <details class="help"><summary>Cómo se llena un generador y cómo se deduce</summary><div class="hb">
     <p>El generador es la <b>memoria de cálculo de las cantidades</b>: de dónde salió cada número. Una cantidad sin generador no se puede defender ni revisar en obra.</p>
-    <p>Cada renglón se ubica con una referencia (eje, tramo, nivel, plano) y se multiplican todas las columnas numéricas:</p>
-    <p><code>Parcial = No. × Largo × Ancho × Alto × Factor</code></p>
-    <p>Las casillas vacías valen 1: para <b>volumen</b> usas las tres dimensiones, para <b>superficie</b> largo y alto, para <b>longitud</b> solo largo. El <b>factor</b> convierte cuando la unidad no es geométrica — la varilla del #3 pesa <code>0.557 kg/m</code>, la del #2 <code>0.248</code>, la del #4 <code>0.994</code> — o aplica desperdicio (1.05 = 5%).</p>
+    <p>Cada renglón se ubica con su <b>eje</b> y su <b>tramo</b>, que son texto y no entran al cálculo. Lo que se multiplica son las columnas de dimensión:</p>
+    <p><code>Subtotal = Piezas × Largo × Ancho × Alto</code></p>
+    <p>Las casillas vacías valen 1: para <b>volumen</b> usas las tres dimensiones, para <b>superficie</b> largo y alto, para <b>longitud</b> solo largo. El resultado sale siempre en la unidad del concepto.</p>
+    <p>Aquí <b>no se convierten unidades</b>. Si un concepto se mide en metros lineales pero lleva kilos de varilla, esa conversión va en el <b>análisis de precio unitario</b>, que es donde cada insumo tiene su propia unidad y aporta su parte al costo por metro lineal.</p>
     <p>El botón <b>−</b> de cada renglón lo convierte en <b>deducción</b>: se resta en vez de sumar. Ahí van los vanos de puertas y ventanas que se descuentan de muros y aplanados. Es lo primero que pregunta un profesor y en tu entrega pasada no estaba documentado.</p>
+    <p><b>Ver todos los conceptos</b> arma la hoja completa de generadores, con todos los renglones de la obra en una sola tabla. Es la vista que conviene imprimir.</p>
+    <p style="margin-top:11px"><b>Pesos de varilla</b> — para cuando armes el análisis y necesites pasar de metros de varilla a kilos:</p>
+    <div style="overflow-x:auto"><table style="min-width:0;font-size:10.5px;margin-top:5px">
+      <thead><tr><th>Varilla</th><th>Diámetro</th><th class="num">kg / m</th><th>Varilla</th><th>Diámetro</th><th class="num">kg / m</th></tr></thead>
+      <tbody>
+        <tr><td><div class="ro">Alambrón</div></td><td><div class="ro">1/4"</div></td><td><div class="ro b" style="text-align:right">0.248</div></td>
+            <td><div class="ro">#5</div></td><td><div class="ro">5/8"</div></td><td><div class="ro b" style="text-align:right">1.552</div></td></tr>
+        <tr><td><div class="ro">#2</div></td><td><div class="ro">1/4"</div></td><td><div class="ro b" style="text-align:right">0.248</div></td>
+            <td><div class="ro">#6</div></td><td><div class="ro">3/4"</div></td><td><div class="ro b" style="text-align:right">2.235</div></td></tr>
+        <tr><td><div class="ro">#2.5</div></td><td><div class="ro">5/16"</div></td><td><div class="ro b" style="text-align:right">0.384</div></td>
+            <td><div class="ro">#8</div></td><td><div class="ro">1"</div></td><td><div class="ro b" style="text-align:right">3.973</div></td></tr>
+        <tr><td><div class="ro">#3</div></td><td><div class="ro">3/8"</div></td><td><div class="ro b" style="text-align:right">0.557</div></td>
+            <td><div class="ro">#10</div></td><td><div class="ro">1 1/4"</div></td><td><div class="ro b" style="text-align:right">6.404</div></td></tr>
+        <tr><td><div class="ro">#4</div></td><td><div class="ro">1/2"</div></td><td><div class="ro b" style="text-align:right">0.994</div></td>
+            <td><div class="ro">#12</div></td><td><div class="ro">1 1/2"</div></td><td><div class="ro b" style="text-align:right">9.865</div></td></tr>
+      </tbody></table></div>
+    <p style="margin-top:9px">Ejemplo, el concepto CIM-02 de la app: se mide por <b>metro lineal</b> de dala, y su análisis dice que cada metro lleva 4 varillas del #3 corridas (4 × 1.00 m × 0.557 × 1.05 de traslapes = <b>2.339 kg</b>) más los estribos del #2 (5 piezas × 0.64 m × 0.248 × 1.05 = <b>0.833 kg</b>). El generador solo cuenta los 12.40 metros de dala; los kilos salen del análisis.</p>
+    <p>Al desperdicio y traslapes del acero se le pone <code>1.05</code>, al concreto <code>1.03</code>, y la madera de cimbra se divide entre sus usos (4 o 5).</p>
   </div></details>
   <div class="panel">
     <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tGen',this.textContent)">Números generadores</span></h2><select class="sel" id="selGen" onchange="renderGen()"></select></div>
@@ -358,7 +455,11 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
     <div class="panel-hd"><h2>Desglose de indirectos</h2><div class="sub" id="indCount"></div></div>
     <div class="panel-bd flush">
       <div class="tbl-wrap"><table id="tIndirectos"></table></div>
-      <div style="padding:9px 11px"><button class="btn ghost" onclick="addRubro()">+ Agregar renglón</button></div>
+      <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
+        <button class="btn ghost" onclick="addRubro()">+ Agregar renglón</button>
+        <button class="btn mini" style="flex:0 0 auto;white-space:nowrap" onclick="sueldosDesdeTabulador()">Traer sueldos del tabulador</button>
+      </div>
+      <div class="hint">El sueldo mensual de un puesto es su <b>salario real × 30 días</b>. El botón lo calcula para los renglones cuyo nombre coincida con una categoría del catálogo de salarios.</div>
     </div>
   </div>
   <div class="panel">
@@ -457,8 +558,9 @@ const DEF_LABELS={
   docIndirectos:'Análisis de costos indirectos', docCargos:'Análisis del cargo por utilidad',
   docPresupuesto:'Presupuesto', docValidaciones:'Revisión de consistencia',
   tInsumos:'Catálogo de insumos', tConceptos:'Catálogo de conceptos',
+  tCuadrillas:'Cuadrillas', tBasicos:'Básicos',
   tMatriz:'Análisis de precio unitario', tGen:'Números generadores',
-  iClave:'Clave', iDesc:'Descripción', iUnidad:'Unidad', iTipo:'Tipo', iCosto:'Costo', iFsr:'FSR', iReal:'Real', iFuente:'Fuente',
+  iClave:'Clave', iDesc:'Descripción', iCat:'Categoría', iUnidad:'Unidad', iTipo:'Tipo', iCosto:'Costo', iFsr:'FSR', iReal:'Real', iFuente:'Fuente',
   pClave:'Clave', pPartida:'Partida', pDesc:'Descripción', pCorta:'Desc. corta', pUnidad:'Unidad', pCD:'C.D.', pPU:'P.U.',
   mClave:'Clave', mInsumo:'Insumo', mUnidad:'Unidad', mRend:'Rendim.', mCant:'Cantidad', mCosto:'Costo', mImporte:'Importe',
   mCD:'Costo directo por', mSub:'Subtotal',
@@ -483,25 +585,56 @@ const RUBROS_SUG=['Personal directivo','Personal técnico','Personal administrat
   'Primas por seguros','Primas por fianzas','Seguro de vehículos',
   'Residente de obra','Auxiliar de oficina','Velador'];
 
+/* ---- Tabulador de salarios: categoría, salario tabulado, FSR ----
+   Las 12 primeras son mano de obra que entra a las matrices; las 8
+   últimas son personal técnico y administrativo, que se cobra en los
+   indirectos y NO debe meterse a una matriz o se pagaría dos veces. */
+const CAT_MO='Mano de obra directa', CAT_IND='Personal de indirectos';
+const CAT_SALARIOS=[
+  ['MO-01','Oficial albañil (O.A.)',714.29,1.90246,0],
+  ['MO-02','Ayudante de albañil (A.A.)',428.57,1.90699,0],
+  ['MO-03','Peón (P.)',314.29,1.95824,0],
+  ['MO-04','Operador de revolvedora (O.R.)',428.57,1.90699,0],
+  ['MO-05','Oficial plomero (O.P.)',685.71,1.90428,0],
+  ['MO-06','Ayudante de plomero (A.P.)',400.00,1.91221,0],
+  ['MO-07','Oficial herrero (O.H.)',685.71,1.90428,0],
+  ['MO-08','Ayudante de herrero (A.H.)',357.14,1.92160,0],
+  ['MO-09','Oficial azulejero (O.AZ.)',571.43,1.91341,0],
+  ['MO-10','Ayudante de azulejero (A.AZ.)',357.14,1.92160,0],
+  ['MO-11','Oficial de limpieza (O.L.)',357.14,1.94629,0],
+  ['MO-12','Ayudante de limpieza (A.L.)',328.57,1.92923,0],
+  ['MO-13','Oficial carpintero de obra negra (O.C.)',571.43,1.90428,0],
+  ['MOI-01','Director general',1114.29,1.88672,1],
+  ['MOI-02','Gerente de obras',928.57,1.86766,1],
+  ['MOI-03','Gerente de costos',928.57,1.89234,1],
+  ['MOI-04','Auxiliar de oficina',428.57,1.90699,1],
+  ['MOI-05','Auxiliar legal',428.57,1.93168,1],
+  ['MOI-06','Auxiliar de limpieza',328.57,1.92923,1],
+  ['MOI-07','Secretaria',357.14,1.94629,1],
+  ['MOI-08','Residente de obra',571.43,1.88873,1]
+];
+const salarioReal=(tab,fsr)=>+(tab*fsr).toFixed(2);
+
 function seed(){
-  const I=(clave,desc,unidad,tipo,costo,fsr,fuente)=>({id:uid(),clave,desc,unidad,tipo,costo,fsr:fsr||'',fuente:fuente||''});
+  const I=(clave,desc,unidad,tipo,costo,fsr,cat,fuente)=>({id:uid(),clave,desc,unidad,tipo,costo,fsr:fsr||'',cat:cat||'',fuente:fuente||''});
   const ins=[
-    I('MAT-01','Cemento gris CPC 30R, saco 50 kg','SAC','mat',215,'','Referencia GDL 2026'),
-    I('MAT-02','Arena de río cribada','M3','mat',380,'','Referencia GDL 2026'),
-    I('MAT-03','Grava de 3/4", puesta en obra','M3','mat',420,'','Referencia GDL 2026'),
-    I('MAT-04','Agua para construcción','M3','mat',45,'',''),
-    I('MAT-05','Varilla corrugada #3, fy=4200 kg/cm²','KG','mat',23.5,'','Referencia GDL 2026'),
-    I('MAT-06','Alambre recocido calibre 16','KG','mat',32,'',''),
-    I('MAT-07','Madera de pino de 3ª (5 usos)','PT','mat',28,'',''),
-    I('MAT-08','Clavo con cabeza de 2 1/2"','KG','mat',34,'',''),
-    I('MAT-09','Diesel como desmoldante','LT','mat',26,'',''),
-    I('MO-01','Oficial albañil','JOR','mo',480,1.72,'Salario nominal de zona'),
-    I('MO-02','Oficial fierrero','JOR','mo',500,1.72,'Salario nominal de zona'),
-    I('MO-03','Oficial carpintero de obra negra','JOR','mo',500,1.72,'Salario nominal de zona'),
-    I('MO-04','Peón / ayudante general','JOR','mo',320,1.72,'Salario nominal de zona'),
-    I('EQ-01','Revolvedora de 1 saco','JOR','eq',650,'',''),
-    I('EQ-02','Herramienta menor','%','pct',0,'','3% sobre mano de obra')
+    I('MAT-01','Cemento gris CPC 30R, saco 50 kg','SAC','mat',215,'','Cementantes y agregados','Referencia GDL 2026'),
+    I('MAT-02','Arena de río cribada','M3','mat',380,'','Cementantes y agregados','Referencia GDL 2026'),
+    I('MAT-03','Grava de 3/4", puesta en obra','M3','mat',420,'','Cementantes y agregados','Referencia GDL 2026'),
+    I('MAT-04','Agua para construcción','M3','mat',45,'','Cementantes y agregados',''),
+    I('MAT-05','Varilla corrugada #3, fy=4200 kg/cm²','KG','mat',23.5,'','Acero','Referencia GDL 2026'),
+    I('MAT-10','Varilla corrugada #2, fy=2530 kg/cm²','KG','mat',25,'','Acero','Referencia GDL 2026'),
+    I('MAT-06','Alambre recocido calibre 16','KG','mat',32,'','Acero',''),
+    I('MAT-07','Madera de pino de 3ª (5 usos)','PT','mat',28,'','Cimbra y madera',''),
+    I('MAT-08','Clavo con cabeza de 2 1/2"','KG','mat',34,'','Cimbra y madera',''),
+    I('MAT-09','Diesel como desmoldante','LT','mat',26,'','Cimbra y madera',''),
+    I('EQ-01','Revolvedora de 1 saco','JOR','eq',650,'','Equipo de obra',''),
+    I('EQ-02','Herramienta menor','%','pct',0,'','Equipo de obra','3% sobre mano de obra')
   ];
+  /* Catálogo de salarios: tabulado y FSR de cada categoría. El costo que
+     entra a las matrices es el salario real = tabulado × FSR. */
+  CAT_SALARIOS.forEach(([clave,desc,tab,fsr,esInd])=>
+    ins.push(I(clave,desc,'JOR','mo',tab,fsr,esInd?CAT_IND:CAT_MO,'Tabulador de salarios')));
   const f=c=>ins.find(x=>x.clave===c).id;
 
   const partidas=[
@@ -518,15 +651,15 @@ function seed(){
     {id:uid(),clave:'CIM-01',partida:pCIM,unidad:'M3',
      desc:"Concreto hecho en obra f'c=200 kg/cm² en dala de desplante de 15×20 cm. Incluye: acarreos, colado, vibrado, curado, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.",
      descCorta:"Concreto f'c=200 en dala 15×20"},
-    {id:uid(),clave:'CIM-02',partida:pCIM,unidad:'KG',
-     desc:'Acero de refuerzo fy=4200 kg/cm², varilla del #3 corrida y estribos del #2 a cada 20 cm, habilitado y armado en dala de desplante. Incluye: cortes, dobleces, ganchos, traslapes, amarres con alambre recocido, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.',
-     descCorta:'Acero de refuerzo #3 y estribos #2 en dala'},
+    {id:uid(),clave:'CIM-02',partida:pCIM,unidad:'ML',
+     desc:'Armado de dala de desplante de 15×20 cm con 4 varillas del #3 corridas y estribos del #2 a cada 20 cm, habilitado y armado en sitio. Incluye: cortes, dobleces, ganchos, traslapes, amarres con alambre recocido, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.',
+     descCorta:'Armado de dala 15×20, 4 var. #3 y estribos #2'},
     {id:uid(),clave:'CIM-03',partida:pCIM,unidad:'M2',
      desc:'Cimbra común aparente en costados de dala de desplante. Incluye: habilitado de la madera, colocación, aplicación de desmoldante, descimbrado, limpieza, mano de obra, herramienta, equipo y todo lo necesario para su correcta ejecución.',
      descCorta:'Cimbra común en costados de dala'}
   ];
   const c1=con[0].id,c2=con[1].id,c3=con[2].id;
-  const G=(ref,nota,v,ded)=>({id:uid(),ref,nota,ded:!!ded,v});
+  const G=(v,ded)=>({id:uid(),ded:!!ded,v});
   const M=(ref,cant)=>({id:uid(),ref,cant});
 
   return {
@@ -538,41 +671,103 @@ function seed(){
     cargos:{isr:30,ptu:10,uen:10,fin:0,ca:0.5,iva:16,indModo:'auto',indManual:0,met:12.40},
     labels:{...DEF_LABELS},
     tipos:[{k:'mat',label:'Materiales',tag:'MAT'},{k:'mo',label:'Mano de obra',tag:'M.O.'},
+           {k:'cuad',label:'Cuadrillas',tag:'CUAD'},
            {k:'eq',label:'Herramienta y equipo',tag:'EQ'},{k:'pct',label:'Cargos porcentuales',tag:'% M.O.'},
-           {k:'aux',label:'Auxiliares',tag:'AUX'}],
-    genCols:[{id:'n',label:'No.'},{id:'l',label:'Largo'},{id:'a',label:'Ancho'},{id:'h',label:'Alto'},{id:'fx',label:'Factor'}],
+           {k:'aux',label:'Básicos',tag:'BÁS'}],
+    genCols:[{id:'eje',label:'Eje',t:'txt'},{id:'tramo',label:'Tramo',t:'txt'},
+             {id:'pz',label:'Piezas',t:'num'},{id:'l',label:'Largo',t:'num'},
+             {id:'a',label:'Ancho',t:'num'},{id:'h',label:'Alto',t:'num'}],
     insumos:ins,
-    auxiliares:[{id:uid(),clave:'AUX-01',desc:'Mortero cemento-arena proporción 1:5',unidad:'M3',
+    auxiliares:[{id:uid(),clave:'B-01',desc:'Mortero cemento-arena proporción 1:5',unidad:'M3',
       comp:[M(f('MAT-01'),4.40),M(f('MAT-02'),1.10),M(f('MO-04'),0.80),M(f('EQ-02'),3.00)]}],
+    cuadrillas:[],
     partidas, conceptos:con,
     matrices:{
       [c1]:[M(f('MAT-01'),7.00),M(f('MAT-02'),0.51),M(f('MAT-03'),0.68),M(f('MAT-04'),0.20),
-            M(f('MO-01'),0.35),M(f('MO-04'),1.10),M(f('EQ-01'),0.30),M(f('EQ-02'),3.00)],
-      [c2]:[M(f('MAT-05'),1.05),M(f('MAT-06'),0.035),M(f('MO-02'),0.008),M(f('MO-04'),0.008),M(f('EQ-02'),3.00)],
-      [c3]:[M(f('MAT-07'),1.10),M(f('MAT-08'),0.05),M(f('MAT-09'),0.05),M(f('MO-03'),0.12),M(f('MO-04'),0.12),M(f('EQ-02'),3.00)]
+            M(f('MO-01'),0.35),M(f('MO-03'),1.10),M(f('EQ-01'),0.30),M(f('EQ-02'),3.00)],
+      /* CIM-02 va por METRO LINEAL de dala: la conversión a kilos se hace aquí,
+         en el análisis, no en el generador. 4 var. #3 × 1.00 m × 0.557 kg/m × 1.05
+         de traslapes = 2.339 kg; estribos #2 = 5 pzas × 0.64 m × 0.248 × 1.05 = 0.833 kg. */
+      [c2]:[M(f('MAT-05'),2.339),M(f('MAT-10'),0.833),M(f('MAT-06'),0.030),
+            M(f('MO-07'),0.022),M(f('MO-08'),0.022),M(f('EQ-02'),3.00)],
+      [c3]:[M(f('MAT-07'),1.10),M(f('MAT-08'),0.05),M(f('MAT-09'),0.05),M(f('MO-13'),0.12),M(f('MO-03'),0.12),M(f('EQ-02'),3.00)]
     },
     generadores:{
-      [c1]:[G('Eje A (1-3)','Dala perimetral · plano E-01',{n:1,l:4.20,a:0.15,h:0.20,fx:''}),
-            G('Eje C (1-3)','Plano E-01',{n:1,l:4.20,a:0.15,h:0.20,fx:''}),
-            G('Eje 1 (A-C)','Plano E-01',{n:1,l:2.00,a:0.15,h:0.20,fx:''}),
-            G('Eje 3 (A-C)','Plano E-01',{n:1,l:2.00,a:0.15,h:0.20,fx:''})],
-      [c2]:[G('Varilla long. #3','4 corridas + 5% de traslape · 0.557 kg/m',{n:4,l:13.02,a:'',h:'',fx:0.557}),
-            G('Estribos #2','63 pzas @ 20 cm, desarrollo 0.64 m · 0.248 kg/m',{n:63,l:0.64,a:'',h:'',fx:0.248})],
-      [c3]:[G('Costados de dala','2 caras × altura 0.20 m',{n:2,l:12.40,a:'',h:0.20,fx:''})]
+      [c1]:[G({eje:'A',tramo:'1-3',pz:1,l:4.20,a:0.15,h:0.20}),
+            G({eje:'C',tramo:'1-3',pz:1,l:4.20,a:0.15,h:0.20}),
+            G({eje:'1',tramo:'A-C',pz:1,l:2.00,a:0.15,h:0.20}),
+            G({eje:'3',tramo:'A-C',pz:1,l:2.00,a:0.15,h:0.20})],
+      [c2]:[G({eje:'A',tramo:'1-3',pz:1,l:4.20}),
+            G({eje:'C',tramo:'1-3',pz:1,l:4.20}),
+            G({eje:'1',tramo:'A-C',pz:1,l:2.00}),
+            G({eje:'3',tramo:'A-C',pz:1,l:2.00})],
+      [c3]:[G({eje:'Todos',tramo:'Costados',pz:2,l:12.40,h:0.20})]
     },
     indirectos:{meses:6,proyectos:4,
-      rubros:[{id:uid(),grupo:RUBROS_GRUPOS[0],desc:'Personal directivo',mensual:0,admin:'central'},
-              {id:uid(),grupo:RUBROS_GRUPOS[0],desc:'Residente de obra',mensual:0,admin:'obra'},
-              {id:uid(),grupo:RUBROS_GRUPOS[2],desc:'Papelería y consumibles',mensual:0,admin:'central'},
-              {id:uid(),grupo:RUBROS_GRUPOS[6],desc:'Primas por fianzas',mensual:0,admin:'obra'}]},
-    ui:{tab:'inicio',lastCid:'',lastTab:''}
+      /* los puestos vienen listados pero en cero: el sueldo mensual se
+         trae del tabulador con un botón, cuando ya haya una obra real */
+      rubros:CAT_SALARIOS.filter(s=>s[4]).map(([clave,desc])=>({
+        id:uid(),grupo:RUBROS_GRUPOS[0],desc,mensual:0,
+        admin:desc==='Residente de obra'?'obra':'central'}))
+        .concat([{id:uid(),grupo:RUBROS_GRUPOS[2],desc:'Papelería y consumibles',mensual:0,admin:'central'},
+                 {id:uid(),grupo:RUBROS_GRUPOS[6],desc:'Primas por fianzas',mensual:0,admin:'obra'}])},
+    croquis:{},
+    ui:{tab:'inicio',lastCid:'',lastTab:'',agrupaIns:'tipo'}
   };
 }
 
 let db;
 try{const raw=localStorage.getItem(KEY);db=raw?JSON.parse(raw):seed();}catch(e){db=seed();}
 db.labels={...DEF_LABELS,...(db.labels||{})};
-(function(){const s=seed();['unidades','partidas','auxiliares','genCols','tipos','cargos','indirectos','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});})();
+(function(){const s=seed();['unidades','partidas','auxiliares','cuadrillas','genCols','tipos','cargos','indirectos','croquis','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});})();
+
+/* Migración de la ronda de cuadrillas y básicos:
+   — abre la colección de cuadrillas si el respaldo viene sin ella;
+   — agrega el tipo 'cuad' después de mano de obra, para que la cuadrilla
+     tenga su propia etiqueta sin salirse de ese bloque en la matriz;
+   — renombra el tipo 'aux' de Auxiliares a Básicos, solo si nunca se
+     renombró a mano. Es idempotente: correr de nuevo no hace nada. */
+(function migrarCuadBasicos(){
+  if(!Array.isArray(db.cuadrillas))db.cuadrillas=[];
+  if(!db.tipos.some(t=>t.k==='cuad')){
+    const ix=db.tipos.findIndex(t=>t.k==='mo');
+    db.tipos.splice(ix<0?db.tipos.length:ix+1,0,{k:'cuad',label:'Cuadrillas',tag:'CUAD'});
+  }
+  const a=db.tipos.find(t=>t.k==='aux');
+  if(a&&a.label==='Auxiliares'){a.label='Básicos';a.tag='BÁS';}
+  if(!db.croquis||typeof db.croquis!=='object')db.croquis={};
+  /* el agrupado del catálogo pasó de sí/no a tres modos */
+  if(db.ui.agrupaIns===true)db.ui.agrupaIns='cat';
+  else if(db.ui.agrupaIns===false||db.ui.agrupaIns==null)db.ui.agrupaIns='tipo';
+  /* orden fijo de las columnas del generador: eje, tramo, piezas,
+     largo, ancho, alto. Las columnas que tú hayas agregado se
+     respetan y quedan después. */
+  const ORD=['eje','tramo','pz','l','a','h'];
+  const base=ORD.map(id=>db.genCols.find(c=>c.id===id)).filter(Boolean);
+  if(base.length)db.genCols=base.concat(db.genCols.filter(c=>!ORD.includes(c.id)));
+})();
+
+/* Migración al formato de generador que se usa en obra:
+   eje y tramo como texto, sin columna de factor. Lo que estaba en
+   Referencia pasa a Eje y lo de Observaciones a Tramo; si alguna fila
+   traía factor, se multiplica dentro de Piezas para no alterar cantidades. */
+(function migrarGenCols(){
+  if(db.genCols.map(c=>c.id).join(',')==='n,l,a,h,fx'){
+    db.genCols=[{id:'eje',label:'Eje',t:'txt'},{id:'tramo',label:'Tramo',t:'txt'},
+                {id:'pz',label:'Piezas',t:'num'},{id:'l',label:'Largo',t:'num'},
+                {id:'a',label:'Ancho',t:'num'},{id:'h',label:'Alto',t:'num'}];
+    Object.values(db.generadores||{}).forEach(rows=>(rows||[]).forEach(r=>{
+      r.v=r.v||{};
+      const fx=parseFloat(r.v.fx),n=parseFloat(r.v.n);
+      r.v.pz=(!isNaN(fx)&&fx!==0&&fx!==1)?+(((isNaN(n)?1:n)*fx).toFixed(6)):(isNaN(n)?'':n);
+      delete r.v.fx;delete r.v.n;
+      if(r.ref!=null&&r.v.eje==null)r.v.eje=r.ref;
+      if(r.nota!=null&&r.v.tramo==null)r.v.tramo=r.nota;
+      delete r.ref;delete r.nota;
+    }));
+  }
+  db.genCols.forEach(c=>{if(!c.t)c.t='num';});
+})();
 
 let saveTimer;
 function save(){
@@ -580,8 +775,138 @@ function save(){
   saveTimer=setTimeout(()=>{
     try{localStorage.setItem(KEY,JSON.stringify(db));
       flash('Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}));
-    }catch(e){flash('No se pudo guardar');}
+      schedulePush();
+    }catch(e){flash('No se pudo guardar — revisa el peso de los croquis');}
   },250);
+}
+
+/* ==================================================================
+   1b. SINCRONIZACIÓN EN LA NUBE (Supabase)
+   Pega aquí el Project URL y la anon public key de tu proyecto.
+   Mientras estén vacías, la app funciona igual pero sin sincronizar.
+   ================================================================== */
+const SUPA_URL="";
+const SUPA_KEY="";
+const SUPA_TABLA="costos_sync";
+const K_CODE=KEY+'_synccode', K_TS=KEY+'_remote_ts';
+
+const supaListo=()=>!!(SUPA_URL&&SUPA_KEY);
+const supaHdr=()=>({apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json'});
+let syncCode=localStorage.getItem(K_CODE)||'';
+let pushTimer=null,syncTimer=null;
+const nowISO=()=>new Date().toISOString();
+const localBlob=()=>({[KEY]:localStorage.getItem(KEY)});
+function syncMsg(t){const e=document.getElementById('syncEstado');if(e)e.textContent=t;}
+
+function schedulePush(){
+  if(!supaListo()||!syncCode)return;
+  clearTimeout(pushTimer);pushTimer=setTimeout(cloudPush,1500);
+}
+async function cloudPush(){
+  if(!supaListo()||!syncCode)return;
+  try{
+    const ts=nowISO();
+    await fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLA+'?on_conflict=code',{method:'POST',
+      headers:Object.assign({},supaHdr(),{Prefer:'resolution=merge-duplicates'}),
+      body:JSON.stringify([{code:syncCode,data:localBlob(),updated_at:ts}])});
+    localStorage.setItem(K_TS,ts);
+    syncMsg('Subido '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}));
+  }catch(e){syncMsg('Sin conexión con la nube');}
+}
+async function cloudPull(){
+  if(!supaListo()||!syncCode)return;
+  try{
+    const r=await fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLA+'?code=eq.'+encodeURIComponent(syncCode)+'&select=data,updated_at',{headers:supaHdr()});
+    const rows=await r.json();
+    if(!rows||!rows.length)return;
+    const remoto=rows[0],localTs=localStorage.getItem(K_TS)||'';
+    /* no re-jalar lo propio, y no pisar mientras se está capturando */
+    const escribiendo=document.activeElement&&/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+    if(remoto.updated_at>localTs&&remoto.data&&!escribiendo){
+      Object.keys(remoto.data).forEach(k=>{if(remoto.data[k]!=null)localStorage.setItem(k,remoto.data[k]);});
+      localStorage.setItem(K_TS,remoto.updated_at);
+      location.reload();
+    }
+  }catch(e){syncMsg('Sin conexión con la nube');}
+}
+async function connectSync(){
+  const v=(document.getElementById('syncCodeIn')||{}).value||'';
+  syncCode=v.trim();
+  if(!syncCode){syncMsg('Escribe un código');return;}
+  if(!supaListo()){syncMsg('Falta configurar Supabase en el archivo');return;}
+  localStorage.setItem(K_CODE,syncCode);
+  syncMsg('Conectando…');
+  try{
+    const r=await fetch(SUPA_URL+'/rest/v1/'+SUPA_TABLA+'?code=eq.'+encodeURIComponent(syncCode)+'&select=data,updated_at',{headers:supaHdr()});
+    const rows=await r.json();
+    if(rows&&rows.length&&rows[0].data){
+      if(!confirm('Ese código ya tiene datos en la nube. Se reemplaza lo que tienes aquí. ¿Continuar?')){syncMsg('Cancelado');return;}
+      Object.keys(rows[0].data).forEach(k=>{if(rows[0].data[k]!=null)localStorage.setItem(k,rows[0].data[k]);});
+      localStorage.setItem(K_TS,rows[0].updated_at);
+      location.reload();
+    }else{
+      await cloudPush();          /* la nube estaba vacía: sube lo de aquí */
+      arrancarSync();renderSync();
+    }
+  }catch(e){syncMsg('No se pudo conectar. Revisa las credenciales.');}
+}
+function disconnectSync(){
+  syncCode='';localStorage.removeItem(K_CODE);localStorage.removeItem(K_TS);
+  clearInterval(syncTimer);renderSync();syncMsg('Desconectado — los datos siguen aquí');
+}
+function arrancarSync(){
+  clearInterval(syncTimer);
+  if(supaListo()&&syncCode){cloudPull();syncTimer=setInterval(cloudPull,20000);}
+}
+function renderSync(){
+  const box=document.getElementById('syncUI');if(!box)return;
+  if(!supaListo()){
+    box.innerHTML=`<div style="font-size:11.5px;color:var(--soft)">
+      Todavía no hay credenciales de Supabase en el archivo, así que la sincronización está apagada.
+      Ábrelo con un editor de texto, busca <code style="font-family:'IBM Plex Mono',monospace">const SUPA_URL</code> hasta arriba del script y pega ahí tu URL y tu anon key. Los pasos completos están abajo.</div>`;
+    syncMsg('Sin configurar');return;
+  }
+  box.innerHTML=`
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <input class="f-in" id="syncCodeIn" style="flex:1;min-width:190px" placeholder="Código secreto" value="${esc(syncCode)}" autocomplete="off">
+      <button class="btn solid" onclick="connectSync()">${syncCode?'Reconectar':'Conectar'}</button>
+      ${syncCode?`<button class="btn" onclick="cloudPush()">Subir ahora</button>
+                  <button class="btn" onclick="cloudPull()">Traer ahora</button>
+                  <button class="btn" onclick="disconnectSync()" style="color:var(--terra);border-color:#EBD5CA">Desconectar</button>`:''}
+    </div>
+    <div style="font-size:10.5px;color:var(--soft);margin-top:8px">
+      ${syncCode?'Se sube solo cada vez que cambias algo, y revisa la nube cada 20 segundos. El mismo código en otro dispositivo abre estos mismos datos.'
+                :'Inventa un código largo y difícil de adivinar. Es la única llave de tus datos.'}
+    </div>`;
+  syncMsg(syncCode?'Conectado':'Sin conectar');
+}
+
+/* --- puente por código: mueve los datos entre versiones --- */
+function exportCode(){
+  const ta=document.getElementById('codeArea');
+  try{
+    ta.value=btoa(encodeURIComponent(localStorage.getItem(KEY)||''));
+    ta.select();flash('Código generado — cópialo');
+  }catch(e){flash('No se pudo generar el código');}
+}
+function copiarCodigo(){
+  const ta=document.getElementById('codeArea');
+  if(!ta.value){flash('Primero genera el código');return;}
+  ta.select();
+  navigator.clipboard?.writeText(ta.value).then(()=>flash('Copiado'),()=>document.execCommand('copy'));
+}
+function importCode(){
+  const txt=(document.getElementById('codeArea').value||'').trim();
+  if(!txt){flash('Pega un código primero');return;}
+  try{
+    const json=decodeURIComponent(atob(txt));
+    const d=JSON.parse(json);
+    if(!d.conceptos||!d.insumos)throw 0;
+    if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
+    localStorage.setItem(KEY,json);
+    if(supaListo()&&syncCode){syncCode&&localStorage.setItem(K_TS,'');cloudPush();}
+    location.reload();
+  }catch(e){alert('Ese código no es válido o está incompleto.');}
 }
 const flash=t=>{document.getElementById('statusTxt').textContent=t;};
 
@@ -611,6 +936,16 @@ function resolveRef(ref,stack){
     if(stack.includes(a.id))return {id:a.id,clave:a.clave,desc:a.desc,unidad:a.unidad,tipo:'aux',costo:0};
     return {id:a.id,clave:a.clave,desc:a.desc,unidad:a.unidad,tipo:'aux',costo:calcRows(a.comp||[],stack.concat(a.id)).total};
   }
+  /* La cuadrilla se resuelve igual que un básico, pero con tipo propio:
+     así cae en el bloque de mano de obra de la matriz y, al mismo tiempo,
+     su costo no entra a la base de los cargos porcentuales de esa matriz
+     (ya trae herramienta menor y equipo de seguridad adentro). */
+  const q=(db.cuadrillas||[]).find(x=>x.id===ref);
+  if(q){
+    stack=stack||[];
+    if(stack.includes(q.id))return {id:q.id,clave:q.clave,desc:q.desc,unidad:q.unidad,tipo:'cuad',costo:0};
+    return {id:q.id,clave:q.clave,desc:q.desc,unidad:q.unidad,tipo:'cuad',costo:calcRows(q.comp||[],stack.concat(q.id)).total};
+  }
   return null;
 }
 function calcRows(rows,stack){
@@ -622,8 +957,30 @@ function calcRows(rows,stack){
   return {det,mo,total:det.reduce((s,d)=>s+d.imp,0)};
 }
 
-const parcialRaw=r=>db.genCols.reduce((p,c)=>{const v=(r.v||{})[c.id];const x=parseFloat(v);
-  return p*((isNaN(x)||v===''||v==null)?1:x);},1);
+/* Agrupación de la matriz: la cuadrilla se dibuja dentro de MANO DE OBRA,
+   como en el formato del Excel, aunque por dentro sea su propio tipo. */
+const grupoMat=t=>t==='cuad'?'mo':t;
+const tipoLabel=k=>(db.tipos.find(t=>t.k===k)||{}).label||k;
+const cuadTraePct=q=>!!(q&&(q.comp||[]).some(r=>{const o=resolveRef(r.ref);return o&&o.tipo==='pct';}));
+const pctExternos=cid=>(db.matrices[cid]||[]).filter(r=>{const o=resolveRef(r.ref);return o&&o.tipo==='pct';});
+const cuadsDe=cid=>(db.matrices[cid]||[]).map(r=>resolveRef(r.ref)).filter(o=>o&&o.tipo==='cuad')
+  .map(o=>(db.cuadrillas||[]).find(q=>q.id===o.id)).filter(Boolean);
+/* Doble cobro: la matriz trae una cuadrilla que ya incluye herramienta
+   menor y además un cargo porcentual por fuera. */
+const dobleHM=cid=>cuadsDe(cid).some(cuadTraePct)&&pctExternos(cid).length>0;
+
+/* El subtotal multiplica solo las columnas numéricas; las de texto
+   (eje, tramo) son ubicación, no entran al cálculo. Vacío vale 1. */
+function parcialRaw(r){
+  let p=1,hay=false;
+  db.genCols.forEach(c=>{
+    if(c.t==='txt')return;
+    const v=(r.v||{})[c.id],x=parseFloat(v);
+    if(isNaN(x)||v===''||v==null)return;   // vacío vale 1
+    hay=true;p*=x;
+  });
+  return hay?p:0;                          // renglón sin ninguna dimensión: no suma
+}
 const parcial=r=>(r.ded?-1:1)*parcialRaw(r);
 const cantidad=cid=>(db.generadores[cid]||[]).reduce((s,r)=>s+parcial(r),0);
 const cdu=cid=>calcRows(db.matrices[cid]||[]).total;
@@ -739,51 +1096,162 @@ function renderEstado(){
 /* ==================================================================
    5. INSUMOS Y AUXILIARES
    ================================================================== */
+/* Las categorías son internas: sirven para encontrar las cosas en el
+   catálogo, no salen en la impresión ni las ve el cliente. La lista crece
+   sola: cualquier texto nuevo que escribas queda disponible para los demás. */
+const catList=()=>[...new Set(db.insumos.map(i=>(i.cat||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+const SIN_CAT='Sin categoría';
+
 function renderInsumos(){
+  const cats=catList();
+  const filtro=db.ui.filtroCat||'';
+  const modo=db.ui.agrupaIns||'tipo';   // 'tipo' | 'cat' | ''
+  /* orden alfabético de clave, con los números bien: MO-2 antes que MO-10 */
+  const porClave=(a,b)=>String(a.i.clave||'').localeCompare(String(b.i.clave||''),'es',{numeric:true,sensitivity:'base'});
+
+  document.getElementById('insCtrl').innerHTML=`
+    <select class="sel" style="padding:4px 22px 4px 8px;font-size:10.5px" onchange="setFiltroCat(this.value)">
+      <option value="">Todas las categorías</option>
+      ${cats.map(c=>`<option value="${esc(c)}" ${filtro===c?'selected':''}>${esc(c)}</option>`).join('')}
+      ${db.insumos.some(i=>!(i.cat||'').trim())?`<option value="${SIN_CAT}" ${filtro===SIN_CAT?'selected':''}>${SIN_CAT}</option>`:''}
+    </select>
+    <select class="sel" style="padding:4px 22px 4px 8px;font-size:10.5px" onchange="setAgrupa(this.value)">
+      <option value="tipo" ${modo==='tipo'?'selected':''}>Agrupar por tipo</option>
+      <option value="cat" ${modo==='cat'?'selected':''}>Agrupar por categoría</option>
+      <option value="" ${modo===''?'selected':''}>Sin agrupar</option>
+    </select>
+    <button class="btn mini" onclick="ordenarInsumos()" title="Deja el catálogo guardado en ese mismo orden">Ordenar el catálogo</button>`;
+
+  const vis=db.insumos.map((i,ix)=>({i,ix}))
+    .filter(o=>!filtro||((o.i.cat||'').trim()||SIN_CAT)===filtro);
+
+  const fila=o=>{const i=o.i,ix=o.ix,r=resolveRef(i.id);return `<tr data-id="${i.id}">
+      <td><input value="${esc(i.clave)}" oninput="upIns('${i.id}','clave',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="MAT-00"></td>
+      <td><input value="${esc(i.desc)}" oninput="upIns('${i.id}','desc',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="Descripción del insumo"></td>
+      <td class="int"><input value="${esc(i.cat||'')}" list="catList" placeholder="—" oninput="upIns('${i.id}','cat',this.value)" onchange="renderInsumos()"></td>
+      <td>${unidSel(i.unidad,`upIns('${i.id}','unidad',this.value)`)}</td>
+      <td class="mid"><select onchange="upIns('${i.id}','tipo',this.value)">
+        ${db.tipos.filter(t=>!['aux','cuad'].includes(t.k)).map(t=>`<option value="${t.k}" ${i.tipo===t.k?'selected':''}>${esc(t.tag)}</option>`).join('')}</select></td>
+      <td>${i.tipo==='pct'?`<div class="ro" style="text-align:right">auto</div>`
+        :`<input class="n" value="${i.costo}" inputmode="decimal" oninput="upIns('${i.id}','costo',this.value,1)" onchange="upIns('${i.id}','costo',this.value)">`}</td>
+      <td>${i.tipo==='mo'?`<input class="n" value="${i.fsr}" inputmode="decimal" placeholder="1.72" oninput="upIns('${i.id}','fsr',this.value,1)" onchange="upIns('${i.id}','fsr',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
+      <td><div class="ro b" style="text-align:right">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</div></td>
+      <td><input value="${esc(i.fuente)}" oninput="upIns('${i.id}','fuente',this.value)" placeholder="Cotización, fecha"></td>
+      <td class="act">${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
+    </tr>`;};
+
+  let body='';
+  if(modo==='tipo'){
+    /* el orden de los subtítulos es el de los tipos: materiales, mano de
+       obra, equipo, cargos porcentuales. Dentro, alfabético por clave. */
+    db.tipos.filter(t=>!['aux','cuad'].includes(t.k)).forEach(t=>{
+      const rows=vis.filter(o=>o.i.tipo===t.k).sort(porClave);
+      if(!rows.length)return;
+      body+=`<tr class="grp"><td colspan="10">${esc(t.label)} · ${rows.length}</td></tr>`+rows.map(fila).join('');
+    });
+    const otros=vis.filter(o=>!db.tipos.some(t=>t.k===o.i.tipo)).sort(porClave);
+    if(otros.length)body+=`<tr class="grp"><td colspan="10">Sin tipo · ${otros.length}</td></tr>`+otros.map(fila).join('');
+  }else if(modo==='cat'){
+    const grupos=[...new Set(vis.map(o=>(o.i.cat||'').trim()||SIN_CAT))]
+      .sort((a,b)=>a===SIN_CAT?1:b===SIN_CAT?-1:a.localeCompare(b,'es'));
+    grupos.forEach(g=>{
+      const rows=vis.filter(o=>((o.i.cat||'').trim()||SIN_CAT)===g).sort(porClave);
+      body+=`<tr class="grp"><td colspan="10">${esc(g)} · ${rows.length}</td></tr>`+rows.map(fila).join('');
+    });
+  }else body=vis.slice().sort(porClave).map(fila).join('');
+
   document.getElementById('tInsumos').innerHTML=
   `<thead><tr>
     <th style="width:76px">${eh('iClave')}</th><th>${eh('iDesc')}</th>
+    <th style="width:132px" class="int">${eh('iCat')}</th>
     <th style="width:58px" class="mid">${eh('iUnidad')}</th><th style="width:86px" class="mid">${eh('iTipo')}</th>
     <th style="width:88px" class="num">${eh('iCosto')}</th><th style="width:62px" class="num">${eh('iFsr')}</th>
-    <th style="width:88px" class="num">${eh('iReal')}</th><th style="width:145px">${eh('iFuente')}</th><th class="act"></th>
-  </tr></thead><tbody>${
-    db.insumos.map((i,ix)=>{const o=resolveRef(i.id);return `<tr>
-      <td><input value="${esc(i.clave)}" oninput="upIns('${i.id}','clave',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="MAT-00"></td>
-      <td><input value="${esc(i.desc)}" oninput="upIns('${i.id}','desc',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="Descripción del insumo"></td>
-      <td>${unidSel(i.unidad,`upIns('${i.id}','unidad',this.value)`)}</td>
-      <td class="mid"><select onchange="upIns('${i.id}','tipo',this.value)">
-        ${db.tipos.filter(t=>t.k!=='aux').map(t=>`<option value="${t.k}" ${i.tipo===t.k?'selected':''}>${esc(t.tag)}</option>`).join('')}</select></td>
-      <td>${i.tipo==='pct'?`<div class="ro" style="text-align:right">auto</div>`
-        :`<input class="n" value="${i.costo}" inputmode="decimal" oninput="upIns('${i.id}','costo',this.value)">`}</td>
-      <td>${i.tipo==='mo'?`<input class="n" value="${i.fsr}" inputmode="decimal" placeholder="1.72" oninput="upIns('${i.id}','fsr',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
-      <td><div class="ro b" style="text-align:right">${i.tipo==='pct'?'—':dec(o?o.costo:0)}</div></td>
-      <td><input value="${esc(i.fuente)}" oninput="upIns('${i.id}','fuente',this.value)" placeholder="Cotización, fecha"></td>
-      <td class="act">${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
-    </tr>`;}).join('')
-  }</tbody>`;
-  document.getElementById('insCount').textContent=db.insumos.length+' insumos';
+    <th style="width:88px" class="num">${eh('iReal')}</th><th style="width:132px">${eh('iFuente')}</th><th class="act"></th>
+  </tr></thead><tbody>${body||`<tr><td colspan="10"><div class="empty">Nada en esta categoría.</div></td></tr>`}</tbody>
+  <datalist id="catList">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}</datalist>`;
+
+  document.getElementById('insCount').textContent=
+    (filtro?vis.length+' de '+db.insumos.length:db.insumos.length+' insumos')+
+    (cats.length?' · '+cats.length+' categorías':'');
 }
-function upIns(id,k,v){
+/* Carga el tabulador completo sin tocar lo que ya está capturado:
+   salta las claves que ya existen y agrega el personal de indirectos
+   al desglose, con su importe mensual = salario real × 30 días. */
+function cargarSalarios(){
+  let nuevos=0,rubros=0;
+  CAT_SALARIOS.forEach(([clave,desc,tab,fsr,esInd])=>{
+    if(db.insumos.some(i=>i.clave===clave))return;
+    db.insumos.push({id:uid(),clave,desc,unidad:'JOR',tipo:'mo',costo:tab,fsr,
+                     cat:esInd?CAT_IND:CAT_MO,fuente:'Tabulador de salarios'});
+    nuevos++;
+    if(esInd&&!db.indirectos.rubros.some(r=>norm(r.desc)===norm(desc))){
+      db.indirectos.rubros.push({id:uid(),grupo:RUBROS_GRUPOS[0],desc,mensual:0,
+        admin:desc==='Residente de obra'?'obra':'central'});
+      rubros++;
+    }
+  });
+  save();renderInsumos();renderIndirectos();recalc();
+  alert(nuevos?`Se agregaron ${nuevos} categorías al catálogo`+(rubros?` y ${rubros} renglones al desglose de indirectos.`:'.')
+              :'Todas las categorías del tabulador ya estaban en el catálogo.');
+}
+function setFiltroCat(v){db.ui.filtroCat=v;save();renderInsumos();}
+function setAgrupa(v){db.ui.agrupaIns=v;save();renderInsumos();}
+/* Deja el catálogo guardado en el mismo orden en que se ve agrupado por
+   tipo. Sirve para que las flechas de subir y bajar, y la impresión,
+   coincidan con lo que ves. */
+function ordenarInsumos(){
+  if(!confirm('Se reacomoda el catálogo por tipo y, dentro de cada tipo, por clave. No cambia ningún número. ¿Continuar?'))return;
+  const orden=db.tipos.map(t=>t.k);
+  db.insumos.sort((a,b)=>{
+    const ta=orden.indexOf(a.tipo),tb=orden.indexOf(b.tipo);
+    if(ta!==tb)return (ta<0?99:ta)-(tb<0?99:tb);
+    return String(a.clave||'').localeCompare(String(b.clave||''),'es',{numeric:true,sensitivity:'base'});
+  });
+  save();renderInsumos();flash('Catálogo ordenado');
+}
+/* vivo = estás escribiendo: se guarda el valor pero no se redibuja la
+   tabla, porque redibujarla te saca del campo y te borra los decimales.
+   El redibujo pasa al salir del campo (onchange). */
+function upIns(id,k,v,vivo){
   const i=db.insumos.find(x=>x.id===id);if(!i)return;
   i[k]=(k==='costo'||k==='fsr')?(v===''?'':N(v)):v;save();
-  if(['costo','fsr','tipo'].includes(k)){renderInsumos();renderAux();recalc();}
+  if(vivo)return;
+  if(['costo','fsr','tipo'].includes(k)){renderInsumos();renderCuad();renderAux();recalc();}
 }
-function addInsumo(){db.insumos.push({id:uid(),clave:'',desc:'',unidad:db.unidades[0],tipo:'mat',costo:0,fsr:'',fuente:''});
-  save();renderInsumos();const n=document.querySelectorAll('#tInsumos tbody tr:last-child input');if(n[0])n[0].focus();}
+function addInsumo(){
+  /* hereda la categoría del filtro activo, o la del último insumo capturado */
+  const f=db.ui.filtroCat;
+  const cat=(f&&f!==SIN_CAT)?f:((db.insumos[db.insumos.length-1]||{}).cat||'');
+  const nuevo={id:uid(),clave:'',desc:'',cat,unidad:db.unidades[0],tipo:'mat',costo:0,fsr:'',fuente:''};
+  db.insumos.push(nuevo);save();renderInsumos();
+  const n=document.querySelector(`#tInsumos tr[data-id="${nuevo.id}"] input`);if(n)n.focus();}
 function dupIns(ix){db.insumos.splice(ix+1,0,{...db.insumos[ix],id:uid()});save();renderInsumos();}
 function movIns(ix,d){move(db.insumos,ix,d);save();renderInsumos();}
 function delIns(id){
-  const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id))||db.auxiliares.some(a=>(a.comp||[]).some(x=>x.ref===id));
-  if(uso&&!confirm('Este insumo se usa en alguna matriz o auxiliar. ¿Eliminarlo de todas formas?'))return;
+  const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id))
+    ||db.auxiliares.some(a=>(a.comp||[]).some(x=>x.ref===id))
+    ||(db.cuadrillas||[]).some(a=>(a.comp||[]).some(x=>x.ref===id));
+  if(uso&&!confirm('Este insumo se usa en alguna matriz, cuadrilla o básico. ¿Eliminarlo de todas formas?'))return;
   db.insumos=db.insumos.filter(i=>i.id!==id);
   Object.keys(db.matrices).forEach(k=>db.matrices[k]=db.matrices[k].filter(r=>r.ref!==id));
   db.auxiliares.forEach(a=>a.comp=(a.comp||[]).filter(r=>r.ref!==id));
-  save();renderInsumos();renderAux();recalc();
+  (db.cuadrillas||[]).forEach(a=>a.comp=(a.comp||[]).filter(r=>r.ref!==id));
+  save();renderInsumos();renderCuad();renderAux();recalc();
 }
-function refOptions(sel,excludeAux){
-  const gI=db.insumos.map(i=>`<option value="${i.id}" ${i.id===sel?'selected':''}>${esc(i.clave)} · ${esc(i.desc)}</option>`).join('');
-  const gA=db.auxiliares.filter(a=>a.id!==excludeAux).map(a=>`<option value="${a.id}" ${a.id===sel?'selected':''}>${esc(a.clave)} · ${esc(a.desc)}</option>`).join('');
-  return `<optgroup label="Insumos">${gI}</optgroup>${gA?`<optgroup label="Auxiliares">${gA}</optgroup>`:''}`;
+/* modo 'soloInsumos' se usa dentro de la cuadrilla: una cuadrilla se
+   integra con categorías y cargos porcentuales, no con básicos. */
+/* Las listas salen agrupadas por tipo — materiales, mano de obra, equipo,
+   cargos, cuadrillas, básicos — y dentro de cada grupo, por clave. */
+const ordClave=(a,b)=>String(a.clave||'').localeCompare(String(b.clave||''),'es',{numeric:true,sensitivity:'base'});
+function refOptions(sel,excluir,modo){
+  const op=x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.clave)} · ${esc(x.desc)}</option>`;
+  const grupo=(lbl,arr)=>arr.length?`<optgroup label="${esc(lbl)}">${arr.slice().sort(ordClave).map(op).join('')}</optgroup>`:'';
+  let gI='';
+  db.tipos.filter(t=>!['aux','cuad'].includes(t.k)).forEach(t=>{gI+=grupo(t.label,db.insumos.filter(i=>i.tipo===t.k));});
+  gI+=grupo('Sin tipo',db.insumos.filter(i=>!db.tipos.some(t=>t.k===i.tipo)));
+  if(modo==='soloInsumos')return gI;
+  return gI+grupo(tipoLabel('cuad'),(db.cuadrillas||[]).filter(a=>a.id!==excluir))
+           +grupo(tipoLabel('aux'),db.auxiliares.filter(a=>a.id!==excluir));
 }
 function fillAuxSel(){
   const s=document.getElementById('selAux'),v=s.value;
@@ -793,9 +1261,29 @@ function fillAuxSel(){
 function renderAux(){
   const box=document.getElementById('auxBody');
   const a=db.auxiliares.find(x=>x.id===document.getElementById('selAux').value);
-  if(!a){box.innerHTML='<div class="empty"><b>Sin auxiliares</b>Los básicos como mortero o concreto hecho en obra se capturan una vez y se reusan.</div>';return;}
+  if(!a){box.innerHTML='<div class="empty"><b>Sin básicos</b>El mortero, el concreto hecho en obra o la cimbra se analizan una vez aquí y se reusan en todas las matrices.</div>';return;}
   a.comp=a.comp||[];
   const m=calcRows(a.comp);
+  /* El básico se despliega igual que una matriz — agrupado por tipo y con
+     subtotal por bloque — porque eso es: un análisis de precio unitario,
+     nada más que de un material compuesto en vez de un concepto de obra. */
+  let cuerpo='';
+  db.tipos.forEach(t=>{
+    const g=m.det.filter(d=>grupoMat(d.o.tipo)===t.k);if(!g.length)return;
+    cuerpo+=`<tr class="grp"><td colspan="7">${esc(t.label)}</td></tr>`;
+    cuerpo+=g.map(d=>{const ix=a.comp.indexOf(d.row),esPct=d.o.tipo==='pct',salta=['aux','cuad'].includes(d.o.tipo);
+      return `<tr>
+      <td><span class="tag ${d.o.tipo}" style="margin-left:7px${salta?';cursor:pointer':''}"
+        ${salta?`onclick="irAnalisis('${d.o.tipo}','${d.o.id}')" title="Ver su análisis"`:''}>${esc(d.o.clave)}</span></td>
+      <td><select onchange="upAuxRow('${a.id}','${d.row.id}','ref',this.value)">${refOptions(d.row.ref,a.id)}</select></td>
+      <td class="mid"><div class="ro" style="text-align:center">${esc(esPct?'% M.O.':d.o.unidad)}</div></td>
+      <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upAuxRow('${a.id}','${d.row.id}','cant',this.value,1)" onchange="upAuxRow('${a.id}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addAuxRow('${a.id}')`)}"></td>
+      <td><div class="ro" style="text-align:right">${esPct?dec(m.mo):dec(d.o.costo)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
+      <td class="act">${rowBtns(`movAuxRow('${a.id}',${ix},-1)`,`movAuxRow('${a.id}',${ix},1)`,`dupAuxRow('${a.id}',${ix})`,`delAuxRow('${a.id}','${d.row.id}')`)}</td>
+    </tr>`;}).join('');
+    cuerpo+=`<tr class="sub"><td colspan="5">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((x,d)=>x+d.imp,0))}</td><td></td></tr>`;
+  });
   box.innerHTML=`
   <div style="padding:12px 15px 4px" class="f-grid">
     <div class="f"><label>Clave</label><input class="f-in" value="${esc(a.clave)}" oninput="upAux('${a.id}','clave',this.value)"></div>
@@ -806,38 +1294,234 @@ function renderAux(){
     <thead><tr><th style="width:74px">Clave</th><th>Componente</th><th style="width:54px" class="mid">Unidad</th>
       <th style="width:86px" class="num">Cantidad</th><th style="width:88px" class="num">Costo</th>
       <th style="width:96px" class="num">Importe</th><th class="act"></th></tr></thead>
-    <tbody>${a.comp.map((r,ix)=>{const o=resolveRef(r.ref);const d=m.det.find(x=>x.row.id===r.id);return `<tr>
-      <td><span class="tag ${o?o.tipo:''}" style="margin-left:7px">${esc(o?o.clave:'?')}</span></td>
-      <td><select onchange="upAuxRow('${a.id}','${r.id}','ref',this.value)">${refOptions(r.ref,a.id)}</select></td>
-      <td class="mid"><div class="ro" style="text-align:center">${esc(o?o.unidad:'')}</div></td>
-      <td><input class="n" value="${r.cant}" inputmode="decimal" oninput="upAuxRow('${a.id}','${r.id}','cant',this.value)" onkeydown="${enterAdd(`addAuxRow('${a.id}')`)}"></td>
-      <td><div class="ro" style="text-align:right">${o&&o.tipo==='pct'?'—':dec(o?o.costo:0)}</div></td>
-      <td><div class="ro b" style="text-align:right">${dec(d?d.imp:0)}</div></td>
-      <td class="act">${rowBtns(`movAuxRow('${a.id}',${ix},-1)`,`movAuxRow('${a.id}',${ix},1)`,`dupAuxRow('${a.id}',${ix})`,`delAuxRow('${a.id}','${r.id}')`)}</td>
-    </tr>`;}).join('')||`<tr><td colspan="7"><div class="empty">Sin componentes.</div></td></tr>`}
-      <tr class="tot"><td colspan="5">Costo por ${esc(a.unidad)}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
+    <tbody>${cuerpo||`<tr><td colspan="7"><div class="empty">Sin componentes.</div></td></tr>`}
+      <tr class="tot"><td colspan="5">Costo unitario del básico · por ${esc(a.unidad)}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
     </tbody></table></div>
   <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
     <button class="btn ghost" onclick="addAuxRow('${a.id}')">+ Agregar componente</button>
-    <button class="btn mini" onclick="delAuxiliar('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar auxiliar</button>
-  </div>`;
+    <button class="btn mini" onclick="delAuxiliar('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar básico</button>
+  </div>
+  <div style="padding:0 15px 13px;font-size:10.5px;color:var(--soft);max-width:78ch">Este importe por ${esc(a.unidad)} es <b>costo directo</b>: entra tal cual a la matriz de cualquier concepto que lo use, multiplicado por la cantidad que le toque. Los indirectos y la utilidad no se cargan aquí — se aplican una sola vez, al final, sobre el costo directo del concepto.</div>`;
 }
 function upAux(id,k,v){const a=db.auxiliares.find(x=>x.id===id);if(!a)return;a[k]=v;save();fillAuxSel();recalc();}
-function upAuxRow(aid,rid,k,v){const a=db.auxiliares.find(x=>x.id===aid);const r=a.comp.find(x=>x.id===rid);if(!r)return;
-  r[k]=(k==='cant')?N(v):v;save();renderAux();recalc();}
+function upAuxRow(aid,rid,k,v,vivo){const a=db.auxiliares.find(x=>x.id===aid);const r=a.comp.find(x=>x.id===rid);if(!r)return;
+  r[k]=(k==='cant')?N(v):v;save();if(vivo)return;renderAux();recalc();}
+
 function addAuxRow(aid){const a=db.auxiliares.find(x=>x.id===aid);if(!db.insumos.length)return;
   a.comp.push({id:uid(),ref:db.insumos[0].id,cant:0});save();renderAux();recalc();}
 function dupAuxRow(aid,ix){const a=db.auxiliares.find(x=>x.id===aid);a.comp.splice(ix+1,0,{...a.comp[ix],id:uid()});save();renderAux();recalc();}
 function movAuxRow(aid,ix,d){const a=db.auxiliares.find(x=>x.id===aid);move(a.comp,ix,d);save();renderAux();}
 function delAuxRow(aid,rid){const a=db.auxiliares.find(x=>x.id===aid);a.comp=a.comp.filter(r=>r.id!==rid);save();renderAux();recalc();}
-function addAuxiliar(){const a={id:uid(),clave:'AUX-'+String(db.auxiliares.length+1).padStart(2,'0'),desc:'',unidad:'M3',comp:[]};
+function addAuxiliar(){const a={id:uid(),clave:'B-'+String(db.auxiliares.length+1).padStart(2,'0'),desc:'',unidad:'M3',comp:[]};
   db.auxiliares.push(a);save();fillAuxSel();document.getElementById('selAux').value=a.id;renderAux();}
 function delAuxiliar(id){
   const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id));
-  if(uso&&!confirm('Este auxiliar se usa en alguna matriz. ¿Eliminarlo?'))return;
+  if(uso&&!confirm('Este básico se usa en alguna matriz. ¿Eliminarlo?'))return;
   db.auxiliares=db.auxiliares.filter(a=>a.id!==id);
   Object.keys(db.matrices).forEach(k=>db.matrices[k]=db.matrices[k].filter(r=>r.ref!==id));
   save();fillAuxSel();renderAux();recalc();
+}
+
+/* ==================================================================
+   5b. CUADRILLAS
+   Una cuadrilla es un análisis de mano de obra: las categorías que
+   trabajan juntas, cada una con cantidad 1.0, y encima los cargos
+   porcentuales sobre el subtotal de mano de obra — herramienta menor
+   3% y equipo de seguridad 2%. El resultado es un costo por jornada y
+   en la matriz aparece en un solo renglón, con su rendimiento.
+   ================================================================== */
+/* Un clic en la clave de un básico o de una cuadrilla abre su análisis,
+   para poder bajar y subir la cadena sin perder de vista dónde ibas. */
+function irAnalisis(tipo,id){
+  go('insumos');
+  const sel=document.getElementById(tipo==='cuad'?'selCuad':'selAux');
+  if(!sel)return;
+  sel.value=id;
+  if(tipo==='cuad')renderCuad();else renderAux();
+  setTimeout(()=>{const p=sel.closest('.panel');if(p)p.scrollIntoView({behavior:'smooth',block:'start'});},60);
+}
+function fillCuadSel(){
+  const s=document.getElementById('selCuad');if(!s)return;
+  const v=s.value;
+  s.innerHTML=(db.cuadrillas||[]).map(a=>`<option value="${a.id}">${esc(a.clave)} — ${esc(a.desc).slice(0,50)}</option>`).join('');
+  if((db.cuadrillas||[]).some(a=>a.id===v))s.value=v;
+}
+function renderCuad(){
+  const box=document.getElementById('cuadBody');if(!box)return;
+  const a=(db.cuadrillas||[]).find(x=>x.id===document.getElementById('selCuad').value);
+  if(!a){box.innerHTML='<div class="empty"><b>Sin cuadrillas</b>La cuadrilla junta oficial y ayudante con su herramienta menor y su equipo de seguridad, y en la matriz entra en un solo renglón.</div>';return;}
+  a.comp=a.comp||[];
+  const m=calcRows(a.comp);
+  let cuerpo='',subPuesto=false;
+  m.det.forEach(d=>{
+    if(d.o.tipo==='pct'&&!subPuesto){
+      cuerpo+=`<tr class="sub"><td colspan="5">Subtotal mano de obra</td><td class="num mono">${dec(m.mo)}</td><td></td></tr>`;
+      subPuesto=true;
+    }
+    const ix=a.comp.indexOf(d.row),esPct=d.o.tipo==='pct';
+    cuerpo+=`<tr>
+      <td><span class="tag ${d.o.tipo}" style="margin-left:7px">${esc(d.o.clave)}</span></td>
+      <td><select onchange="upCuadRow('${a.id}','${d.row.id}','ref',this.value)">${refOptions(d.row.ref,a.id,'soloInsumos')}</select></td>
+      <td class="mid"><div class="ro" style="text-align:center">${esc(esPct?'% M.O.':d.o.unidad)}</div></td>
+      <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upCuadRow('${a.id}','${d.row.id}','cant',this.value,1)" onchange="upCuadRow('${a.id}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addCuadRow('${a.id}')`)}"></td>
+      <td><div class="ro" style="text-align:right">${esPct?dec(m.mo):dec(d.o.costo)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
+      <td class="act">${rowBtns(`movCuadRow('${a.id}',${ix},-1)`,`movCuadRow('${a.id}',${ix},1)`,`dupCuadRow('${a.id}',${ix})`,`delCuadRow('${a.id}','${d.row.id}')`)}</td>
+    </tr>`;
+  });
+  box.innerHTML=`
+  <div style="padding:12px 15px 4px" class="f-grid">
+    <div class="f"><label>Clave</label><input class="f-in" value="${esc(a.clave)}" oninput="upCuad('${a.id}','clave',this.value)"></div>
+    <div class="f"><label>Unidad</label><input class="f-in" value="${esc(a.unidad)}" oninput="upCuad('${a.id}','unidad',this.value)"></div>
+    <div class="f wide"><label>Descripción</label><input class="f-in" value="${esc(a.desc)}" oninput="upCuad('${a.id}','desc',this.value)"></div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:74px">Clave</th><th>Categoría o cargo</th><th style="width:58px" class="mid">Unidad</th>
+      <th style="width:86px" class="num">Cantidad</th><th style="width:88px" class="num">Costo</th>
+      <th style="width:96px" class="num">Importe</th><th class="act"></th></tr></thead>
+    <tbody>${cuerpo||`<tr><td colspan="7"><div class="empty">Sin integrantes.</div></td></tr>`}
+      <tr class="tot"><td colspan="5">Costo por ${esc(a.unidad||'jornada')}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
+    </tbody></table></div>
+  <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
+    <button class="btn ghost" onclick="addCuadRow('${a.id}')">+ Agregar integrante · Enter también</button>
+    <button class="btn mini" onclick="delCuadrilla('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar cuadrilla</button>
+  </div>
+  <div style="padding:0 15px 13px;font-size:10.5px;color:var(--soft)">Los cargos porcentuales se capturan en número: 3 son 3% del subtotal de mano de obra. Si esta cuadrilla ya trae herramienta menor, la matriz que la use no debe cargarla otra vez.</div>`;
+}
+function upCuad(id,k,v){const a=(db.cuadrillas||[]).find(x=>x.id===id);if(!a)return;a[k]=v;save();fillCuadSel();recalc();}
+function upCuadRow(aid,rid,k,v,vivo){const a=(db.cuadrillas||[]).find(x=>x.id===aid);const r=a.comp.find(x=>x.id===rid);if(!r)return;
+  r[k]=(k==='cant')?N(v):v;save();if(vivo)return;renderCuad();renderMatriz();recalc();}
+
+function addCuadRow(aid){const a=(db.cuadrillas||[]).find(x=>x.id===aid);if(!db.insumos.length)return;
+  const mo=db.insumos.find(i=>i.tipo==='mo')||db.insumos[0];
+  a.comp.push({id:uid(),ref:mo.id,cant:1});save();renderCuad();renderMatriz();recalc();}
+function dupCuadRow(aid,ix){const a=(db.cuadrillas||[]).find(x=>x.id===aid);a.comp.splice(ix+1,0,{...a.comp[ix],id:uid()});save();renderCuad();recalc();}
+function movCuadRow(aid,ix,d){const a=(db.cuadrillas||[]).find(x=>x.id===aid);move(a.comp,ix,d);save();renderCuad();}
+function delCuadRow(aid,rid){const a=(db.cuadrillas||[]).find(x=>x.id===aid);a.comp=a.comp.filter(r=>r.id!==rid);save();renderCuad();renderMatriz();recalc();}
+/* La cuadrilla nueva nace ya con sus dos cargos porcentuales, que es
+   como siempre van, para no tener que acordarse cada vez. */
+function addCuadrilla(){
+  db.cuadrillas=db.cuadrillas||[];
+  const comp=[];
+  ['HM-01','EQS-01'].forEach((c,ix)=>{const i=db.insumos.find(x=>x.clave===c&&x.tipo==='pct');
+    if(i)comp.push({id:uid(),ref:i.id,cant:ix?2:3});});
+  const a={id:uid(),clave:'C'+String(db.cuadrillas.length+1).padStart(2,'0'),desc:'',unidad:'JOR',comp};
+  db.cuadrillas.push(a);save();fillCuadSel();document.getElementById('selCuad').value=a.id;renderCuad();
+}
+function delCuadrilla(id){
+  const uso=Object.values(db.matrices).some(r=>r.some(x=>x.ref===id))
+    ||db.auxiliares.some(a=>(a.comp||[]).some(x=>x.ref===id));
+  if(uso&&!confirm('Esta cuadrilla se usa en alguna matriz o básico. ¿Eliminarla?'))return;
+  db.cuadrillas=(db.cuadrillas||[]).filter(a=>a.id!==id);
+  Object.keys(db.matrices).forEach(k=>db.matrices[k]=db.matrices[k].filter(r=>r.ref!==id));
+  db.auxiliares.forEach(a=>a.comp=(a.comp||[]).filter(r=>r.ref!==id));
+  save();fillCuadSel();renderCuad();renderAux();renderMatriz();recalc();
+}
+
+/* ==================================================================
+   5c. SIEMBRA DEL FORMATO DEL SEMESTRE PASADO
+   Todo sale del Excel de Precios Unitarios. No borra nada: actualiza
+   por clave los insumos que ya existen con la unidad y el precio del
+   Excel, y solo agrega las cuadrillas y los básicos que falten.
+   ================================================================== */
+/* clave, descripción, unidad, tipo, costo, categoría, conversión */
+const EX_INSUMOS=[
+  ['MAT-01','Cemento gris','TON','mat',4137.93,'Cementantes y agregados',{de:'SAC',f:1/20}],
+  ['MAT-02','Arena de río gris','M3','mat',469.83,'Cementantes y agregados',null],
+  ['MAT-03','Grava de 3/4" triturada','M3','mat',560.34,'Cementantes y agregados',null],
+  ['MAT-04','Agua suministrada en pipa','M3','mat',140.52,'Cementantes y agregados',null],
+  ['MAT-06','Alambre recocido cal. 18','KG','mat',25.86,'Acero',null],
+  ['MAT-07','Tablón de pino para cimbra de 15.2 × 2.33 × 2.44','PT','mat',34.48,'Cimbra y madera',null],
+  ['MAT-08','Clavo 2 1/2" x 4"','KG','mat',36.34,'Cimbra y madera',null],
+  ['MAT-09','Diesel desmoldante','LT','mat',22.49,'Cimbra y madera',null],
+  ['MAT-11','Tabla de pino 4.15 × 1.95 × 2.44','PT','mat',30.17,'Cimbra y madera',null],
+  ['MAT-12','Pegapiso y mármol mca. Perdura de 20 kg','KG','mat',189.66,'Adhesivos y acabados',null],
+  ['HM-01','Herramienta menor','%','pct',0,'Cargos porcentuales',null],
+  ['EQS-01','Equipo de seguridad','%','pct',0,'Cargos porcentuales',null],
+  ['REVOLVEDORA','Revolvedora para un saco, marca Joper, motor de gasolina, modelo R100','HR','eq',704.14,'Equipo con costo horario',null],
+  ['VIBRADOR','Vibrador Surtek mod. VCG765, con chicote de 6 m × 38 mm','HR','eq',534.43,'Equipo con costo horario',null],
+  ['RETROEX','Retroexcavadora marca Sany modelo SY215C, incluye operador','HR','eq',1175.79,'Equipo con costo horario',null],
+  ['COMPACTADOR','Compactador vibratorio tipo bailarina, incluye operador','HR','eq',395.68,'Equipo con costo horario',null]
+];
+/* clave, descripción, categorías integrantes (cantidad 1.0 cada una) */
+const EX_CUADRILLAS=[
+  ['C01-OA','Cuadrilla integrada por oficial albañil (O.A.) y ayudante albañil (A.A.), incluye herramienta menor y equipo de seguridad.',['MO-01','MO-02']],
+  ['C02-OR','Cuadrilla integrada por operador de revolvedora (O.R.) y un peón (P.), incluye herramienta menor y equipo de seguridad.',['MO-04','MO-03']],
+  ['C04-OL','Cuadrilla integrada por oficial de limpieza (O.L.) y ayudante de limpieza (A.L.), incluye herramienta menor y equipo de seguridad.',['MO-11','MO-12']],
+  ['C01-OP','Cuadrilla integrada por oficial plomero (O.P.) y ayudante plomero (A.P.), incluye herramienta menor y equipo de seguridad.',['MO-05','MO-06']],
+  ['C01-OH','Cuadrilla integrada por oficial herrero (O.H.) y ayudante herrero (A.H.), incluye herramienta menor y equipo de seguridad.',['MO-07','MO-08']]
+];
+/* clave, descripción, unidad, composición por unidad */
+const EX_BASICOS=[
+  ['M1:3','Mortero cemento gris, arena de río, proporción 1:3, elaborado con revolvedora','M3',
+    [['MAT-01',0.4539],['MAT-02',1.1016],['MAT-04',0.2499],['REVOLVEDORA',1.283]]],
+  ['C100','Concreto de f\'c=100 kg/cm² hecho en obra, tamaño máximo de agregado 3/4", incluye equipo y operación, elaborado en revolvedora','M3',
+    [['MAT-01',0.3264],['MAT-02',0.53856],['MAT-03',0.64668],['MAT-04',0.21828],['REVOLVEDORA',1.283]]],
+  ['C150','Concreto de f\'c=150 kg/cm² hecho en obra, tamaño máximo de agregado 3/4", incluye equipo y operación, elaborado en revolvedora','M3',
+    [['MAT-01',0.4539],['MAT-02',1.1016],['MAT-03',0.78744],['MAT-04',0.2499],['REVOLVEDORA',1.283]]],
+  ['C200','Concreto de f\'c=200 kg/cm² hecho en obra, tamaño máximo de agregado 3/4", de 2.5 a 5 cm de revenimiento, incluye equipo y operación, elaborado en revolvedora','M3',
+    [['MAT-01',0.31926],['MAT-02',0.42126],['MAT-03',0.84354],['MAT-04',0.21318],['REVOLVEDORA',1.283]]],
+  ['C250','Concreto de f\'c=250 kg/cm² hecho en obra, tamaño máximo de agregado 3/4", de 2.5 a 5 cm de revenimiento, incluye equipo y operación, elaborado en revolvedora','M3',
+    [['MAT-01',0.4896],['MAT-02',0.4845],['MAT-03',0.6426],['MAT-04',0.22032],['REVOLVEDORA',1.283]]],
+  ['CIMBRA','Cimbra común para cadenas y castillos a base de madera de pino de segunda mano','M2',
+    [['MAT-07',2.165848],['MAT-11',0.035461],['MAT-09',1],['MAT-08',0.245499],['MAT-06',0.150027]]],
+  ['FINO','Mezcla de cemento y arena, aplanado fino, incluye equipo y operación, elaborado en revolvedora','M3',
+    [['MAT-01',0.4539],['MAT-02',0.11016],['MAT-04',0.2499],['REVOLVEDORA',1.283]]],
+  ['AD-PISO','Adhesivo pegapiso y mármol de 10 kg marca Perdura','KG',
+    [['MAT-12',0.51],['MAT-04',0.00204]]]
+];
+function sembrarExcel(){
+  if(!confirm('Se actualizan los insumos que ya existen con la unidad y el precio del Excel, y se agregan las cuadrillas y los básicos que falten.\n\nNada se borra. ¿Continuar?'))return;
+  const byClave=c=>db.insumos.find(i=>i.clave===c);
+  /* EQ-02 era la herramienta menor: se le pone la clave del Excel para no
+     acabar con dos renglones de lo mismo. Las cantidades no cambian, porque
+     un cargo porcentual lleva su % en la cantidad. */
+  const eq2=byClave('EQ-02');
+  if(eq2&&eq2.tipo==='pct'&&!byClave('HM-01'))eq2.clave='HM-01';
+
+  let nvo=0,act=0,conv=0;
+  EX_INSUMOS.forEach(([clave,desc,unidad,tipo,costo,cat,cv])=>{
+    const i=byClave(clave);
+    if(!i){db.insumos.push({id:uid(),clave,desc,unidad,tipo,costo,fsr:'',cat,fuente:'Excel Precios Unitarios'});nvo++;return;}
+    /* si la unidad cambia — el cemento pasa de saco a tonelada — se
+       convierten las cantidades ya capturadas, para que ninguna matriz
+       cambie de número nada más por el cambio de unidad */
+    if(cv&&i.unidad===cv.de&&unidad!==cv.de){
+      const tocar=rows=>(rows||[]).forEach(r=>{if(r.ref===i.id&&N(r.cant)){r.cant=+(N(r.cant)*cv.f).toFixed(6);conv++;}});
+      Object.values(db.matrices).forEach(tocar);
+      db.auxiliares.forEach(a=>tocar(a.comp));
+      (db.cuadrillas||[]).forEach(a=>tocar(a.comp));
+    }
+    i.desc=desc;i.unidad=unidad;i.tipo=tipo;i.costo=costo;i.cat=cat;i.fuente='Excel Precios Unitarios';act++;
+  });
+
+  const ref=c=>{const i=byClave(c);return i?i.id:null;};
+  db.cuadrillas=db.cuadrillas||[];
+  let cu=0,faltan=[];
+  EX_CUADRILLAS.forEach(([clave,desc,cats])=>{
+    if(db.cuadrillas.some(q=>q.clave===clave))return;
+    const comp=[];
+    cats.forEach(c=>{const id=ref(c);if(id)comp.push({id:uid(),ref:id,cant:1});else faltan.push(c);});
+    [['HM-01',3],['EQS-01',2]].forEach(([c,p])=>{const id=ref(c);if(id)comp.push({id:uid(),ref:id,cant:p});});
+    db.cuadrillas.push({id:uid(),clave,desc,unidad:'JOR',comp});cu++;
+  });
+
+  let ba=0;
+  EX_BASICOS.forEach(([clave,desc,unidad,comps])=>{
+    if(db.auxiliares.some(a=>a.clave===clave))return;
+    const comp=[];
+    comps.forEach(([c,q])=>{const id=ref(c);if(id)comp.push({id:uid(),ref:id,cant:q});else faltan.push(c);});
+    db.auxiliares.push({id:uid(),clave,desc,unidad,comp});ba++;
+  });
+
+  save();renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();renderMatriz();recalc();
+  alert(['Del Excel del semestre pasado:',
+    '· '+nvo+' insumos nuevos y '+act+' actualizados con su unidad y su precio',
+    '· '+cu+' cuadrillas',
+    '· '+ba+' básicos',
+    conv?'· '+conv+' cantidades convertidas de saco a tonelada, para que ninguna matriz cambie de número':'',
+    faltan.length?'\nFaltó en el catálogo: '+[...new Set(faltan)].join(', ')+'. Carga el tabulador de salarios y vuelve a sembrar.':''
+  ].filter(Boolean).join('\n'));
 }
 
 /* ==================================================================
@@ -933,35 +1617,166 @@ function renderGen(){
   const rows=db.generadores[cid],cols=db.genCols;
   const sum=rows.filter(r=>!r.ded).reduce((s,r)=>s+parcialRaw(r),0);
   const ded=rows.filter(r=>r.ded).reduce((s,r)=>s+parcialRaw(r),0);
-  const th=cols.map((col,i)=>`<th style="width:72px" class="num">
+  if(db.ui.genTodos){box.innerHTML=vistaTodos();return;}
+
+  const th=cols.map((col,i)=>`<th style="width:${col.t==='txt'?'92px':'74px'}" class="${col.t==='txt'?'':'num'}">
     <span class="ed" contenteditable spellcheck="false" onblur="setGenCol(${i},this.textContent)">${esc(col.label)}</span>
+    <button class="icon" style="font-size:9px;padding:0 2px" onclick="togGenColTipo(${i})" title="Texto o número">${col.t==='txt'?'abc':'123'}</button>
     ${cols.length>1?`<button class="icon" style="font-size:10px;padding:0 2px" onclick="delGenCol(${i})" title="Quitar columna">&times;</button>`:''}</th>`).join('');
 
+  const nCols=cols.length+6;   // #, concepto, …cols…, unidad, subtotal, referencia, acciones
   box.innerHTML=`
-  <div style="padding:12px 15px 5px">
-    <div style="font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)">${esc(c.clave)} · resultado en ${esc(c.unidad)}</div>
-    <div style="font-size:12px;color:var(--deep);margin-top:3px;line-height:1.45">${esc(c.desc)}</div>
+  <div style="padding:12px 15px 5px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:220px">
+      <div style="font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)">${esc(c.clave)} · resultado en ${esc(c.unidad)}</div>
+      <div class="desc-larga">${esc(c.desc)}</div>
+    </div>
+    <button class="btn mini" onclick="togGenTodos()">Ver todos los conceptos</button>
   </div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th style="width:30px" class="mid">#</th><th style="width:128px">${eh('gRef')}</th><th>${eh('gNota')}</th>
-      ${th}<th style="width:90px" class="num">${eh('gParcial')}</th>
+    <thead><tr><th style="width:30px" class="mid">#</th><th style="width:78px">Concepto</th>
+      ${th}<th style="width:52px" class="mid">Unidad</th><th style="width:88px" class="num">Subtotal</th>
+      <th style="width:104px">${eh('gRef')}</th>
       <th class="act"><button class="icon" onclick="addGenCol()" title="Agregar columna">+col</button></th></tr></thead>
     <tbody>${rows.length?rows.map((r,ix)=>`<tr class="${r.ded?'ded':''}">
       <td class="mid"><div class="ro" style="text-align:center">${ix+1}</div></td>
-      <td><input value="${esc(r.ref)}" oninput="upGen('${cid}','${r.id}','ref',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}" placeholder="Eje / tramo"></td>
-      <td><input value="${esc(r.nota)}" oninput="upGen('${cid}','${r.id}','nota',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}" placeholder="Plano, nivel, nota"></td>
-      ${cols.map(col=>`<td><input class="n" value="${esc((r.v||{})[col.id]??'')}" inputmode="decimal" placeholder="—" oninput="upGenV('${cid}','${r.id}','${col.id}',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}"></td>`).join('')}
+      <td><div class="ro" style="text-align:center">${esc(c.clave)}</div></td>
+      ${cols.map(col=>col.t==='txt'
+        ?`<td><input value="${esc((r.v||{})[col.id]??'')}" placeholder="—" oninput="upGenV('${cid}','${r.id}','${col.id}',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}"></td>`
+        :`<td><input class="n" value="${esc((r.v||{})[col.id]??'')}" inputmode="decimal" placeholder="—" oninput="upGenV('${cid}','${r.id}','${col.id}',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}"></td>`).join('')}
+      <td class="mid"><div class="ro" style="text-align:center">${esc(c.unidad)}</div></td>
       <td><div class="ro b gp" style="text-align:right">${dec(parcial(r),3)}</div></td>
+      <td><input value="${esc((r.v||{}).ref??'')}" placeholder="Plano, detalle" oninput="upGenV('${cid}','${r.id}','ref',this.value)" onkeydown="${enterAdd(`addGen('${cid}')`)}"></td>
       <td class="act"><button class="icon ${r.ded?'on':''}" onclick="togDed('${cid}','${r.id}')" title="Deducción">&minus;</button>${rowBtns(`movGen('${cid}',${ix},-1)`,`movGen('${cid}',${ix},1)`,`dupGen('${cid}',${ix})`,`delGen('${cid}','${r.id}')`)}</td>
-    </tr>`).join(''):`<tr><td colspan="${cols.length+5}"><div class="empty"><b>Generador vacío</b>Cada renglón es un tramo medido en planos.</div></td></tr>`}
-      ${ded?`<tr class="sub"><td colspan="${cols.length+3}">Suma</td><td class="num mono">${dec(sum,3)}</td><td></td></tr>
-             <tr class="sub"><td colspan="${cols.length+3}">Deducciones</td><td class="num mono">&minus;${dec(ded,3)}</td><td></td></tr>`:''}
-      <tr class="tot"><td colspan="${cols.length+3}">${esc(L('gTotal'))}</td><td class="num mono" id="genTot">${dec(cantidad(cid),3)} ${esc(c.unidad)}</td><td></td></tr>
+    </tr>`).join(''):`<tr><td colspan="${nCols}"><div class="empty"><b>Generador vacío</b>Cada renglón es un tramo medido en planos.</div></td></tr>`}
+      ${ded?`<tr class="sub"><td colspan="${nCols-4}">Suma</td><td></td><td class="num mono">${dec(sum,3)}</td><td colspan="2"></td></tr>
+             <tr class="sub"><td colspan="${nCols-4}">Deducciones</td><td></td><td class="num mono">&minus;${dec(ded,3)}</td><td colspan="2"></td></tr>`:''}
+      <tr class="tot"><td colspan="${nCols-4}">${esc(L('gTotal'))}</td><td class="mid">${esc(c.unidad)}</td><td class="num mono" id="genTot">${dec(cantidad(cid),3)}</td><td colspan="2"></td></tr>
     </tbody></table></div>
   <div style="padding:9px 11px"><button class="btn ghost" onclick="addGen('${cid}')">+ Agregar renglón · Enter también</button></div>
-  <div class="hint">Las casillas vacías valen 1 y todas las columnas numéricas se multiplican. El botón &minus; convierte el renglón en deducción (vanos de puertas y ventanas). Renombra una columna haciendo clic en su título.</div>`;
+  ${croqBox(cid)}
+  <div class="hint">Eje y tramo son texto y no entran al cálculo. El subtotal multiplica piezas × largo × ancho × alto, y las casillas vacías valen 1. El botón &minus; convierte el renglón en deducción. Con <b>abc/123</b> cambias una columna de texto a número, y con su título la renombras.</div>`;
 }
-function upGen(cid,rid,k,v){const r=db.generadores[cid].find(x=>x.id===rid);if(!r)return;r[k]=v;save();}
+
+/* Hoja completa de generadores: todos los conceptos en una sola tabla,
+   que es como se entrega el formato. Solo lectura. */
+function vistaTodos(){
+  const cols=db.genCols;
+  let body='';
+  db.conceptos.forEach(c=>{
+    const rows=db.generadores[c.id]||[];
+    if(!rows.length)return;
+    body+=`<tr class="grp"><td colspan="${cols.length+5}">${esc(c.clave)} · ${esc(c.descCorta||c.desc).slice(0,90)}</td></tr>`;
+    body+=rows.map((r,ix)=>`<tr class="${r.ded?'ded':''}">
+      <td class="mid"><div class="ro" style="text-align:center">${ix+1}</div></td>
+      <td><div class="ro" style="text-align:center">${esc(c.clave)}</div></td>
+      ${cols.map(col=>`<td><div class="ro" style="text-align:${col.t==='txt'?'left':'right'}">${esc((r.v||{})[col.id]??'—')}</div></td>`).join('')}
+      <td class="mid"><div class="ro" style="text-align:center">${esc(c.unidad)}</div></td>
+      <td><div class="ro b" style="text-align:right">${dec(parcial(r),3)}</div></td>
+      <td><div class="ro">${esc((r.v||{}).ref||'—')}</div></td></tr>`).join('');
+    body+=`<tr class="sub"><td colspan="${cols.length+2}">Total ${esc(c.clave)}</td><td class="mid">${esc(c.unidad)}</td><td class="num mono">${dec(cantidad(c.id),3)}</td><td></td></tr>`;
+  });
+  return `
+  <div style="padding:12px 15px 5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px;font-size:12px;color:var(--deep)">Hoja completa de generadores — todos los conceptos</div>
+    <button class="btn mini solid" onclick="togGenTodos()">Volver a capturar</button>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th style="width:30px" class="mid">#</th><th style="width:78px">Concepto</th>
+      ${cols.map(col=>`<th style="width:${col.t==='txt'?'92px':'74px'}" class="${col.t==='txt'?'':'num'}">${esc(col.label)}</th>`).join('')}
+      <th style="width:52px" class="mid">Unidad</th><th style="width:88px" class="num">Subtotal</th>
+      <th style="width:104px">${esc(L('gRef'))}</th></tr></thead>
+    <tbody>${body||`<tr><td colspan="${cols.length+5}"><div class="empty">Todavía no hay renglones capturados.</div></td></tr>`}</tbody>
+  </table></div>
+  <div class="hint">Esta vista es de solo lectura y es la que conviene imprimir. Para capturar, vuelve a la vista por concepto.</div>`;
+}
+/* ==================================================================
+   CROQUIS DEL GENERADOR
+   Van abajo de los renglones, por concepto. Se arrastran, se pegan con
+   Ctrl+V o se eligen con el botón. La imagen se reduce antes de
+   guardarse porque vive en el mismo localStorage que los números: un
+   screenshot de 2 MB tal cual llena el espacio en cuatro croquis.
+   ================================================================== */
+const CROQ_LADO=1400, CROQ_CAL=0.72;
+const croqKB=src=>Math.round(String(src||'').length/1365);
+function croqDe(cid){db.croquis=db.croquis||{};db.croquis[cid]=db.croquis[cid]||[];return db.croquis[cid];}
+function croqBox(cid){
+  const cs=croqDe(cid),peso=cs.reduce((s,k)=>s+croqKB(k.src),0);
+  return `
+  <div class="croq" ondragover="event.preventDefault();this.classList.add('drag')"
+    ondragleave="this.classList.remove('drag')" ondrop="croqDrop(event,'${cid}')">
+    <div class="croq-hd">
+      <b>Croquis</b><span>Arrastra una imagen aquí, o toma un screenshot y pégalo con Ctrl+V</span>
+      <label class="btn mini" style="cursor:pointer">Elegir imagen
+        <input type="file" accept="image/*" multiple style="display:none" onchange="croqFiles(this.files,'${cid}');this.value=''"></label>
+      ${cs.length?`<span class="pes">${cs.length} · ${peso} KB</span>`:''}
+    </div>
+    ${cs.length?`<div class="croq-grid">${cs.map((k,ix)=>`
+      <figure>
+        <img src="${k.src}" alt="Croquis ${ix+1}" onclick="croqZoom('${cid}','${k.id}')">
+        <figcaption>
+          <input value="${esc(k.nota||'')}" placeholder="Nota del croquis" oninput="croqNota('${cid}','${k.id}',this.value)">
+          <button class="icon" title="Quitar croquis" onclick="croqDel('${cid}','${k.id}')">&times;</button>
+        </figcaption>
+        <div class="croq-pie">${esc(k.nota||'')}</div>
+      </figure>`).join('')}</div>`
+    :`<div class="croq-vacio">Todavía no hay croquis de este concepto. Sirven para dejar constancia de dónde salió cada medida.</div>`}
+  </div>`;
+}
+function croqDrop(ev,cid){
+  ev.preventDefault();ev.currentTarget.classList.remove('drag');
+  croqFiles(ev.dataTransfer.files,cid);
+}
+function croqFiles(lista,cid){[...(lista||[])].forEach(f=>croqAdd(cid,f));}
+function croqAdd(cid,file){
+  if(!file||!/^image\//.test(file.type)){flash('Eso no es una imagen');return;}
+  const rd=new FileReader();
+  rd.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      /* se reescala al lado mayor y se guarda como JPEG sobre blanco:
+         un screenshot pasa de 2 MB a unos 200 KB sin perder legibilidad */
+      const f=Math.min(1,CROQ_LADO/Math.max(img.width,img.height));
+      const w=Math.max(1,Math.round(img.width*f)),h=Math.max(1,Math.round(img.height*f));
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.drawImage(img,0,0,w,h);
+      const src=cv.toDataURL('image/jpeg',CROQ_CAL);
+      croqDe(cid).push({id:uid(),src,nota:''});
+      save();renderGen();flash('Croquis agregado · '+croqKB(src)+' KB');
+    };
+    img.onerror=()=>flash('No se pudo leer la imagen');
+    img.src=e.target.result;
+  };
+  rd.readAsDataURL(file);
+}
+function croqNota(cid,id,v){const k=croqDe(cid).find(x=>x.id===id);if(!k)return;k.nota=v;save();}
+function croqDel(cid,id){
+  if(!confirm('¿Quitar este croquis?'))return;
+  db.croquis[cid]=croqDe(cid).filter(k=>k.id!==id);save();renderGen();
+}
+function croqZoom(cid,id){
+  const k=croqDe(cid).find(x=>x.id===id);if(!k)return;
+  const d=document.createElement('div');d.className='lightbox';
+  d.innerHTML=`<img src="${k.src}" alt="Croquis">${k.nota?`<div class="lb-cap">${esc(k.nota)}</div>`:''}`;
+  d.onclick=()=>d.remove();
+  document.body.appendChild(d);
+}
+/* Pegar un screenshot con Ctrl+V estando en la pestaña de generadores.
+   Si estás escribiendo en un campo, no se interpone. */
+document.addEventListener('paste',ev=>{
+  if(db.ui.tab!=='generadores'||db.ui.genTodos)return;
+  const a=document.activeElement;
+  if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)&&a.type!=='file')return;
+  const items=[...((ev.clipboardData||{}).items||[])].filter(i=>/^image\//.test(i.type));
+  if(!items.length)return;
+  const cid=document.getElementById('selGen').value;if(!cid)return;
+  ev.preventDefault();
+  items.forEach(i=>croqAdd(cid,i.getAsFile()));
+});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){const l=document.querySelector('.lightbox');if(l)l.remove();}});
+
+function togGenTodos(){db.ui.genTodos=!db.ui.genTodos;save();renderGen();}
+function togGenColTipo(i){db.genCols[i].t=db.genCols[i].t==='txt'?'num':'txt';save();renderGen();recalc();}
 function refreshGenTotals(cid){
   const rows=db.generadores[cid],cells=document.querySelectorAll('#genBody tbody .gp');
   rows.forEach((r,i)=>{if(cells[i])cells[i].textContent=dec(parcial(r),3);});
@@ -972,14 +1787,20 @@ function refreshGenTotals(cid){
 function upGenV(cid,rid,col,v){const r=db.generadores[cid].find(x=>x.id===rid);if(!r)return;
   r.v=r.v||{};r.v[col]=v;save();refreshGenTotals(cid);}
 function togDed(cid,rid){const r=db.generadores[cid].find(x=>x.id===rid);r.ded=!r.ded;save();renderGen();recalc();}
-function addGen(cid){(db.generadores[cid]=db.generadores[cid]||[]).push({id:uid(),ref:'',nota:'',ded:false,v:{}});
+function addGen(cid){
+  const arr=(db.generadores[cid]=db.generadores[cid]||[]);
+  const ult=arr[arr.length-1];
+  /* hereda eje y tramo del renglón anterior: capturar un generador es repetir ubicación */
+  const v={};
+  if(ult&&ult.v)db.genCols.forEach(c=>{if(c.t==='txt'&&ult.v[c.id])v[c.id]=ult.v[c.id];});
+  arr.push({id:uid(),ded:false,v});
   save();renderGen();renderNav();renderPresup();
   const n=document.querySelectorAll('#genBody tbody tr:nth-last-child(2) input');if(n[0])n[0].focus();}
 function dupGen(cid,ix){const o=db.generadores[cid][ix];db.generadores[cid].splice(ix+1,0,{...o,id:uid(),v:{...o.v}});save();renderGen();recalc();}
 function movGen(cid,ix,d){move(db.generadores[cid],ix,d);save();renderGen();}
 function delGen(cid,rid){db.generadores[cid]=db.generadores[cid].filter(r=>r.id!==rid);save();renderGen();renderNav();recalc();}
 function setGenCol(i,v){db.genCols[i].label=(v||'').trim()||'Col';save();}
-function addGenCol(){db.genCols.push({id:'c'+uid(),label:'Nueva'});save();renderGen();}
+function addGenCol(){db.genCols.push({id:'c'+uid(),label:'Nueva',t:'num'});save();renderGen();}
 function delGenCol(i){
   if(db.genCols.length<=1)return;
   if(!confirm('Se quita la columna "'+db.genCols[i].label+'" de todos los generadores. ¿Seguro?'))return;
@@ -1002,15 +1823,16 @@ function renderMatriz(){
 
   let body='';
   db.tipos.forEach(t=>{
-    const g=m.det.filter(d=>d.o.tipo===t.k);if(!g.length)return;
+    const g=m.det.filter(d=>grupoMat(d.o.tipo)===t.k);if(!g.length)return;
     body+=`<tr class="grp"><td colspan="8">${esc(t.label)}</td></tr>`;
-    body+=g.map(d=>{const ix=db.matrices[cid].indexOf(d.row);const esMO=d.o.tipo==='mo';
+    body+=g.map(d=>{const ix=db.matrices[cid].indexOf(d.row);const esMO=['mo','cuad'].includes(d.o.tipo);
       return `<tr>
-      <td><span class="tag ${d.o.tipo}" style="margin-left:7px">${esc(d.o.clave)}</span></td>
+      <td><span class="tag ${d.o.tipo}" style="margin-left:7px${['aux','cuad'].includes(d.o.tipo)?';cursor:pointer':''}"
+        ${['aux','cuad'].includes(d.o.tipo)?`onclick="irAnalisis('${d.o.tipo}','${d.o.id}')" title="Ver el análisis de ${esc(d.o.clave)}"`:''}>${esc(d.o.clave)}</span></td>
       <td><select onchange="upMat('${cid}','${d.row.id}','ref',this.value)">${refOptions(d.o.id)}</select></td>
       <td class="mid"><div class="ro" style="text-align:center">${esc(d.o.unidad)}</div></td>
-      <td>${esMO?`<input class="n" value="${N(d.row.cant)?dec(1/N(d.row.cant),2):''}" inputmode="decimal" placeholder="—" oninput="upRend('${cid}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
-      <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upMat('${cid}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addMat('${cid}')`)}"></td>
+      <td>${esMO?`<input class="n" value="${N(d.row.cant)?dec(1/N(d.row.cant),2):''}" inputmode="decimal" placeholder="—" oninput="upRend('${cid}','${d.row.id}',this.value,1)" onchange="upRend('${cid}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
+      <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upMat('${cid}','${d.row.id}','cant',this.value,1)" onchange="upMat('${cid}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addMat('${cid}')`)}"></td>
       <td><div class="ro" style="text-align:right">${d.o.tipo==='pct'?'—':dec(d.o.costo)}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
       <td class="act">${rowBtns(`movMat('${cid}',${ix},-1)`,`movMat('${cid}',${ix},1)`,`dupMat('${cid}',${ix})`,`delMat('${cid}','${d.row.id}')`)}</td>
@@ -1024,7 +1846,7 @@ function renderMatriz(){
   box.innerHTML=`
   <div style="padding:12px 15px 5px">
     <div style="font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)">${esc(c.clave)} · por ${esc(c.unidad)}</div>
-    <div style="font-size:12px;color:var(--deep);margin-top:3px;line-height:1.45">${esc(c.desc)}</div>
+    <div class="desc-larga">${esc(c.desc)}</div>
   </div>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:76px">${eh('mClave')}</th><th>${eh('mInsumo')}</th>
@@ -1035,6 +1857,10 @@ function renderMatriz(){
       <tr class="tot"><td colspan="6">${esc(L('mCD'))} ${esc(c.unidad)}</td><td class="num mono">${dec(cd)}</td><td></td></tr>
     </tbody></table></div>
   <div style="padding:9px 11px"><button class="btn ghost" onclick="addMat('${cid}')">+ Agregar renglón · Enter también</button></div>
+  ${dobleHM(cid)?`<div class="avisos"><div class="aviso"><div><b>Herramienta menor cobrada dos veces.</b>
+    ${esc(cuadsDe(cid).filter(cuadTraePct).map(q=>q.clave).join(', '))} ya trae herramienta menor y equipo de seguridad adentro,
+    y esta matriz además carga ${esc(pctExternos(cid).map(r=>{const o=resolveRef(r.ref);return o?o.clave:'?';}).join(', '))} por fuera.</div>
+    <button class="btn mini" onclick="quitarPctDuplicado('${cid}')">Quitar el duplicado</button></div></div>`:''}
   <div style="padding:0 15px 15px">
     <div class="pu-box">
       <div class="pu-line strong"><div class="lbl">Costo directo unitario</div><div class="pc"></div><div class="vl">${dec(cd)}</div></div>
@@ -1046,17 +1872,28 @@ function renderMatriz(){
     </div>
     <div class="kpis" style="margin-top:11px">
       <div class="kpi"><small>Incidencia materiales</small><b>${pc(m.det.filter(d=>['mat','aux'].includes(d.o.tipo)).reduce((s,d)=>s+d.imp,0))}</b></div>
-      <div class="kpi"><small>Incidencia mano de obra</small><b>${pc(m.mo)}</b></div>
+      <div class="kpi"><small>Incidencia mano de obra</small><b>${pc(m.mo+m.det.filter(d=>d.o.tipo==='cuad').reduce((s,d)=>s+d.imp,0))}</b></div>
       <div class="kpi accent"><small>Factor de sobrecosto</small><b>${dec(fs,4)}</b></div>
       <div class="kpi"><small>Cantidad generada</small><b>${dec(cantidad(cid),3)}</b></div>
     </div>
     <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los porcentajes no se capturan aquí: salen de <span class="lnk" onclick="go('indirectos')">Indirectos</span> y de <span class="lnk" onclick="go('cargos')">Utilidad y cargos</span>, y son los mismos para toda la obra.</div>
   </div>`;
 }
-function upMat(cid,rid,k,v){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
-  r[k]=(k==='cant')?N(v):v;save();renderMatriz();recalc();}
-function upRend(cid,rid,v){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
-  const x=N(v);r.cant=x?+(1/x).toFixed(6):0;save();renderMatriz();recalc();}
+/* Quita los cargos porcentuales que la matriz carga por fuera cuando la
+   cuadrilla ya los trae adentro. Solo se ejecuta si tú le das al botón. */
+function quitarPctDuplicado(cid){
+  const fuera=pctExternos(cid);if(!fuera.length)return;
+  if(!confirm('Se quitan '+fuera.length+' renglón(es) de cargo porcentual de esta matriz. La cuadrilla los sigue cobrando adentro. ¿Continuar?'))return;
+  const ids=fuera.map(r=>r.id);
+  db.matrices[cid]=db.matrices[cid].filter(r=>!ids.includes(r.id));
+  save();renderMatriz();renderNav();recalc();
+}
+function upMat(cid,rid,k,v,vivo){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
+  r[k]=(k==='cant')?N(v):v;save();if(vivo)return;renderMatriz();recalc();}
+
+function upRend(cid,rid,v,vivo){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
+  const x=N(v);r.cant=x?+(1/x).toFixed(6):0;save();if(vivo)return;renderMatriz();recalc();}
+
 function addMat(cid){if(!db.insumos.length){alert('Primero agrega insumos.');return;}
   (db.matrices[cid]=db.matrices[cid]||[]).push({id:uid(),ref:db.insumos[0].id,cant:0});
   save();renderMatriz();renderNav();recalc();}
@@ -1070,8 +1907,8 @@ function delMat(cid,rid){db.matrices[cid]=db.matrices[cid].filter(r=>r.id!==rid)
 function renderIndirectos(){
   const I=db.indirectos;
   document.getElementById('indParams').innerHTML=`
-    <div class="f"><label>Duración de la obra (meses)</label><input class="f-in" value="${I.meses}" inputmode="decimal" oninput="upInd('meses',this.value)"></div>
-    <div class="f"><label>Proyectos en ejecución simultánea</label><input class="f-in" value="${I.proyectos}" inputmode="decimal" oninput="upInd('proyectos',this.value)"></div>
+    <div class="f"><label>Duración de la obra (meses)</label><input class="f-in" value="${I.meses}" inputmode="decimal" oninput="upInd('meses',this.value,1)" onchange="upInd('meses',this.value)"></div>
+    <div class="f"><label>Proyectos en ejecución simultánea</label><input class="f-in" value="${I.proyectos}" inputmode="decimal" oninput="upInd('proyectos',this.value,1)" onchange="upInd('proyectos',this.value)"></div>
     <div class="f wide"><label>Fórmula del prorrateo</label>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);padding:5px 0">Total = importe mensual × ${dec(N(I.meses),0)} meses ÷ ${dec(N(I.proyectos),0)} proyectos</div></div>`;
 
@@ -1083,11 +1920,11 @@ function renderIndirectos(){
     <td><select onchange="upRubro('${r.id}','grupo',this.value)">
       ${RUBROS_GRUPOS.map(g=>`<option ${r.grupo===g?'selected':''}>${esc(g)}</option>`).join('')}
       ${RUBROS_GRUPOS.includes(r.grupo)?'':`<option selected>${esc(r.grupo)}</option>`}</select></td>
-    <td><input value="${esc(r.desc)}" oninput="upRubro('${r.id}','desc',this.value)" onkeydown="${enterAdd('addRubro()')}" list="rubrosList" placeholder="Puesto o concepto"></td>
+    <td><input value="${esc(r.desc)}" oninput="upRubro('${r.id}','desc',this.value,1)" onchange="upRubro('${r.id}','desc',this.value)" onkeydown="${enterAdd('addRubro()')}" list="rubrosList" placeholder="Puesto o concepto"></td>
     <td class="mid"><select onchange="upRubro('${r.id}','admin',this.value)">
       <option value="central" ${r.admin==='central'?'selected':''}>Central</option>
       <option value="obra" ${r.admin==='obra'?'selected':''}>Obra</option></select></td>
-    <td><input class="n" value="${r.mensual}" inputmode="decimal" oninput="upRubro('${r.id}','mensual',this.value)" onkeydown="${enterAdd('addRubro()')}"></td>
+    <td><input class="n" value="${r.mensual}" inputmode="decimal" oninput="upRubro('${r.id}','mensual',this.value,1)" onchange="upRubro('${r.id}','mensual',this.value)" onkeydown="${enterAdd('addRubro()')}"></td>
     <td><div class="ro b" style="text-align:right">${dec(prorrateo(r))}</div></td>
     <td class="act">${rowBtns(`movRubro(${ix},-1)`,`movRubro(${ix},1)`,`dupRubro(${ix})`,`delRubro('${r.id}')`)}</td>
   </tr>`).join('')||`<tr><td colspan="6"><div class="empty">Sin renglones.</div></td></tr>`}</tbody>
@@ -1109,9 +1946,24 @@ function renderIndirectos(){
     <tr class="tot"><td colspan="3">Total de gastos indirectos</td><td class="num mono">${p(tt)}</td></tr>
   </tbody>`;
 }
-function upInd(k,v){db.indirectos[k]=N(v);save();renderIndirectos();recalc();}
-function upRubro(id,k,v){const r=db.indirectos.rubros.find(x=>x.id===id);if(!r)return;
-  r[k]=(k==='mensual')?N(v):v;save();renderIndirectos();recalc();}
+function sueldosDesdeTabulador(){
+  let n=0;
+  db.indirectos.rubros.forEach(r=>{
+    const i=db.insumos.find(x=>x.tipo==='mo'&&norm(x.desc)===norm(r.desc));
+    if(!i)return;
+    const real=N(i.costo)*(N(i.fsr)||1);
+    if(!real)return;
+    r.mensual=+(real*30).toFixed(2);n++;
+  });
+  save();renderIndirectos();recalc();
+  alert(n?`Se calcularon ${n} sueldos mensuales a partir del salario real.`
+         :'Ningún renglón coincide por nombre con una categoría del catálogo de salarios.');
+}
+function upInd(k,v,vivo){db.indirectos[k]=N(v);save();if(vivo)return;renderIndirectos();recalc();}
+
+function upRubro(id,k,v,vivo){const r=db.indirectos.rubros.find(x=>x.id===id);if(!r)return;
+  r[k]=(k==='mensual')?N(v):v;save();if(vivo)return;renderIndirectos();recalc();}
+
 function addRubro(){db.indirectos.rubros.push({id:uid(),grupo:RUBROS_GRUPOS[0],desc:'',mensual:0,admin:'central'});
   save();renderIndirectos();const n=document.querySelectorAll('#tIndirectos tbody tr:last-child input');if(n[0])n[0].focus();}
 function dupRubro(ix){db.indirectos.rubros.splice(ix+1,0,{...db.indirectos.rubros[ix],id:uid()});save();renderIndirectos();recalc();}
@@ -1124,7 +1976,7 @@ function delRubro(id){db.indirectos.rubros=db.indirectos.rubros.filter(r=>r.id!=
 function renderCargos(){
   const g=db.cargos,ui=utilidadIntegrada(),pI=pctIndirectos(),fs=factorSobrecosto();
   const row=(lbl,k)=>`<div class="pu-line"><div class="lbl">${lbl}</div>
-    <div class="pc"><input class="pc-in" value="${g[k]}" inputmode="decimal" oninput="upCargo('${k}',this.value)"> %</div></div>`;
+    <div class="pc"><input class="pc-in" value="${g[k]}" inputmode="decimal" oninput="upCargo('${k}',this.value,1)" onchange="upCargo('${k}',this.value)"> %</div></div>`;
   document.getElementById('utilBox').innerHTML=
     row('ISR — impuesto sobre la renta','isr')+
     row('PTU — participación de los trabajadores','ptu')+
@@ -1139,17 +1991,17 @@ function renderCargos(){
           <option value="auto" ${g.indModo==='auto'?'selected':''}>del desglose</option>
           <option value="manual" ${g.indModo==='manual'?'selected':''}>a mano</option></select></div>
       <div class="pc">${g.indModo==='manual'
-        ?`<input class="pc-in" value="${g.indManual}" inputmode="decimal" oninput="upCargo('indManual',this.value)"> %`
+        ?`<input class="pc-in" value="${g.indManual}" inputmode="decimal" oninput="upCargo('indManual',this.value,1)" onchange="upCargo('indManual',this.value)"> %`
         :`<span class="pc-ro">${dec(pI*100,2)}%</span>`}</div>
       <div class="vl">${dec(1+pI,4)}</div></div>
     <div class="pu-line"><div class="lbl">Utilidad integrada</div><div class="pc"><span class="pc-ro">${dec(ui*100,2)}%</span></div><div class="vl">${dec(1+ui,4)}</div></div>
-    <div class="pu-line"><div class="lbl">Financiamiento</div><div class="pc"><input class="pc-in" value="${g.fin}" inputmode="decimal" oninput="upCargo('fin',this.value)"> %</div><div class="vl">${dec(1+N(g.fin)/100,4)}</div></div>
-    <div class="pu-line"><div class="lbl">Cargos adicionales — 5 al millar de inspección y vigilancia</div><div class="pc"><input class="pc-in" value="${g.ca}" inputmode="decimal" oninput="upCargo('ca',this.value)"> %</div><div class="vl">${dec(1+N(g.ca)/100,4)}</div></div>
+    <div class="pu-line"><div class="lbl">Financiamiento</div><div class="pc"><input class="pc-in" value="${g.fin}" inputmode="decimal" oninput="upCargo('fin',this.value,1)" onchange="upCargo('fin',this.value)"> %</div><div class="vl">${dec(1+N(g.fin)/100,4)}</div></div>
+    <div class="pu-line"><div class="lbl">Cargos adicionales — 5 al millar de inspección y vigilancia</div><div class="pc"><input class="pc-in" value="${g.ca}" inputmode="decimal" oninput="upCargo('ca',this.value,1)" onchange="upCargo('ca',this.value)"> %</div><div class="vl">${dec(1+N(g.ca)/100,4)}</div></div>
     <div class="pu-line final"><div class="lbl">Factor de sobrecosto — precio de venta ÷ costo directo</div><div class="pc"></div><div class="vl">${dec(fs,4)}</div></div>
-    <div class="pu-line"><div class="lbl">I.V.A.</div><div class="pc"><input class="pc-in" value="${g.iva}" inputmode="decimal" oninput="upCargo('iva',this.value)"> %</div><div class="vl">—</div></div>
+    <div class="pu-line"><div class="lbl">I.V.A.</div><div class="pc"><input class="pc-in" value="${g.iva}" inputmode="decimal" oninput="upCargo('iva',this.value,1)" onchange="upCargo('iva',this.value)"> %</div><div class="vl">—</div></div>
     <div class="pu-line strong"><div class="lbl">Costo directo total de la obra</div><div class="pc"></div><div class="vl">${dec(costoDirectoTotal())}</div></div>`;
 }
-function upCargo(k,v){db.cargos[k]=(k==='indModo')?v:N(v);save();renderCargos();recalc();}
+function upCargo(k,v,vivo){db.cargos[k]=(k==='indModo')?v:N(v);save();if(vivo)return;renderCargos();recalc();}
 
 /* ==================================================================
    11. PRESUPUESTO
@@ -1298,6 +2150,29 @@ function validar(){
   const flojos=db.conceptos.filter(c=>cdu(c.id)>0&&puVenta(c.id)<=cdu(c.id));
   if(flojos.length)add('r','Precio de venta igual o menor al costo directo',flojos.map(c=>c.clave).join(', ')+'. Estarías trabajando gratis.');
 
+  /* el mismo puesto no puede estar en una matriz y en los indirectos */
+  const idsInd=db.insumos.filter(i=>/indirecto/i.test(i.cat||'')).map(i=>i.id);
+  const dobles=[];
+  db.conceptos.forEach(c=>(db.matrices[c.id]||[]).forEach(r=>{
+    if(idsInd.includes(r.ref)){const i=db.insumos.find(x=>x.id===r.ref);
+      dobles.push(c.clave+' → '+(i?i.clave:'?'));}}));
+  (db.cuadrillas||[]).forEach(q=>(q.comp||[]).forEach(r=>{
+    if(idsInd.includes(r.ref)){const i=db.insumos.find(x=>x.id===r.ref);
+      dobles.push((q.clave||'cuadrilla')+' → '+(i?i.clave:'?'));}}));
+  if(dobles.length)add('r','Personal de indirectos dentro de una matriz',dobles.join(' · ')+
+    '. Ese sueldo ya se cobra en el desglose de indirectos: si además va en la matriz, se paga dos veces.');
+
+  /* 14. la cuadrilla ya trae herramienta menor: la matriz no debe repetirla */
+  const dbl=db.conceptos.filter(c=>dobleHM(c.id));
+  if(dbl.length)add('a','Herramienta menor cobrada dos veces',dbl.map(c=>c.clave).join(', ')+
+    '. La cuadrilla ya carga herramienta menor y equipo de seguridad adentro, y la matriz además trae un porcentual por fuera. Se corrige en la matriz, con el botón del aviso.');
+  else if(db.conceptos.some(c=>cuadsDe(c.id).length))add('v','Ninguna cuadrilla duplica la herramienta menor');
+
+  /* 15. cuadrilla sin categorías: su costo por jornada saldría en cero */
+  const cuadFlojas=(db.cuadrillas||[]).filter(q=>!(q.comp||[]).some(r=>{const o=resolveRef(r.ref);return o&&o.tipo==='mo';}));
+  if(cuadFlojas.length)add('a','Cuadrilla(s) sin categorías de mano de obra',cuadFlojas.map(q=>q.clave||'(sin clave)').join(', ')+
+    '. Sin integrantes su costo por jornada es cero, o solo trae los porcentajes.');
+
   const sinF=db.insumos.filter(i=>i.tipo==='mo'&&!N(i.fsr));
   if(sinF.length)add('a','Mano de obra sin factor de salario real',sinF.map(i=>i.clave).join(', ')+'. Sin FSR cargas solo el salario nominal, como 40% menos de lo que cuesta.');
   else if(db.insumos.some(i=>i.tipo==='mo'))add('v','Toda la mano de obra tiene FSR');
@@ -1334,7 +2209,7 @@ function renderAjustes(){
     <input value="${esc(t.tag)}" oninput="setTipo(${i},'tag',this.value)" style="flex:0 0 68px;text-align:center"></label>`).join('');
   document.getElementById('unidInput').value=db.unidades.join(', ');
   document.getElementById('cfgMetrica').innerHTML=cfgRow('Nombre','metNombre')+cfgRow('Unidad','metUnidad')+cfgRow('Título del KPI','kpiMetrica')+
-    `<label class="cfg"><span>Cantidad</span><input value="${db.cargos.met}" inputmode="decimal" oninput="upCargo('met',this.value)"></label>`;
+    `<label class="cfg"><span>Cantidad</span><input value="${db.cargos.met}" inputmode="decimal" oninput="upCargo('met',this.value,1)" onchange="upCargo('met',this.value)"></label>`;
 }
 function setTipo(i,k,v){db.tipos[i][k]=v;save();renderInsumos();renderMatriz();}
 function setUnidades(v){db.unidades=v.split(',').map(s=>s.trim()).filter(Boolean);save();}
@@ -1390,7 +2265,7 @@ function importJSON(ev){
       if(!d.conceptos||!d.insumos)throw 0;
       if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
       db=d;db.labels={...DEF_LABELS,...(db.labels||{})};
-      const s=seed();['unidades','partidas','auxiliares','genCols','tipos','cargos','indirectos','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});
+      const s=seed();['unidades','partidas','auxiliares','cuadrillas','genCols','tipos','cargos','indirectos','croquis','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});
       save();boot();flash('Datos importados');
     }catch(err){alert('El archivo no tiene el formato esperado.');}};
   rd.readAsText(f);ev.target.value='';
@@ -1404,13 +2279,14 @@ function recalc(){
 }
 function boot(){
   renderObraForm();printHeads();
-  renderInsumos();fillAuxSel();renderAux();
+  renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();
   renderPartidas();renderConceptos();fillSelects();
   renderGen();renderMatriz();renderIndirectos();renderCargos();
   renderPresup();renderVal();renderAjustes();renderEstado();renderHeader();
   document.querySelectorAll('.panel-hd .ed').forEach(el=>{
     const m=(el.getAttribute('onblur')||'').match(/setLbl\('([^']+)'/);if(m)el.textContent=L(m[1]);});
   const b=document.querySelector('.brand .ed');if(b)b.textContent=L('brand');
+  renderSync();arrancarSync();
   go(tab);
 }
 boot();
