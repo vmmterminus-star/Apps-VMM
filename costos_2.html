@@ -115,6 +115,15 @@ td .ro.txt{font-family:'Alexandria',sans-serif;font-size:11px;font-weight:300;co
   align-items:center;justify-content:center;gap:10px;padding:24px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:86vh;object-fit:contain;background:#fff;border-radius:6px}
 .lightbox .lb-cap{color:#fff;font-size:11px;text-align:center;max-width:70ch}
+tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
+.nota-in{width:100%;border:0;border-bottom:1px dashed #DDCCC2;background:transparent;font-size:10.5px;
+  font-style:italic;color:#8A6A55;padding:3px 2px;font-family:inherit}
+.nota-in::placeholder{font-style:normal;color:#BFB4AC}
+.nota-in:focus{outline:none;border-bottom-color:var(--terra)}
+.notag{padding:0 15px 14px}
+.notag label{display:block;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
+.notag textarea{width:100%;font-size:11px;line-height:1.55;resize:vertical;min-height:46px;font-family:inherit}
+.notag .pr{display:none}
 
 tr.grp td{background:var(--mint)!important;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);font-weight:600;padding:5px 7px}
 tr.tot td{background:var(--deep)!important;color:#fff;font-weight:500;font-size:11.5px;padding:8px 7px;border:none}
@@ -224,6 +233,12 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   .croq-grid img{height:auto!important;max-height:190pt;object-fit:contain!important}
   .croq-grid figcaption input{display:none!important}
   .croq-pie{display:block!important;padding:3pt 4pt;font-size:6.5pt;color:#000}
+  tr.nota td{background:#fff!important;font-size:6.5pt;color:#000!important;padding:0 4pt 3pt!important}
+  .nota-in{border:0!important;color:#000!important;font-style:italic;font-size:6.5pt}
+  .notag{padding:3pt 0 0!important}
+  .notag label{color:#000!important}
+  .notag textarea{display:none!important}
+  .notag .pr{display:block!important;font-size:6.5pt;color:#000;white-space:pre-wrap;font-style:italic}
   tr.grp td{background:#EEE!important;color:#000!important;font-size:6.5pt;border-top:.5pt solid #000}
   tr.tot td{background:#fff!important;color:#000!important;border-top:1pt solid #000;font-weight:700;font-size:8pt}
   tr.sub td{background:#F4F4F4!important;color:#000!important}
@@ -960,6 +975,15 @@ function calcRows(rows,stack){
 /* Agrupación de la matriz: la cuadrilla se dibuja dentro de MANO DE OBRA,
    como en el formato del Excel, aunque por dentro sea su propio tipo. */
 const grupoMat=t=>t==='cuad'?'mo':t;
+/* Rendimiento: solo tiene sentido en lo que se mide en tiempo — jornadas
+   de mano de obra o de cuadrilla, horas de equipo. Es cuántas unidades
+   del análisis salen en una jornada o en una hora, y la cantidad del
+   renglón es su inverso: 120 kg por jornada = 1/120 = 0.008333 JOR. */
+const esTiempo=u=>['JOR','HR','JORNADA','HORA','DIA','DÍA'].includes(String(u||'').toUpperCase());
+const llevaRend=o=>!!o&&(['mo','cuad'].includes(o.tipo)||esTiempo(o.unidad));
+const verRend=c=>{const x=N(c);if(!x)return '';const r=1/x;return dec(r,r<10?3:2);};
+/* encabezado con su unidad: "KG por JOR" */
+const thRend=u=>`<th style="width:82px" class="num">Rendim.<div style="font-size:8px;font-weight:400;letter-spacing:.04em;color:var(--soft);text-transform:none">${esc(u)} por JOR u HR</div></th>`;
 const tipoLabel=k=>(db.tipos.find(t=>t.k===k)||{}).label||k;
 const cuadTraePct=q=>!!(q&&(q.comp||[]).some(r=>{const o=resolveRef(r.ref);return o&&o.tipo==='pct';}));
 const pctExternos=cid=>(db.matrices[cid]||[]).filter(r=>{const o=resolveRef(r.ref);return o&&o.tipo==='pct';});
@@ -1042,6 +1066,36 @@ function go(id,cid){
   renderNav();window.scrollTo({top:0});
 }
 const enterAdd=fn=>`if(event.key==='Enter'){event.preventDefault();${fn}}`;
+/* ------------------------------------------------------------------
+   NOTAS DE LOS ANÁLISIS
+   Cualquier renglón de una matriz, un básico o una cuadrilla puede
+   llevar una nota que explique de dónde sale el número — el 1.283 de
+   revolvedora, el 5% de traslapes, el rendimiento del fierrero. Es lo
+   que en el Excel andaba suelto abajo de la tabla. Se imprimen.
+   ------------------------------------------------------------------ */
+const notasAbiertas=new Set();
+const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad()};
+function togNota(key,vista){
+  if(notasAbiertas.has(key))notasAbiertas.delete(key);else notasAbiertas.add(key);
+  (VISTAS[vista]||(()=>{}))();
+  const n=document.querySelector(`[data-nota="${key}"]`);if(n)n.focus();
+}
+const btnNota=(key,vista,tiene)=>
+  `<button class="icon${tiene?' on':''}" onclick="togNota('${key}','${vista}')" title="Nota: de dónde sale este número">&#9998;</button>`;
+/* La nota se dibuja solo si tiene texto o si la abriste con el lápiz. */
+const filaNota=(key,vista,valor,span,setter)=>
+  (valor||notasAbiertas.has(key))
+  ?`<tr class="nota"><td></td><td colspan="${span}"><input class="nota-in" data-nota="${key}"
+      value="${esc(valor||'')}" placeholder="De dónde sale este número"
+      oninput="${setter}" onchange="(VISTAS['${vista}']||(()=>{}))()"></td><td class="act"></td></tr>`
+  :'';
+const notaGral=(valor,setter)=>`
+  <div class="notag">
+    <label>Notas del análisis</label>
+    <textarea class="f-in" rows="2" spellcheck="false" placeholder="Supuestos, fuentes, de dónde salieron los rendimientos" oninput="${setter}">${esc(valor||'')}</textarea>
+    <div class="pr">${esc(valor||'')}</div>
+  </div>`;
+
 const rowBtns=(up,dn,dup,del)=>
   `<button class="icon" onclick="${up}" title="Subir">&#8593;</button>
    <button class="icon" onclick="${dn}" title="Bajar">&#8595;</button>
@@ -1270,19 +1324,20 @@ function renderAux(){
   let cuerpo='';
   db.tipos.forEach(t=>{
     const g=m.det.filter(d=>grupoMat(d.o.tipo)===t.k);if(!g.length)return;
-    cuerpo+=`<tr class="grp"><td colspan="7">${esc(t.label)}</td></tr>`;
+    cuerpo+=`<tr class="grp"><td colspan="8">${esc(t.label)}</td></tr>`;
     cuerpo+=g.map(d=>{const ix=a.comp.indexOf(d.row),esPct=d.o.tipo==='pct',salta=['aux','cuad'].includes(d.o.tipo);
       return `<tr>
       <td><span class="tag ${d.o.tipo}" style="margin-left:7px${salta?';cursor:pointer':''}"
         ${salta?`onclick="irAnalisis('${d.o.tipo}','${d.o.id}')" title="Ver su análisis"`:''}>${esc(d.o.clave)}</span></td>
       <td><select onchange="upAuxRow('${a.id}','${d.row.id}','ref',this.value)">${refOptions(d.row.ref,a.id)}</select></td>
       <td class="mid"><div class="ro" style="text-align:center">${esc(esPct?'% M.O.':d.o.unidad)}</div></td>
+      <td>${llevaRend(d.o)?`<input class="n" value="${verRend(d.row.cant)}" inputmode="decimal" placeholder="${esc(a.unidad)}/${esc(d.o.unidad)}" title="Cuántos ${esc(a.unidad)} salen por ${esc(d.o.unidad)}" oninput="upAuxRend('${a.id}','${d.row.id}',this.value,1)" onchange="upAuxRend('${a.id}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
       <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upAuxRow('${a.id}','${d.row.id}','cant',this.value,1)" onchange="upAuxRow('${a.id}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addAuxRow('${a.id}')`)}"></td>
       <td><div class="ro" style="text-align:right">${esPct?dec(m.mo):dec(d.o.costo)}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
-      <td class="act">${rowBtns(`movAuxRow('${a.id}',${ix},-1)`,`movAuxRow('${a.id}',${ix},1)`,`dupAuxRow('${a.id}',${ix})`,`delAuxRow('${a.id}','${d.row.id}')`)}</td>
-    </tr>`;}).join('');
-    cuerpo+=`<tr class="sub"><td colspan="5">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((x,d)=>x+d.imp,0))}</td><td></td></tr>`;
+      <td class="act">${btnNota(d.row.id,'aux',!!d.row.nota)}${rowBtns(`movAuxRow('${a.id}',${ix},-1)`,`movAuxRow('${a.id}',${ix},1)`,`dupAuxRow('${a.id}',${ix})`,`delAuxRow('${a.id}','${d.row.id}')`)}</td>
+    </tr>`+filaNota(d.row.id,'aux',d.row.nota,6,`upAuxRow('${a.id}','${d.row.id}','nota',this.value,1)`);}).join('');
+    cuerpo+=`<tr class="sub"><td colspan="6">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((x,d)=>x+d.imp,0))}</td><td></td></tr>`;
   });
   box.innerHTML=`
   <div style="padding:12px 15px 4px" class="f-grid">
@@ -1292,18 +1347,26 @@ function renderAux(){
   </div>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:74px">Clave</th><th>Componente</th><th style="width:54px" class="mid">Unidad</th>
+      ${thRend(a.unidad)}
       <th style="width:86px" class="num">Cantidad</th><th style="width:88px" class="num">Costo</th>
       <th style="width:96px" class="num">Importe</th><th class="act"></th></tr></thead>
-    <tbody>${cuerpo||`<tr><td colspan="7"><div class="empty">Sin componentes.</div></td></tr>`}
-      <tr class="tot"><td colspan="5">Costo unitario del básico · por ${esc(a.unidad)}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
+    <tbody>${cuerpo||`<tr><td colspan="8"><div class="empty">Sin componentes.</div></td></tr>`}
+      <tr class="tot"><td colspan="6">Costo unitario del básico · por ${esc(a.unidad)}</td><td class="num mono">${dec(m.total)}</td><td></td></tr>
     </tbody></table></div>
   <div style="padding:9px 11px;display:flex;gap:8px;align-items:center">
     <button class="btn ghost" onclick="addAuxRow('${a.id}')">+ Agregar componente</button>
     <button class="btn mini" onclick="delAuxiliar('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar básico</button>
   </div>
-  <div style="padding:0 15px 13px;font-size:10.5px;color:var(--soft);max-width:78ch">Este importe por ${esc(a.unidad)} es <b>costo directo</b>: entra tal cual a la matriz de cualquier concepto que lo use, multiplicado por la cantidad que le toque. Los indirectos y la utilidad no se cargan aquí — se aplican una sola vez, al final, sobre el costo directo del concepto.</div>`;
+  ${notaGral(a.notaGral,`upAux('${a.id}','notaGral',this.value)`)}
+  <div style="padding:0 15px 13px;font-size:10.5px;color:var(--soft);max-width:78ch">Este importe por ${esc(a.unidad)} es <b>costo directo</b>: entra tal cual a la matriz de cualquier concepto que lo use, multiplicado por la cantidad que le toque. Los indirectos y la utilidad no se cargan aquí — se aplican una sola vez, al final, sobre el costo directo del concepto. En los renglones que se miden en tiempo puedes escribir el <b>rendimiento</b> —cuántos ${esc(a.unidad)} salen por jornada o por hora— y la cantidad se calcula sola.</div>`;
 }
 function upAux(id,k,v){const a=db.auxiliares.find(x=>x.id===id);if(!a)return;a[k]=v;save();fillAuxSel();recalc();}
+/* Escribes cuántas unidades salen por jornada y la app guarda su inverso
+   como cantidad. Es la misma división que hacías a mano en el Excel. */
+function upAuxRend(aid,rid,v,vivo){
+  const a=db.auxiliares.find(x=>x.id===aid);const r=(a.comp||[]).find(x=>x.id===rid);if(!r)return;
+  const x=N(v);r.cant=x?+(1/x).toFixed(6):0;save();if(vivo)return;renderAux();recalc();
+}
 function upAuxRow(aid,rid,k,v,vivo){const a=db.auxiliares.find(x=>x.id===aid);const r=a.comp.find(x=>x.id===rid);if(!r)return;
   r[k]=(k==='cant')?N(v):v;save();if(vivo)return;renderAux();recalc();}
 
@@ -1366,8 +1429,8 @@ function renderCuad(){
       <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upCuadRow('${a.id}','${d.row.id}','cant',this.value,1)" onchange="upCuadRow('${a.id}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addCuadRow('${a.id}')`)}"></td>
       <td><div class="ro" style="text-align:right">${esPct?dec(m.mo):dec(d.o.costo)}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
-      <td class="act">${rowBtns(`movCuadRow('${a.id}',${ix},-1)`,`movCuadRow('${a.id}',${ix},1)`,`dupCuadRow('${a.id}',${ix})`,`delCuadRow('${a.id}','${d.row.id}')`)}</td>
-    </tr>`;
+      <td class="act">${btnNota(d.row.id,'cuad',!!d.row.nota)}${rowBtns(`movCuadRow('${a.id}',${ix},-1)`,`movCuadRow('${a.id}',${ix},1)`,`dupCuadRow('${a.id}',${ix})`,`delCuadRow('${a.id}','${d.row.id}')`)}</td>
+    </tr>`+filaNota(d.row.id,'cuad',d.row.nota,5,`upCuadRow('${a.id}','${d.row.id}','nota',this.value,1)`);
   });
   box.innerHTML=`
   <div style="padding:12px 15px 4px" class="f-grid">
@@ -1386,6 +1449,7 @@ function renderCuad(){
     <button class="btn ghost" onclick="addCuadRow('${a.id}')">+ Agregar integrante · Enter también</button>
     <button class="btn mini" onclick="delCuadrilla('${a.id}')" style="color:var(--terra);border-color:#EBD5CA;flex:0 0 auto">Eliminar cuadrilla</button>
   </div>
+  ${notaGral(a.notaGral,`upCuad('${a.id}','notaGral',this.value)`)}
   <div style="padding:0 15px 13px;font-size:10.5px;color:var(--soft)">Los cargos porcentuales se capturan en número: 3 son 3% del subtotal de mano de obra. Si esta cuadrilla ya trae herramienta menor, la matriz que la use no debe cargarla otra vez.</div>`;
 }
 function upCuad(id,k,v){const a=(db.cuadrillas||[]).find(x=>x.id===id);if(!a)return;a[k]=v;save();fillCuadSel();recalc();}
@@ -1825,18 +1889,18 @@ function renderMatriz(){
   db.tipos.forEach(t=>{
     const g=m.det.filter(d=>grupoMat(d.o.tipo)===t.k);if(!g.length)return;
     body+=`<tr class="grp"><td colspan="8">${esc(t.label)}</td></tr>`;
-    body+=g.map(d=>{const ix=db.matrices[cid].indexOf(d.row);const esMO=['mo','cuad'].includes(d.o.tipo);
+    body+=g.map(d=>{const ix=db.matrices[cid].indexOf(d.row);const esMO=llevaRend(d.o);
       return `<tr>
       <td><span class="tag ${d.o.tipo}" style="margin-left:7px${['aux','cuad'].includes(d.o.tipo)?';cursor:pointer':''}"
         ${['aux','cuad'].includes(d.o.tipo)?`onclick="irAnalisis('${d.o.tipo}','${d.o.id}')" title="Ver el análisis de ${esc(d.o.clave)}"`:''}>${esc(d.o.clave)}</span></td>
       <td><select onchange="upMat('${cid}','${d.row.id}','ref',this.value)">${refOptions(d.o.id)}</select></td>
       <td class="mid"><div class="ro" style="text-align:center">${esc(d.o.unidad)}</div></td>
-      <td>${esMO?`<input class="n" value="${N(d.row.cant)?dec(1/N(d.row.cant),2):''}" inputmode="decimal" placeholder="—" oninput="upRend('${cid}','${d.row.id}',this.value,1)" onchange="upRend('${cid}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
+      <td>${esMO?`<input class="n" value="${verRend(d.row.cant)}" inputmode="decimal" placeholder="${esc(c.unidad)}/${esc(d.o.unidad)}" title="Cuántos ${esc(c.unidad)} salen por ${esc(d.o.unidad)}" oninput="upRend('${cid}','${d.row.id}',this.value,1)" onchange="upRend('${cid}','${d.row.id}',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
       <td><input class="n" value="${d.row.cant}" inputmode="decimal" oninput="upMat('${cid}','${d.row.id}','cant',this.value,1)" onchange="upMat('${cid}','${d.row.id}','cant',this.value)" onkeydown="${enterAdd(`addMat('${cid}')`)}"></td>
       <td><div class="ro" style="text-align:right">${d.o.tipo==='pct'?'—':dec(d.o.costo)}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(d.imp)}</div></td>
-      <td class="act">${rowBtns(`movMat('${cid}',${ix},-1)`,`movMat('${cid}',${ix},1)`,`dupMat('${cid}',${ix})`,`delMat('${cid}','${d.row.id}')`)}</td>
-    </tr>`;}).join('');
+      <td class="act">${btnNota(d.row.id,'matriz',!!d.row.nota)}${rowBtns(`movMat('${cid}',${ix},-1)`,`movMat('${cid}',${ix},1)`,`dupMat('${cid}',${ix})`,`delMat('${cid}','${d.row.id}')`)}</td>
+    </tr>`+filaNota(d.row.id,'matriz',d.row.nota,6,`upMat('${cid}','${d.row.id}','nota',this.value,1)`);}).join('');
     body+=`<tr class="sub"><td colspan="6">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((s,d)=>s+d.imp,0))}</td><td></td></tr>`;
   });
 
@@ -1850,7 +1914,8 @@ function renderMatriz(){
   </div>
   <div class="tbl-wrap"><table>
     <thead><tr><th style="width:76px">${eh('mClave')}</th><th>${eh('mInsumo')}</th>
-      <th style="width:54px" class="mid">${eh('mUnidad')}</th><th style="width:76px" class="num">${eh('mRend')}</th>
+      <th style="width:54px" class="mid">${eh('mUnidad')}</th>
+      <th style="width:82px" class="num">${eh('mRend')}<div style="font-size:8px;font-weight:400;letter-spacing:.04em;color:var(--soft);text-transform:none">${esc(c.unidad)} por JOR u HR</div></th>
       <th style="width:88px" class="num">${eh('mCant')}</th><th style="width:86px" class="num">${eh('mCosto')}</th>
       <th style="width:96px" class="num">${eh('mImporte')}</th><th class="act"></th></tr></thead>
     <tbody>${body||`<tr><td colspan="8"><div class="empty"><b>Matriz vacía</b>Agrega lo que se necesita para producir un ${esc(c.unidad)}.</div></td></tr>`}
@@ -1877,7 +1942,8 @@ function renderMatriz(){
       <div class="kpi"><small>Cantidad generada</small><b>${dec(cantidad(cid),3)}</b></div>
     </div>
     <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los porcentajes no se capturan aquí: salen de <span class="lnk" onclick="go('indirectos')">Indirectos</span> y de <span class="lnk" onclick="go('cargos')">Utilidad y cargos</span>, y son los mismos para toda la obra.</div>
-  </div>`;
+  </div>
+  ${notaGral(c.notaAnalisis,`setNotaAnalisis('${cid}',this.value)`)}`;
 }
 /* Quita los cargos porcentuales que la matriz carga por fuera cuando la
    cuadrilla ya los trae adentro. Solo se ejecuta si tú le das al botón. */
@@ -1888,6 +1954,7 @@ function quitarPctDuplicado(cid){
   db.matrices[cid]=db.matrices[cid].filter(r=>!ids.includes(r.id));
   save();renderMatriz();renderNav();recalc();
 }
+function setNotaAnalisis(cid,v){const c=db.conceptos.find(x=>x.id===cid);if(!c)return;c.notaAnalisis=v;save();}
 function upMat(cid,rid,k,v,vivo){const r=db.matrices[cid].find(x=>x.id===rid);if(!r)return;
   r[k]=(k==='cant')?N(v):v;save();if(vivo)return;renderMatriz();recalc();}
 
