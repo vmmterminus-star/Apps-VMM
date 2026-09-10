@@ -1074,7 +1074,7 @@ const enterAdd=fn=>`if(event.key==='Enter'){event.preventDefault();${fn}}`;
    que en el Excel andaba suelto abajo de la tabla. Se imprimen.
    ------------------------------------------------------------------ */
 const notasAbiertas=new Set();
-const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad()};
+const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad(),ins:()=>renderInsumos()};
 function togNota(key,vista){
   if(notasAbiertas.has(key))notasAbiertas.delete(key);else notasAbiertas.add(key);
   (VISTAS[vista]||(()=>{}))();
@@ -1191,8 +1191,12 @@ function renderInsumos(){
       <td>${i.tipo==='mo'?`<input class="n" value="${i.fsr}" inputmode="decimal" placeholder="1.72" oninput="upIns('${i.id}','fsr',this.value,1)" onchange="upIns('${i.id}','fsr',this.value)">`:`<div class="ro" style="text-align:right">—</div>`}</td>
       <td><div class="ro b" style="text-align:right">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</div></td>
       <td><input value="${esc(i.fuente)}" oninput="upIns('${i.id}','fuente',this.value)" placeholder="Cotización, fecha"></td>
-      <td class="act">${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
-    </tr>`;};
+      <td class="act">${btnNota(i.id,'ins',!!i.nota)}${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
+    </tr>`+((i.nota||notasAbiertas.has(i.id))
+      ?`<tr class="nota"><td></td><td class="int"></td><td colspan="7"><input class="nota-in" data-nota="${i.id}"
+          value="${esc(i.nota||'')}" placeholder="De dónde sale este precio, qué incluye, con quién se cotizó"
+          oninput="upIns('${i.id}','nota',this.value,1)" onchange="renderInsumos()"></td><td class="act"></td></tr>`
+      :'');};
 
   let body='';
   if(modo==='tipo'){
