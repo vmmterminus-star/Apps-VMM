@@ -127,6 +127,16 @@ button{cursor:pointer;border:none;background:none;padding:0}
   border-left:2px solid var(--accent2);padding-left:11px;white-space:pre-wrap;margin-bottom:9px}
 .fc .parq{font-size:11.5px;color:var(--accent);line-height:1.5;margin:0 0 9px 13px;font-weight:400}
 /* recorte con puntos suspensivos para los textos largos */
+.fmt{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:9px}
+.fmt .fh2{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex-wrap:wrap}
+.fmt .fh2 b{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.fmt .fh2 .hh{font-size:10.5px;color:var(--muted);font-weight:300}
+.fmt .lnk{font-size:10.5px;color:var(--muted)}
+.fmt .lnk:hover{color:var(--accent);text-decoration:underline}
+.fmt .lnk.cp{color:var(--accent);font-weight:500}
+.fmt .prev{background:var(--panel);border-radius:6px;padding:8px 10px;font-size:11.5px;
+  line-height:1.55;color:var(--text);font-weight:300;margin-bottom:7px}
+.fmt .prev i{font-style:italic}
 .cita{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border-radius:7px;
   padding:8px 10px;margin-bottom:6px}
 .cita .t{flex:1;font-size:11.5px;line-height:1.45;color:var(--text);font-weight:300;min-width:0}
@@ -359,6 +369,38 @@ label{display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.0
   font-weight:600;margin-left:auto;flex:none;line-height:1.6}
 @media(max-width:1020px){.apgrid{grid-template-columns:minmax(0,1fr)}.apcol .therm{flex:none}}
 
+
+/* ---------- editor de redacción ---------- */
+.edwrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.edbar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel);
+  border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.edbar .med{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.edbar .med b{color:var(--text);font-weight:600}
+.edrea{padding:26px 34px;min-height:380px;font-size:14.5px;line-height:1.95;font-weight:300;
+  outline:none;color:#1B2226;white-space:pre-wrap}
+.edrea:empty::before{content:attr(data-ph);color:var(--ph);pointer-events:none}
+.edrea div{margin-bottom:.85em}
+.edrea sup{display:inline-block;background:var(--soft);color:var(--accent);font-weight:700;
+  font-size:9.5px;line-height:1;padding:2px 4px;border-radius:3px;margin:0 1px;
+  vertical-align:super;user-select:none;cursor:default;min-width:14px;text-align:center}
+.edrea sup:hover{background:var(--accent);color:#fff}
+.ednotas{border-top:1px solid var(--line);padding:18px 34px 26px;background:#FCFDFD}
+.edsec{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:10px;display:flex;gap:9px;align-items:baseline}
+.edsec .r{text-transform:none;letter-spacing:0;font-weight:300;font-size:10.5px}
+ol.notas{margin:0;padding-left:22px;font-size:11.5px;line-height:1.7;color:var(--text);font-weight:300}
+ol.notas li{margin-bottom:6px;padding-left:3px}
+ol.notas i,.bibl i{font-style:italic}
+.bibl{font-size:11.5px;line-height:1.65;margin-bottom:7px;padding-left:22px;text-indent:-22px;
+  color:var(--text);font-weight:300}
+.pick{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:8px;
+  padding:10px 12px;margin-bottom:7px;background:var(--card)}
+.pick:hover{border-color:var(--accent);background:var(--soft)}
+.pick .p1{font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:4px;font-weight:300}
+.pick .p1 i{font-style:italic}
+.pick .p2{font-size:12.5px;color:var(--text);line-height:1.5;font-weight:300}
+.pick .p3{font-size:10px;color:var(--accent);margin-top:5px;font-weight:600;letter-spacing:.04em}
+@media print{.edbar{display:none!important}}
 /* ---------- etiquetas ---------- */
 .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .tg{background:var(--soft);color:var(--accent);border-radius:12px;padding:2px 9px;font-size:10.5px;font-weight:500}
@@ -438,6 +480,13 @@ label{display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.0
 .pv-apm{font-size:9.5pt;color:var(--muted);margin-bottom:16px;padding-bottom:9px;border-bottom:1px solid var(--line);font-weight:300}
 .pv-p{font-size:11pt;line-height:1.75;margin:0 0 13px;text-align:justify;font-weight:300}
 .pv-p b{font-weight:600}
+.pv-texto{font-size:11pt;line-height:1.9;font-weight:300;text-align:justify;margin-bottom:18px}
+.pv-texto div{margin-bottom:.9em}
+.pv-texto sup{font-size:7.5pt;vertical-align:super;color:var(--accent);font-weight:700}
+.pv-notas{border-top:1px solid var(--line);padding-top:12px;margin-bottom:22px}
+.pv-notas .nt{font-size:8.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.pv-notas ol{margin:0;padding-left:20px;font-size:9.5pt;line-height:1.6;font-weight:300}
+.pv-notas li{margin-bottom:4px}
 .pv-fi{margin:0 0 20px;padding-left:16px;border-left:2px solid var(--accent2);page-break-inside:avoid;break-inside:avoid}
 .pv-fi .n{font-size:8.5pt;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:5px}
 .pv-fi .tx{font-size:11pt;line-height:1.7;margin-bottom:7px;font-weight:300;white-space:pre-wrap}
@@ -698,10 +747,11 @@ const CAUSAS = [
    ESTADO
    ========================================================= */
 const KEY='protocolo_v1';
-const DEF={fichas:[],atorados:[],pendientes:{},redaccion:{},ext:{},
+const ESQUEMA=2;
+const DEF={fichas:[],atorados:[],pendientes:{},redaccion:{},redacciones:{},ext:{},esquema:2,
   ajustes:{ppc:300,mult:2.5,umbral:80,estilo:'chicago-nb'},
   ui:{detalles:false,guia:{que:true,como:true,mide:true,tips:true}},
-  avance:{dondeVoy:'',aps:null,preguntas:[],borradores:true,alumno:'',maestra:'Dra. Alejandra Robles Delgado Romero'},
+  avance:{dondeVoy:'',aps:null,preguntas:[],borradores:true,texto:true,alumno:'',maestra:'Dra. Alejandra Robles Delgado Romero'},
   asesorias:[],
   titulo:null};
 
@@ -728,12 +778,24 @@ function tituloDefault(){
       'servicios complementarios','adulto mayor'].map(c=>({id:uid(),txt:c,estado:'por-definir'}))
   };
 }
-let S=load(), view='apartados', sel='1.1', filtro='', tipoFiltro='', srcFiltro='', claseFiltro='';
+let S=load(), view='apartados', sel='1.1', filtro='', tipoFiltro='', srcFiltro='', claseFiltro='', modoAp='fichas';
 
 function load(){
-  try{ const r=localStorage.getItem(KEY); if(!r) return JSON.parse(JSON.stringify(DEF));
-    const d=JSON.parse(r); return Object.assign(JSON.parse(JSON.stringify(DEF)),d);
-  }catch(e){ return JSON.parse(JSON.stringify(DEF)); }
+  try{ const r=localStorage.getItem(KEY); if(!r){ const d=JSON.parse(JSON.stringify(DEF)); d.esquema=ESQUEMA; return d; }
+    const d=JSON.parse(r);
+    /* migración: antes de tocar nada, se guarda una copia intacta de lo que había */
+    if((d.esquema||1) < ESQUEMA){
+      try{ localStorage.setItem('protocolo_v1_respaldo_'+(d.esquema||1)+'_'+Date.now().toString(36), r); }catch(e){}
+      d.redacciones = d.redacciones || {};
+      (d.fichas||[]).forEach(f=>{ if(f.fuente && typeof f.fuente==='object'){
+        if(f.fuente.notaC===undefined) f.fuente.notaC='';
+        if(f.fuente.notaA===undefined) f.fuente.notaA=''; } });
+      d.esquema=ESQUEMA;
+    }
+    const s=Object.assign(JSON.parse(JSON.stringify(DEF)),d);
+    s.redacciones = s.redacciones || {};
+    return s;
+  }catch(e){ const d=JSON.parse(JSON.stringify(DEF)); d.esquema=ESQUEMA; return d; }
 }
 function save(){ localStorage.setItem(KEY,JSON.stringify(S)); localStorage.setItem('protocolo_local_ts',new Date().toISOString()); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -764,7 +826,8 @@ function metrica(id){
   const mMax=Math.round(e.max*a.ppc*a.mult);
   /* la redacción sale de tus borradores + lo que hayas escrito fuera de la app */
   const redMan=S.redaccion[id]||0;
-  const red=Math.round((redMan + palRed/(a.ppc||300))*10)/10;
+  const palEd=palabrasRed(id);
+  const red=Math.round((redMan + (palRed+palEd)/(a.ppc||300))*10)/10;
   let est='sin-empezar';
   if(pal>0){
     if(pal<mMin*(a.umbral/100)) est='juntando';
@@ -773,7 +836,7 @@ function metrica(id){
     else if(pal<=mMax) est='completo';
     else est='de-sobra';
   }
-  return {pal,palRed,redMan,nBor:bor.length,fue,meta,mMin,mMax,red,est,e,n:fs.length,
+  return {pal,palRed,palEd,redMan,nBor:bor.length,fue,meta,mMin,mMax,red,est,e,n:fs.length,
     pct:meta?Math.min(pal/meta,1.35):0, pctF:e.fue?Math.min(fue/e.fue,1.35):0, pctR:e.ideal?Math.min(red/e.ideal,1.35):0};
 }
 const ESTLBL={'sin-empezar':'sin empezar','juntando':'juntando','ya-casi':'ya casi','suficiente':'suficiente','completo':'completo','de-sobra':'de sobra'};
@@ -792,23 +855,153 @@ function chicago(s){
   if(s.usarCruda && s.refCruda) return esc(s.refCruda).replace(/[*_]{1,2}([^*_]{3,})[*_]{1,2}/g,'<i>$1</i>');
   const A=esc(s.autor||''), T=esc(s.titulo||''), Y=esc(s.anio||''), L=esc(s.liga||'');
   const p=(x)=>x?x:'';
+  /* si el autor ya termina en punto (una inicial), no se le agrega otro */
+  const pt = A.slice(-1)==='.' ? ' ' : '. ';
   switch(s.tipo){
-    case 'libro': return `${p(A)}${A?'. ':''}<i>${T}</i>. ${s.ciudad?esc(s.ciudad)+': ':''}${esc(s.editorial||'')}${(s.ciudad||s.editorial)&&Y?', ':''}${Y}.`;
-    case 'articulo': return `${p(A)}${A?'. ':''}"${T}." <i>${esc(s.revista||'')}</i>${s.volumen?' '+esc(s.volumen):''}${s.numero?', no. '+esc(s.numero):''}${Y?' ('+Y+')':''}${s.paginas?': '+esc(s.paginas):''}.`;
-    case 'tesis': return `${p(A)}${A?'. ':''}"${T}." ${esc(s.grado||'Tesis')}, ${esc(s.universidad||'')}${Y?', '+Y:''}.`;
+    case 'libro': return `${p(A)}${A?pt:''}<i>${T}</i>. ${s.ciudad?esc(s.ciudad)+': ':''}${esc(s.editorial||'')}${(s.ciudad||s.editorial)&&Y?', ':''}${Y}.`;
+    case 'articulo': return `${p(A)}${A?pt:''}"${T}." <i>${esc(s.revista||'')}</i>${s.volumen?' '+esc(s.volumen):''}${s.numero?', no. '+esc(s.numero):''}${Y?' ('+Y+')':''}${s.paginas?': '+esc(s.paginas):''}.`;
+    case 'tesis': return `${p(A)}${A?pt:''}"${T}." ${esc(s.grado||'Tesis')}, ${esc(s.universidad||'')}${Y?', '+Y:''}.`;
     case 'ley': return `<i>${T}</i>. ${s.ciudad?esc(s.ciudad)+': ':''}${A}${Y?', '+Y:''}.`;
-    case 'sitio': return `${p(A)}${A?'. ':''}"${T}." <i>${esc(s.sitio||'')}</i>. ${esc(s.fecha||'')}${L?'. '+L:''}.`;
-    case 'prensa': return `${p(A)}${A?'. ':''}"${T}." <i>${esc(s.medio||'')}</i>, ${esc(s.fecha||'')}${L?'. '+L:''}.`;
-    case 'video': return `${p(A)}${A?'. ':''}"${T}." Video de YouTube${s.duracion?', '+esc(s.duracion):''}. ${s.fecha?'Publicado el '+esc(s.fecha):''}${L?'. '+L:''}.`;
-    default: return `${p(A)}${A?'. ':''}${T}${Y?'. '+Y:''}${L?'. '+L:''}.`;
+    case 'sitio': return `${p(A)}${A?pt:''}"${T}." <i>${esc(s.sitio||'')}</i>. ${esc(s.fecha||'')}${L?'. '+L:''}.`;
+    case 'prensa': return `${p(A)}${A?pt:''}"${T}." <i>${esc(s.medio||'')}</i>, ${esc(s.fecha||'')}${L?'. '+L:''}.`;
+    case 'video': return `${p(A)}${A?pt:''}"${T}." Video de YouTube${s.duracion?', '+esc(s.duracion):''}. ${s.fecha?'Publicado el '+esc(s.fecha):''}${L?'. '+L:''}.`;
+    default: return `${p(A)}${A?pt:''}${T}${Y?'. '+Y:''}${L?'. '+L:''}.`;
   }
 }
+/* ---- nombres: en bibliografía va invertido, en nota va al derecho ---- */
+function nombreDerecho(autor){
+  if(!autor) return '';
+  const partes = autor.split(/\s*;\s*/).filter(Boolean).map(p=>{
+    const c=p.split(/\s*,\s*/);
+    return c.length>1 ? (c.slice(1).join(', ')+' '+c[0]).trim() : p.trim();
+  });
+  if(partes.length===1) return partes[0];
+  if(partes.length===2) return partes[0]+' y '+partes[1];
+  return partes.slice(0,-1).join(', ')+' y '+partes[partes.length-1];
+}
+function apellidoDe(autor){
+  if(!autor) return '';
+  const uno=autor.split(/\s*;\s*/)[0]||'';
+  const c=uno.split(/\s*,\s*/);
+  return (c.length>1? c[0] : uno.split(/\s+/).slice(-1)[0]||uno).trim();
+}
+function tituloCorto(t){
+  if(!t) return '';
+  const lim=t.replace(/[“”"«»]/g,'').split(/[:.;]/)[0].trim();
+  const w=lim.split(/\s+/);
+  return w.slice(0,4).join(' ');
+}
+function md2i(t){ return esc(t).replace(/[*_]{1,2}([^*_]{2,})[*_]{1,2}/g,'<i>$1</i>'); }
+
+/* NOTA AL PIE COMPLETA — nombre al derecho, comas, publicación entre paréntesis,
+   y solo la página de la cita. */
+function chicagoNota(s, pag){
+  if(s.notaC && s.notaC.trim()) return md2i(s.notaC.trim()) + (pag?', '+esc(pag):'') + '.';
+  const A=esc(nombreDerecho(s.autor||'')), T=esc(s.titulo||''), Y=esc(s.anio||'');
+  const L=esc(s.liga||''), P=pag?', '+esc(pag):'';
+  const pub=(...x)=>{ const v=x.filter(Boolean).join(', '); return v?' ('+v+')':''; };
+  switch(s.tipo){
+    case 'libro':
+      return `${A?A+', ':''}<i>${T}</i>${pub([esc(s.ciudad||''),esc(s.editorial||'')].filter(Boolean).join(': '),Y)}${P}.`;
+    case 'articulo':
+      return `${A?A+', ':''}"${T}," <i>${esc(s.revista||'')}</i>${s.volumen?' '+esc(s.volumen):''}${s.numero?', no. '+esc(s.numero):''}${Y?' ('+Y+')':''}${P?':'+P.slice(1):''}.`;
+    case 'tesis':
+      return `${A?A+', ':''}"${T}"${pub((esc(s.grado||'tesis')).toLowerCase(),esc(s.universidad||''),Y)}${P}.`;
+    case 'ley':
+      return `<i>${T}</i>${pub(esc(s.ciudad||''),esc(s.autor||''),Y)}${P}.`;
+    case 'sitio':
+      return `${A?A+', ':''}"${T}," <i>${esc(s.sitio||'')}</i>${s.fecha?', '+esc(s.fecha):''}${L?', '+L:''}${P}.`;
+    case 'prensa':
+      return `${A?A+', ':''}"${T}," <i>${esc(s.medio||'')}</i>${s.fecha?', '+esc(s.fecha):''}${L?', '+L:''}${P}.`;
+    case 'video':
+      return `${A?A+', ':''}"${T}," video de YouTube${s.duracion?', '+esc(s.duracion):''}${s.fecha?', publicado el '+esc(s.fecha):''}${L?', '+L:''}${P}.`;
+    default:
+      return `${A?A+', ':''}${T}${Y?', '+Y:''}${L?', '+L:''}${P}.`;
+  }
+}
+/* NOTA ABREVIADA — de la segunda vez en adelante */
+function chicagoNotaCorta(s, pag){
+  if(s.notaA && s.notaA.trim()) return md2i(s.notaA.trim()) + (pag?', '+esc(pag):'') + '.';
+  const ap=esc(apellidoDe(s.autor||'')) || esc((s.titulo||'').split(/\s+/).slice(0,3).join(' '));
+  const tc=esc(tituloCorto(s.titulo||''));
+  const cursiva = s.tipo==='libro' || s.tipo==='ley';
+  const t = tc ? (cursiva?`<i>${tc}</i>`:`"${tc}"`) : '';
+  return [ap, t].filter(Boolean).join(', ') + (pag?', '+esc(pag):'') + '.';
+}
+/* versiones en texto plano, para copiar */
+function planoDe(html){ const d=document.createElement('div'); d.innerHTML=html; return d.textContent.replace(/\s+/g,' ').trim(); }
+
 function faltan(s){
   if(s.usarCruda && s.refCruda) return [];   /* referencia pegada completa */
   const f=[];
   if(!s.autor) f.push('autor'); if(!s.titulo) f.push('título');
   if(!s.anio && !s.fecha) f.push('año');
   return f;
+}
+
+
+/* =========================================================
+   LOS TRES FORMATOS DE CITA, EDITABLES
+   Lo generado es punto de partida; si escribes algo, manda lo tuyo.
+   ========================================================= */
+function fmtRows(s, pag, ctx){
+  /* ctx: 'M' (ficha abierta) o 'F' (editor de fuente) */
+  const set = ctx==='M' ? 'setFmtM' : 'setFmtF';
+  const fila=(k, lbl, hint, valor, generado)=>{
+    const propio = !!(valor && valor.trim());
+    return `<div class="fmt">
+      <div class="fh2"><b>${lbl}</b>
+        <span class="hh">${hint}</span>
+        <span class="sp"></span>
+        ${propio?`<button class="lnk" onclick="${set}('${k}','')">volver a la automática</button>`:''}
+        <button class="lnk cp" onclick="copiarFmt(this)">copiar</button></div>
+      <div class="prev" data-plano="1">${generado}</div>
+      <textarea class="in auto" placeholder="Escribe aquí solo si quieres corregirla a mano. Las cursivas van entre *asteriscos*."
+        oninput="${set}('${k}',this.value);autoAlto(this)">${esc(valor||'')}</textarea>
+    </div>`;
+  };
+  return `<div class="grp"><div class="gl">Formatos de cita <span class="r">— Chicago notas-bibliografía</span></div>
+    ${fila('refCruda','Entrada de bibliografía','apellido invertido · puntos · va al final del documento',
+       (s.usarCruda?s.refCruda:''), chicago(s))}
+    ${fila('notaC','Nota al pie completa','nombre al derecho · comas · la primera vez que citas',
+       s.notaC, chicagoNota(s, pag))}
+    ${fila('notaA','Nota al pie abreviada','de la segunda vez en adelante',
+       s.notaA, chicagoNotaCorta(s, pag))}
+    <div class="hint">La página sale del campo <b>Página</b> de la ficha${pag?' — ahora dice <b>'+esc(pag)+'</b>':', que está vacío'}.</div>
+  </div>`;
+}
+function setFmtM(k,v){
+  if(k==='refCruda'){ M.fuente.refCruda=v; M.fuente.usarCruda=!!(v&&v.trim()); }
+  else M.fuente[k]=v;
+  const p=document.querySelectorAll('.fmt');
+  /* repintar solo las previas, sin redibujar todo para no perder el cursor */
+  actualizarPrevias();
+}
+function setFmtF(k,v){
+  if(k==='refCruda'){ F.s.refCruda=v; F.s.usarCruda=!!(v&&v.trim()); }
+  else F.s[k]=v;
+  actualizarPrevias();
+}
+function actualizarPrevias(){
+  const s = M? M.fuente : (F? F.s : null); if(!s) return;
+  const pag = M? (M.pagina||'') : '';
+  const prev=document.querySelectorAll('.fmt .prev');
+  if(prev[0]) prev[0].innerHTML=chicago(s);
+  if(prev[1]) prev[1].innerHTML=chicagoNota(s,pag);
+  if(prev[2]) prev[2].innerHTML=chicagoNotaCorta(s,pag);
+}
+function copiarFmt(btn){
+  const caja=btn.closest('.fmt').querySelector('.prev');
+  copiar(planoDe(caja.innerHTML));
+  toast('Copiado');
+}
+/* propagar los formatos a las demás fichas de la misma fuente */
+function propagarFormatos(f){
+  const k=fuenteKey(f); if(!k) return;
+  S.fichas.forEach(x=>{ if(x!==f && fuenteKey(x)===k){
+    x.fuente.refCruda=f.fuente.refCruda; x.fuente.usarCruda=f.fuente.usarCruda;
+    x.fuente.notaC=f.fuente.notaC; x.fuente.notaA=f.fuente.notaA; } });
+  actualizarCitas(k, f.fuente);
 }
 
 /* =========================================================
@@ -831,6 +1024,7 @@ function render(){
   else if(view==='avance') c.innerHTML=viewAvance();
   else c.innerHTML=viewAjustes();
   if(view==='docs') montarLector();
+  if(view==='apartados' && modoAp==='texto' && sel) montarEditor(sel);
 }
 function go(v){ view=v; render(); }
 
@@ -872,9 +1066,14 @@ function viewApartado(){
      <div><div class="num">${a.id} · ${esc(a.sem)} · capítulo ${a.cap}</div>
      <h2>${esc(a.nom)}</h2></div>
      <div style="display:flex;gap:8px;flex-wrap:wrap">
+       <button class="pill ${modoAp==='fichas'?'on':''}" onclick="modoAp='fichas';render()">Fichas</button>
+       <button class="pill ${modoAp==='texto'?'on':''}" onclick="modoAp='texto';render()">Redacción${palabrasRed(a.id)?' · '+palabrasRed(a.id):''}</button>
+       <span style="width:8px"></span>
        <button class="btn o sm" onclick="openAtoro('${a.id}')">marcar atoro</button>
-       <button class="btn o sm" onclick="openFicha('${a.id}',null,null,{clase:'redaccion'})">+ redacción</button>
-       <button class="btn" onclick="openFicha('${a.id}')">+ ficha</button>
+       ${modoAp==='fichas'?`<button class="btn o sm" onclick="openFicha('${a.id}',null,null,{clase:'redaccion'})">+ nota suelta</button>
+       <button class="btn" onclick="openFicha('${a.id}')">+ ficha</button>`
+       :`<button class="btn o sm" onclick="copiarPlano('${a.id}')">copiar texto plano</button>
+       <button class="btn" onclick="copiarRico('${a.id}')">copiar para Word</button>`}
      </div>
    </div>
 
@@ -908,6 +1107,7 @@ function viewApartado(){
    ${pendPanel(a.id)}
    </div>
 
+   ${modoAp==='texto'? editorHTML(a) : `
    <div class="fh">
      <span class="h">Fichas · ${fs.length}</span>
      <span class="sp"></span>
@@ -921,7 +1121,22 @@ function viewApartado(){
    </div>
    ${srcFiltro?`<div class="avisofil">Viendo solo las fichas de <b>una fuente</b>
      <button onclick="srcFiltro='';render()">ver todas otra vez</button></div>`:''}
-   ${fichasHTML(fs)}
+   ${fichasHTML(fs)}`}
+  </div>`;
+}
+
+function editorHTML(a){
+  const r=red(a.id);
+  return `<div class="edwrap">
+    <div class="edbar">
+      <button class="btn o sm" onclick="abrirInsertar()">insertar cita</button>
+      <span class="med" id="edMedidor"></span>
+      <span class="sp"></span>
+      <span class="hint" id="edAviso">${r.ts?'guardado':'sin escribir todavía'}</span>
+    </div>
+    <div class="edrea" id="edRed" contenteditable="true" spellcheck="true"
+      data-ph="Escribe aquí el texto corrido de este apartado. Se guarda solo."></div>
+    <div class="ednotas" id="edNotas"></div>
   </div>`;
 }
 /* =========================================================
@@ -1230,7 +1445,8 @@ function fichasHTML(fs){
         <span class="sp"></span>
         ${f.archivo?`<a href="${esc(f.archivo)}${f.pagina?'#page='+encodeURIComponent(f.pagina):''}" target="_blank" rel="noopener" style="color:var(--accent)">abrir documento</a>`:''}
         <button onclick="openFicha(null,'${f.id}')">editar</button>
-        ${bor?`<button onclick="otraRedaccion('${f.id}')">otra redacción igual</button>`
+        ${bor?`<button onclick="vaciarFichaAlTexto('${f.id}')">pasar al texto</button>
+               <button onclick="otraRedaccion('${f.id}')">otra igual</button>`
              :`<button onclick="dupFicha('${f.id}')">otra de esta fuente</button>
                <button onclick="redactarSobre('${f.id}')">redactar sobre esta</button>`}
         ${viejaTitulo(f)?`<button style="color:var(--warn)" onclick="revisada('${f.id}')">ya la revisé</button>`:''}
@@ -1377,9 +1593,7 @@ function drawFuente(){
         ${rowsCamposF(campos,s)}
       </div>
 
-      <div class="grp"><div class="gl">Cómo va a quedar</div>
-        <div class="lock"><div style="flex:1;min-width:0"><div class="t">${chicago(s)}</div></div></div>
-      </div>
+      ${fmtRows(s, '', 'F')}
 
       <div class="grp"><div class="gl">Se aplica a todas <span class="r">— solo si lo llenas</span></div>
         <div class="fld"><label>Confiabilidad</label>
@@ -1621,7 +1835,8 @@ function drawModal(){
           : 'La referencia se va a armar con los campos de abajo, no con el texto que pegaste.'}</div>
       </div>`:''}
       ${rowsCampos(campos,s)}
-      </div>`;
+      </div>
+      ${(s.autor||s.titulo||s.refCruda)?fmtRows(s, M.pagina||'', 'M'):''}`;
   } else {
     campoHTML = `<div class="lock"><div style="flex:1;min-width:0">
         <div class="t">${chicago(s)}</div>
@@ -1721,7 +1936,7 @@ function detallesHTML(){
           ${RUTA.map(r=>`<option value="${r.id}" ${M.apartado===r.id?'selected':''}>${r.id} · ${esc(r.nom)}</option>`).join('')}
         </select></div>
       <div class="fld" style="max-width:120px"><label><span class="op">opc.</span> Página</label>
-        <input class="in" value="${esc(M.pagina||'')}" oninput="M.pagina=this.value"></div>
+        <input class="in" value="${esc(M.pagina||'')}" oninput="M.pagina=this.value;actualizarPrevias()"></div>
     </div>
     <div class="fld"><label><span class="op">opc.</span> También sirve en
         <span class="hintl">aparece ahí, pero solo suma palabras en el apartado de arriba</span></label>
@@ -1783,8 +1998,8 @@ function guardarFicha(otra){
     archivo:M.archivo||'', clase:M.clase||'extracto',
     fuentes:(M.clase==='redaccion'?(M.fuentes||[]):[]).map(y=>JSON.parse(JSON.stringify(y))), creada:M.modo==='edit'?undefined:new Date().toISOString()};
   if(f.creada===undefined) delete f.creada;
-  if(M.modo==='edit'){ const i=S.fichas.findIndex(x=>x.id===M.id); S.fichas[i]=Object.assign(S.fichas[i],f); }
-  else S.fichas.unshift(f);
+  if(M.modo==='edit'){ const i=S.fichas.findIndex(x=>x.id===M.id); S.fichas[i]=Object.assign(S.fichas[i],f); propagarFormatos(S.fichas[i]); }
+  else { S.fichas.unshift(f); propagarFormatos(f); }
   save(); schedulePush();
   if(otra){ openFicha(f.apartado,null,f.fuente,
       {confiabilidad:f.confiabilidad,tags:f.tags,archivo:f.archivo,secundarios:f.secundarios,clase:f.clase});
@@ -2416,6 +2631,231 @@ function compsDe(ap){
 }
 const COMPLBL={pendiente:'pendiente',hecho:'cumplido',no:'no alcancé'};
 
+
+/* =========================================================
+   REDACCIÓN PROGRESIVA POR APARTADO
+   El texto vive en un contenteditable. Las citas son <sup> atómicos
+   con el id de la ficha adentro; el NÚMERO no se guarda nunca — se
+   calcula por orden de aparición en cada repintado. Por eso mover,
+   borrar o insertar una cita en medio renumera solo y no se puede romper.
+   ========================================================= */
+let _tAuto=null, _rango=null, _apEdit=null;
+
+function red(ap){ S.redacciones=S.redacciones||{}; return S.redacciones[ap]||{html:'',ts:''}; }
+function setRed(ap,html){
+  S.redacciones=S.redacciones||{};
+  S.redacciones[ap]={html, ts:new Date().toISOString()};
+}
+/* deja solo texto, saltos de párrafo y las citas */
+function limpiaHTML(raw){
+  const d=document.createElement('div'); d.innerHTML=raw||'';
+  const out=document.createElement('div');
+  (function walk(nodo, destino){
+    nodo.childNodes.forEach(n=>{
+      if(n.nodeType===3){ destino.appendChild(document.createTextNode(n.nodeValue)); return; }
+      if(n.nodeType!==1) return;
+      const t=n.tagName;
+      if(t==='SCRIPT'||t==='STYLE'||t==='NOSCRIPT') return;   /* nunca se copia código pegado */
+      if(t==='SUP' && n.dataset && n.dataset.f){
+        const s=document.createElement('sup');
+        s.dataset.f=n.dataset.f; if(n.dataset.p) s.dataset.p=n.dataset.p;
+        s.contentEditable='false'; s.textContent='0';
+        destino.appendChild(s); return;
+      }
+      if(t==='BR'){ destino.appendChild(document.createElement('br')); return; }
+      if(t==='DIV'||t==='P'){ const p=document.createElement('div'); destino.appendChild(p); walk(n,p); return; }
+      walk(n, destino);
+    });
+  })(d, out);
+  return out.innerHTML;
+}
+function palabrasDe(html){
+  const d=document.createElement('div'); d.innerHTML=html||'';
+  d.querySelectorAll('sup').forEach(s=>s.remove());
+  return words(d.textContent);
+}
+function palabrasRed(ap){ return palabrasDe(red(ap).html); }
+
+function renumerar(cont){
+  if(!cont) return;
+  [...cont.querySelectorAll('sup[data-f]')].forEach((el,i)=>{
+    el.contentEditable='false';
+    if(el.textContent!==String(i+1)) el.textContent=String(i+1);
+  });
+}
+/* las notas del apartado: completa la primera vez que sale la fuente, abreviada después */
+function notasDe(html){
+  const d=document.createElement('div'); d.innerHTML=html||'';
+  const sups=[...d.querySelectorAll('sup[data-f]')];
+  const vistas={}, notas=[], usadas={};
+  sups.forEach((el,i)=>{
+    const f=S.fichas.find(x=>x.id===el.dataset.f);
+    if(!f){ notas.push({n:i+1, html:'<span style="color:var(--warn)">La ficha de esta cita ya no existe.</span>', falta:true}); return; }
+    const s=f.fuente||{}, k=fuenteKey(f);
+    const pag = el.dataset.p || f.pagina || '';
+    const primera = !vistas[k]; vistas[k]=1;
+    if(k) usadas[k]=s;
+    notas.push({n:i+1, html: primera? chicagoNota(s,pag) : chicagoNotaCorta(s,pag), fid:f.id});
+  });
+  const bib=Object.values(usadas).sort((a,b)=>
+    (a.autor||a.refCruda||'zzz').localeCompare(b.autor||b.refCruda||'zzz','es'));
+  return {notas, bib};
+}
+function guardarEditor(){
+  const ed=document.getElementById('edRed'); if(!ed||!_apEdit) return;
+  renumerar(ed);
+  setRed(_apEdit, limpiaHTML(ed.innerHTML));
+  save(); schedulePush();
+  const av=document.getElementById('edAviso'); if(av) av.textContent='guardado';
+  pintarNotas();
+}
+function autoguardar(){
+  const av=document.getElementById('edAviso'); if(av) av.textContent='escribiendo…';
+  clearTimeout(_tAuto); _tAuto=setTimeout(guardarEditor, 600);
+}
+function pintarNotas(){
+  if(!_apEdit) return;
+  const cont=document.getElementById('edNotas'); if(!cont) return;
+  const ed=document.getElementById('edRed');
+  const {notas,bib}=notasDe(ed? ed.innerHTML : red(_apEdit).html);
+  const pal = ed? palabrasDe(ed.innerHTML) : palabrasRed(_apEdit);
+  const e=ex(_apEdit), metaPal=Math.round(e.ideal*(S.ajustes.ppc||300));
+  const cu=Math.round(pal/(S.ajustes.ppc||300)*100)/100;
+  const m=document.getElementById('edMedidor');
+  if(m) m.innerHTML=`<b>${pal.toLocaleString('es-MX')}</b> palabras · <b>${cu}</b> de ${e.ideal} cuartillas
+    <span class="bar" style="max-width:160px"><i style="width:${Math.min(pal/Math.max(metaPal,1),1)*100}%"></i></span>`;
+  cont.innerHTML = `
+    <div class="edsec">Notas <span class="r">${notas.length} en este apartado</span></div>
+    ${notas.length?`<ol class="notas">${notas.map(n=>`<li>${n.html}</li>`).join('')}</ol>`
+      :'<div class="hint">Todavía no insertas citas. Pon el cursor donde quieras una y toca <b>insertar cita</b>.</div>'}
+    <div class="edsec" style="margin-top:22px">Bibliografía <span class="r">${bib.length} fuente${bib.length===1?'':'s'} usada${bib.length===1?'':'s'}</span></div>
+    ${bib.length?`<div>${bib.map(s=>`<div class="bibl">${chicago(s)}</div>`).join('')}</div>`
+      :'<div class="hint">Se arma sola con las fuentes que cites arriba.</div>'}`;
+}
+function montarEditor(ap){
+  const ed=document.getElementById('edRed'); if(!ed) return;
+  _apEdit=ap;
+  ed.innerHTML = red(ap).html || '';
+  renumerar(ed);
+  ed.oninput=()=>{ renumerar(ed); autoguardar(); };
+  ed.onblur=()=>{ recordarRango(); guardarEditor(); };
+  ed.onkeyup=recordarRango; ed.onmouseup=recordarRango;
+  ed.onpaste=(e)=>{ e.preventDefault();
+    const t=(e.clipboardData||window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, t); };
+  pintarNotas();
+}
+function recordarRango(){
+  const s=window.getSelection(); if(!s||!s.rangeCount) return;
+  const r=s.getRangeAt(0);
+  const ed=document.getElementById('edRed');
+  if(ed && ed.contains(r.commonAncestorContainer)) _rango=r.cloneRange();
+}
+/* ---------- insertar una cita ---------- */
+let CI=null;
+function abrirInsertar(){
+  recordarRango();
+  CI={q:'', ap:_apEdit};
+  drawInsertar();
+}
+function cerrarInsertar(){ CI=null; document.getElementById('modalRoot').innerHTML=''; 
+  const ed=document.getElementById('edRed'); if(ed) ed.focus(); }
+function drawInsertar(){
+  const q=(CI.q||'').toLowerCase();
+  let fs=S.fichas.filter(f=>(f.clase||'extracto')!=='redaccion');
+  if(q) fs=fs.filter(f=>JSON.stringify(f).toLowerCase().includes(q));
+  const delAp=fs.filter(f=>f.apartado===CI.ap || (f.secundarios||[]).includes(CI.ap));
+  const resto=fs.filter(f=>!delAp.includes(f));
+  const fila=f=>{ const s=f.fuente||{};
+    return `<button class="pick" onclick="insertarCita('${f.id}')">
+      <div class="p1">${chicago(s)}</div>
+      <div class="p2">${esc((f.extracto||'').slice(0,120))}${(f.extracto||'').length>120?'…':''}</div>
+      <div class="p3">${f.apartado||'sin apartado'}${f.pagina?' · p. '+esc(f.pagina):' · sin página'}</div>
+    </button>`; };
+  document.getElementById('modalRoot').innerHTML=`<div class="overlay" onclick="if(event.target===this)cerrarInsertar()">
+   <div class="modal" style="max-width:620px">
+    <div class="mtop"><b>Insertar cita</b><span class="apto">${CI.ap}</span>
+      <button class="x" onclick="cerrarInsertar()">✕</button></div>
+    <div class="mbody">
+      <input class="in" id="ciIn" placeholder="buscar entre tus fichas…" value="${esc(CI.q)}"
+        oninput="CI.q=this.value;drawInsertar()">
+      ${delAp.length?`<div class="edsec" style="margin-top:16px">De este apartado</div>
+        ${delAp.map(fila).join('')}`:''}
+      ${resto.length?`<div class="edsec" style="margin-top:18px">De otros apartados</div>
+        ${resto.slice(0,40).map(fila).join('')}`:''}
+      ${(!delAp.length&&!resto.length)?'<div class="empty" style="margin-top:14px">No hay fichas que coincidan.</div>':''}
+    </div>
+    <div class="mfoot"><span class="hint">La página de la nota sale de la ficha. Si la ficha no tiene página, la nota va sin ella.</span></div>
+   </div></div>`;
+  const i=document.getElementById('ciIn'); if(i){ i.focus(); i.setSelectionRange(i.value.length,i.value.length); }
+}
+function insertarCita(fid){
+  const f=S.fichas.find(x=>x.id===fid); if(!f) return;
+  const ed=document.getElementById('edRed');
+  cerrarInsertar();
+  if(!ed) return;
+  const sup=document.createElement('sup');
+  sup.dataset.f=fid; if(f.pagina) sup.dataset.p=f.pagina;
+  sup.contentEditable='false'; sup.textContent='0';
+  const sel=window.getSelection();
+  if(_rango && ed.contains(_rango.commonAncestorContainer)){
+    _rango.collapse(false); _rango.insertNode(sup);
+    const r=document.createRange(); r.setStartAfter(sup); r.collapse(true);
+    sel.removeAllRanges(); sel.addRange(r); _rango=r.cloneRange();
+  } else { ed.appendChild(sup); }
+  renumerar(ed); guardarEditor(); ed.focus();
+}
+/* ---------- exportar ---------- */
+function htmlExport(ap){
+  const r=red(ap), {notas,bib}=notasDe(r.html);
+  const nom=(RUTAMAP[ap]||{}).nom||'';
+  const d=document.createElement('div'); d.innerHTML=r.html||'';
+  d.querySelectorAll('sup[data-f]').forEach(s=>{ s.removeAttribute('data-f'); s.removeAttribute('data-p'); s.removeAttribute('contenteditable'); });
+  return `<div style="font-family:Georgia,serif;font-size:12pt;line-height:1.8">
+    <h2 style="font-family:Arial,sans-serif;font-size:14pt">${ap} ${esc(nom)}</h2>
+    <div>${d.innerHTML}</div>
+    ${notas.length?`<h3 style="font-family:Arial,sans-serif;font-size:11pt;margin-top:26px">Notas</h3>
+      <ol style="font-size:10pt;line-height:1.6">${notas.map(n=>`<li>${n.html}</li>`).join('')}</ol>`:''}
+    ${bib.length?`<h3 style="font-family:Arial,sans-serif;font-size:11pt;margin-top:26px">Bibliografía</h3>
+      ${bib.map(s=>`<p style="font-size:10pt;line-height:1.6;margin:0 0 8pt;padding-left:36pt;text-indent:-36pt">${chicago(s)}</p>`).join('')}`:''}
+  </div>`;
+}
+function copiarRico(ap){
+  const html=htmlExport(ap);
+  const caja=document.createElement('div');
+  caja.innerHTML=html;
+  caja.style.cssText='position:fixed;left:-9999px;top:0;white-space:normal';
+  document.body.appendChild(caja);
+  const r=document.createRange(); r.selectNodeContents(caja);
+  const s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  s.removeAllRanges(); document.body.removeChild(caja);
+  toast(ok?'Copiado con formato — pégalo en Word':'No se pudo copiar; usa el botón de texto plano');
+}
+function copiarPlano(ap){
+  const d=document.createElement('div'); d.innerHTML=htmlExport(ap);
+  d.querySelectorAll('li').forEach((li,i)=>li.textContent=(i+1)+'. '+li.textContent);
+  copiar(d.innerText.replace(/\n{3,}/g,'\n\n').trim());
+  toast('Copiado como texto plano');
+}
+function vaciarFichaAlTexto(id){
+  const f=S.fichas.find(x=>x.id===id); if(!f||!f.apartado) { toast('Esa ficha no tiene apartado'); return; }
+  const r=red(f.apartado);
+  const d=document.createElement('div'); d.innerHTML=r.html||'';
+  const p=document.createElement('div'); p.textContent=f.extracto||'';
+  (f.fuentes||[]).forEach(s=>{
+    const ref=S.fichas.find(x=>fuenteKey(x)===fuenteKey({fuente:s}) && (x.clase||'extracto')!=='redaccion');
+    if(!ref) return;
+    const sup=document.createElement('sup'); sup.dataset.f=ref.id;
+    if(ref.pagina) sup.dataset.p=ref.pagina;
+    sup.contentEditable='false'; sup.textContent='0'; p.appendChild(sup);
+  });
+  d.appendChild(p);
+  setRed(f.apartado, limpiaHTML(d.innerHTML)); save(); schedulePush();
+  sel=f.apartado; modoAp='texto'; view='apartados'; render();
+  toast('Se agregó al texto de '+f.apartado);
+}
+
 /* =========================================================
    AVANCE PARA LA MAESTRA
    ========================================================= */
@@ -2423,6 +2863,7 @@ function AV(){ S.avance=S.avance||{}; const a=S.avance;
   if(a.dondeVoy==null) a.dondeVoy='';
   if(!a.preguntas) a.preguntas=[];
   if(a.borradores==null) a.borradores=true;
+  if(a.texto==null) a.texto=true;
   if(a.maestra==null) a.maestra='Dra. Alejandra Robles Delgado Romero';
   if(a.alumno==null) a.alumno='';
   return a; }
@@ -2486,8 +2927,10 @@ function viewAvance(){
        return `<button class="chip ${aps.includes(id)?'on':''}" onclick="toggleAp('${id}')">${id} · ${esc(r.nom)} (${fichasDeAvance(id).length})</button>`;}).join('')}</div>`
       :`<div class="hint">Todavía no hay fichas en ningún apartado. El documento saldría vacío.</div>`}
      <div class="chips" style="margin-top:11px">
+       <button class="chip ${a.texto?'on':''}" onclick="setAv('texto',${a.texto?'false':'true'});render()">
+         ${a.texto?'✓ ':''}incluir el texto redactado</button>
        <button class="chip ${a.borradores?'on':''}" onclick="setAv('borradores',${a.borradores?'false':'true'});render()">
-         ${a.borradores?'✓ ':''}incluir mis redacciones preliminares</button>
+         ${a.borradores?'✓ ':''}incluir mis notas sueltas</button>
      </div>
      <div class="hint" style="margin-top:7px">Salen marcadas como borrador propio, para que no se confundan con una cita.</div>
    </div>
@@ -2601,8 +3044,18 @@ function viewAvance(){
     const fu=new Set(fs.map(fuenteKey).filter(Boolean)).size;
     doc+=`<div class="pv-hoja">`;
     if(r.cap!==cap){ cap=r.cap; doc+=`<div class="pv-sec">${cap} · ${CAPS[cap]}</div>`; }
+    const rd=red(id), palEd=palabrasDe(rd.html);
     doc+=`<div class="pv-ap">${id} ${esc(r.nom)}</div>
-      <div class="pv-apm">Extensión indicada: ${e.min===e.max?e.ideal+' cuartillas':e.min+' a '+e.max+' cuartillas'} · ${fs.length} ficha${fs.length===1?'':'s'} de ${fu} fuente${fu===1?'':'s'}</div>`;
+      <div class="pv-apm">Extensión indicada: ${e.min===e.max?e.ideal+' cuartillas':e.min+' a '+e.max+' cuartillas'} · ${fs.length} ficha${fs.length===1?'':'s'} de ${fu} fuente${fu===1?'':'s'}${palEd?' · '+palEd+' palabras redactadas':''}</div>`;
+    if(a.texto && palEd){
+      const {notas}=notasDe(rd.html);
+      const dd=document.createElement('div'); dd.innerHTML=rd.html;
+      dd.querySelectorAll('sup[data-f]').forEach(x=>{x.removeAttribute('data-f');x.removeAttribute('data-p');x.removeAttribute('contenteditable');});
+      doc+=`<div class="pv-texto">${dd.innerHTML}</div>
+        ${notas.length?`<div class="pv-notas"><div class="nt">Notas</div>
+          <ol>${notas.map(n=>`<li>${n.html}</li>`).join('')}</ol></div>`:''}`;
+      if(fs.length) doc+=`<div class="pv-apm" style="margin:22px 0 14px">Material de respaldo</div>`;
+    }
     fs.forEach((f,i)=>{
       const bor=f.clase==='redaccion';
       const nn=String(i+1).padStart(2,'0');
@@ -2627,6 +3080,8 @@ function viewAvance(){
   aps.forEach(id=>fichasDeAvance(id).forEach(f=>{
     const k=fuenteKey(f); if(k) map[k]=f.fuente;
     (f.fuentes||[]).forEach(s=>{ const k2=fuenteKey({fuente:s}); if(k2) map[k2]=s; }); }));
+  if(a.texto) aps.forEach(id=>notasDe(red(id).html).bib.forEach(s=>{
+    const k3=fuenteKey({fuente:s}); if(k3) map[k3]=s; }));
   const refs=Object.values(map).sort((x,y)=>(x.autor||x.refCruda||'zzz').localeCompare(y.autor||y.refCruda||'zzz','es'));
   if(refs.length){
     doc+=`<div class="pv-hoja"><div class="pv-sec">Bibliografía</div>
@@ -2686,7 +3141,7 @@ function viewAvance(){
    ARRANQUE
    ========================================================= */
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ if(M)closeModal(); else if(A)cerrarAtoro(); else if(TT)cerrarTitulo(); else if(F)cerrarFuente(); }
+  if(e.key==='Escape'){ if(M)closeModal(); else if(A)cerrarAtoro(); else if(TT)cerrarTitulo(); else if(F)cerrarFuente(); else if(CI)cerrarInsertar(); }
   if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&M){ const s=M.fuente;
     if((M.clase==='redaccion'||M.fija||(s.autor||s.titulo||s.liga||s.refCruda))&&M.extracto.trim()) guardarFicha(true); }
 });
