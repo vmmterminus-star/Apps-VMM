@@ -146,6 +146,15 @@ tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
 .notag label{display:block;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
 .notag textarea{width:100%;font-size:11px;line-height:1.55;resize:vertical;min-height:46px;font-family:inherit}
 .notag .pr{display:none}
+/* Descripción de concepto: caja de varias líneas que crece con el texto.
+   En modo compacto se recorta a un renglón; en completo se ve entera y
+   se queda así, no es un globito que desaparece. */
+textarea.dsc{width:100%;border:0;background:transparent;font-family:inherit;font-size:inherit;
+  line-height:1.5;color:inherit;padding:3px 2px;resize:none;overflow:hidden;display:block}
+textarea.dsc:focus{outline:none;background:var(--wash);border-radius:4px}
+tr.compacta textarea.dsc{height:22px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#tConceptos td{vertical-align:top}
+#tConceptos tr.grp td{vertical-align:middle}
 
 tr.grp td{background:var(--mint)!important;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--deep);font-weight:600;padding:5px 7px}
 tr.tot td{background:var(--deep)!important;color:#fff;font-weight:500;font-size:11.5px;padding:8px 7px;border:none}
@@ -258,6 +267,8 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   /* al imprimir se muestra todo, aunque lo tengas plegado en pantalla */
   .panel.plegado>.panel-bd{display:block!important}
   tr.nota td{background:#fff!important;font-size:6.5pt;color:#000!important;padding:0 4pt 3pt!important}
+  /* al imprimir el catálogo, las descripciones siempre van completas */
+  textarea.dsc{height:auto!important;overflow:visible!important;white-space:normal!important}
   .nota-in{border:0!important;color:#000!important;font-style:italic;font-size:6.5pt}
   .notag{padding:3pt 0 0!important}
   .notag label{color:#000!important}
@@ -422,7 +433,10 @@ create policy "acceso abierto" on costos_sync for all using (true) with check (t
     </div>
   </div>
   <div class="panel">
-    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tConceptos',this.textContent)">Catálogo de conceptos</span></h2><div class="sub" id="conCount"></div></div>
+    <div class="panel-hd"><h2><span class="ed" contenteditable spellcheck="false" onblur="setLbl('tConceptos',this.textContent)">Catálogo de conceptos</span></h2>
+      <button class="btn mini" id="btnDesc" onclick="togDescCompletas()">Descripciones completas</button>
+      <button class="btn mini" onclick="ordenarConceptos()" title="Deja el catálogo guardado en ese orden">Ordenar por partida</button>
+      <div class="sub" id="conCount"></div></div>
     <div class="panel-bd flush">
       <div class="tbl-wrap"><table id="tConceptos"></table></div>
       <div style="padding:9px 11px"><button class="btn ghost" onclick="addConcepto()">+ Agregar concepto</button></div>
@@ -796,7 +810,10 @@ db.labels={...DEF_LABELS,...(db.labels||{})};
    Referencia pasa a Eje y lo de Observaciones a Tramo; si alguna fila
    traía factor, se multiplica dentro de Piezas para no alterar cantidades. */
 (function migrarGenCols(){
-  if(db.genCols.map(c=>c.id).join(',')==='n,l,a,h,fx'){
+  /* Se reconoce el formato viejo por sus columnas, sin importar en qué
+     orden estén guardadas: si trae Factor y no trae Eje, es el viejo. */
+  const ids=db.genCols.map(c=>c.id);
+  if(ids.includes('fx')&&ids.includes('n')&&!ids.includes('eje')){
     db.genCols=[{id:'eje',label:'Eje',t:'txt'},{id:'tramo',label:'Tramo',t:'txt'},
                 {id:'pz',label:'Piezas',t:'num'},{id:'l',label:'Largo',t:'num'},
                 {id:'a',label:'Ancho',t:'num'},{id:'h',label:'Alto',t:'num'}];
@@ -1717,28 +1734,70 @@ function nextClave(pid){
   const p=partidaOf(pid);if(!p)return '';
   return p.clave+'-'+String(db.conceptos.filter(c=>c.partida===pid).length+1).padStart(2,'0');
 }
+/* El catálogo se agrupa por partida, con su renglón de subtítulo, en el
+   mismo orden en que van a salir en el presupuesto. Los conceptos sin
+   partida quedan al final, visibles, para que no se te pierdan. */
 function renderConceptos(){
-  document.getElementById('tConceptos').innerHTML=
-  `<thead><tr>
-    <th style="width:78px">${eh('pClave')}</th><th style="width:98px">${eh('pPartida')}</th>
-    <th>${eh('pDesc')}</th><th style="width:145px">${eh('pCorta')}</th>
-    <th style="width:56px" class="mid">${eh('pUnidad')}</th>
-    <th style="width:80px" class="num">${eh('pCD')}</th><th style="width:84px" class="num">${eh('pPU')}</th><th class="act"></th>
-  </tr></thead><tbody>${
-    db.conceptos.map((c,ix)=>`<tr>
+  const completas=!!db.ui.descCompletas;
+  const fila=(c,ix)=>`<tr class="${completas?'':'compacta'}">
       <td><input value="${esc(c.clave)}" oninput="upCon('${c.id}','clave',this.value)" onkeydown="${enterAdd('addConcepto()')}"></td>
       <td><select onchange="upCon('${c.id}','partida',this.value)">
         <option value="">—</option>
         ${db.partidas.map(p=>`<option value="${p.id}" ${c.partida===p.id?'selected':''}>${esc(p.clave)}</option>`).join('')}</select></td>
-      <td><input value="${esc(c.desc)}" oninput="upCon('${c.id}','desc',this.value)" placeholder="Descripción normativa completa"></td>
+      <td><textarea class="dsc" rows="1" spellcheck="false" placeholder="Descripción normativa completa"
+        oninput="upCon('${c.id}','desc',this.value);autoAlto(this)">${esc(c.desc)}</textarea></td>
       <td><input value="${esc(c.descCorta||'')}" oninput="upCon('${c.id}','descCorta',this.value)" placeholder="Una línea"></td>
       <td>${unidSel(c.unidad,`upCon('${c.id}','unidad',this.value)`)}</td>
       <td><div class="ro" style="text-align:right">${dec(cdu(c.id))}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(puVenta(c.id))}</div></td>
       <td class="act">${rowBtns(`movCon(${ix},-1)`,`movCon(${ix},1)`,`dupCon(${ix})`,`delCon('${c.id}')`)}</td>
-    </tr>`).join('')
-  }</tbody>`;
+    </tr>`;
+
+  const conIx=db.conceptos.map((c,ix)=>({c,ix}));
+  let cuerpo='';
+  db.partidas.forEach(p=>{
+    const g=conIx.filter(o=>o.c.partida===p.id);
+    if(!g.length)return;
+    cuerpo+=`<tr class="grp"><td colspan="8">${esc(p.clave)} · ${esc(p.nombre)} · ${g.length}</td></tr>`;
+    cuerpo+=g.map(o=>fila(o.c,o.ix)).join('');
+  });
+  const sueltos=conIx.filter(o=>!db.partidas.some(p=>p.id===o.c.partida));
+  if(sueltos.length){
+    cuerpo+=`<tr class="grp"><td colspan="8">${esc(L('bSinPartida'))} · ${sueltos.length}</td></tr>`;
+    cuerpo+=sueltos.map(o=>fila(o.c,o.ix)).join('');
+  }
+
+  document.getElementById('tConceptos').innerHTML=
+  `<thead><tr>
+    <th style="width:78px">${eh('pClave')}</th><th style="width:78px">${eh('pPartida')}</th>
+    <th>${eh('pDesc')}</th><th style="width:140px">${eh('pCorta')}</th>
+    <th style="width:56px" class="mid">${eh('pUnidad')}</th>
+    <th style="width:80px" class="num">${eh('pCD')}</th><th style="width:84px" class="num">${eh('pPU')}</th><th class="act"></th>
+  </tr></thead><tbody>${cuerpo||`<tr><td colspan="8"><div class="empty">Sin conceptos todavía.</div></td></tr>`}</tbody>`;
+
+  if(completas)document.querySelectorAll('#tConceptos textarea.dsc').forEach(autoAlto);
+  const b=document.getElementById('btnDesc');
+  if(b)b.classList.toggle('solid',completas);
   document.getElementById('conCount').textContent=db.conceptos.length+' conceptos';
+}
+/* La caja crece hasta donde llegue el texto: nada se queda escondido. */
+function autoAlto(el){
+  if(!db.ui.descCompletas)return;
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight+2)+'px';
+}
+function togDescCompletas(){db.ui.descCompletas=!db.ui.descCompletas;save();renderConceptos();}
+/* Reacomoda el catálogo guardado en el orden de las partidas, para que
+   las flechas de subir y bajar y la impresión coincidan con lo que ves. */
+function ordenarConceptos(){
+  if(!confirm('Se reacomoda el catálogo por partida, en el orden en que están las partidas. No cambia ningún número. ¿Continuar?'))return;
+  const orden=db.partidas.map(p=>p.id);
+  db.conceptos.sort((a,b)=>{
+    const pa=orden.indexOf(a.partida),pb=orden.indexOf(b.partida);
+    if(pa!==pb)return (pa<0?999:pa)-(pb<0?999:pb);
+    return String(a.clave||'').localeCompare(String(b.clave||''),'es',{numeric:true,sensitivity:'base'});
+  });
+  save();renderConceptos();fillSelects();renderPresup();flash('Catálogo ordenado por partida');
 }
 function upCon(id,k,v){const c=db.conceptos.find(x=>x.id===id);if(!c)return;c[k]=v;save();fillSelects();renderPresup();renderPartidas();}
 function addConcepto(){
