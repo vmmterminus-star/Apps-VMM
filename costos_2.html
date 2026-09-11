@@ -149,6 +149,13 @@ tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
 /* Descripción de concepto: caja de varias líneas que crece con el texto.
    En modo compacto se recorta a un renglón; en completo se ve entera y
    se queda así, no es un globito que desaparece. */
+.rev-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--terra);margin-right:5px;vertical-align:middle;flex:0 0 auto}
+tr.rev-row td{background:#FBF1EA!important;padding:3px 7px 7px!important}
+.rev-tx{display:flex;gap:9px;align-items:center;font-size:10.5px;line-height:1.5;color:#7A4E35}
+.rev-tx b{color:var(--terra);font-weight:600}
+.rev-tx .btn{margin-left:auto;flex:0 0 auto;white-space:nowrap}
+.rev-box{margin:11px 11px 0;background:#FBF1EA;border:1px solid #EBD5CA;border-radius:9px;padding:9px 11px}
+.rev-lista .val{cursor:pointer}
 textarea.dsc{width:100%;border:0;background:transparent;font-family:inherit;font-size:inherit;
   line-height:1.5;color:inherit;padding:3px 2px;resize:none;overflow:hidden;display:block}
 textarea.dsc:focus{outline:none;background:var(--wash);border-radius:4px}
@@ -239,7 +246,8 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
 @media print{
   @page{size:letter;margin:13mm 11mm}
   body{background:#fff;font-size:8pt}
-  header,nav,.dock,details.help,.hint,button,.panel-hd .sub,.kpis,.act,th.act,.leg,.prog,.sem,.avisos,.croq-hd,.croq-vacio,.lightbox{display:none!important}
+  header,nav,.dock,details.help,.hint,button,.panel-hd .sub,.kpis,.act,th.act,.leg,.prog,.sem,.avisos,.croq-hd,.croq-vacio,.lightbox,.rev-box{display:none!important}
+  tr.rev-row{display:none!important}
   .app{max-width:none;padding:0} main{padding:0}
   section{display:none!important} section.on{display:block!important}
   #s-inicio,#s-ajustes{display:none!important}
@@ -1119,6 +1127,48 @@ const enterAdd=fn=>`if(event.key==='Enter'){event.preventDefault();${fn}}`;
    revolvedora, el 5% de traslapes, el rendimiento del fierrero. Es lo
    que en el Excel andaba suelto abajo de la tabla. Se imprimen.
    ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------
+   MARCAS DE REVISIÓN
+   Todo lo que se agrega o se cambia de forma automática queda marcado:
+   un punto terracota y un renglón que dice qué se hizo y por qué. El
+   botón "Ya lo revisé" lo borra. En Validaciones sale la lista de lo
+   que falta revisar, y se vacía conforme apruebas.
+   Es distinto de una nota: la nota es tuya y se queda; la marca de
+   revisión es un pendiente y desaparece.
+   ------------------------------------------------------------------ */
+const COLS_REV={ins:()=>db.insumos,con:()=>db.conceptos,bas:()=>db.auxiliares,
+                cua:()=>db.cuadrillas||[],par:()=>db.partidas};
+const NOM_REV={ins:'Insumo',con:'Concepto',bas:'Básico',cua:'Cuadrilla',par:'Partida'};
+const TAB_REV={ins:'insumos',con:'conceptos',bas:'insumos',cua:'insumos',par:'conceptos'};
+function quitarRev(tipo,id){
+  const o=(COLS_REV[tipo]||(()=>[]))().find(x=>x.id===id);
+  if(!o)return;
+  delete o.rev;save();
+  ({ins:renderInsumos,con:renderConceptos,bas:renderAux,cua:renderCuad,par:renderPartidas}[tipo]||(()=>{}))();
+  renderVal();flash('Revisado');
+}
+const revDot=o=>o&&o.rev?'<span class="rev-dot" title="Cambio por revisar"></span>':'';
+const revFila=(tipo,o,span)=>o&&o.rev
+  ?`<tr class="rev-row"><td></td><td colspan="${span}"><div class="rev-tx"><div><b>Revisar:</b> ${esc(o.rev)}</div>
+     <button class="btn mini" onclick="quitarRev('${tipo}','${o.id}')">Ya lo revisé</button></div></td><td class="act"></td></tr>`
+  :'';
+const revCaja=(tipo,o)=>o&&o.rev
+  ?`<div class="rev-box"><div class="rev-tx"><div><b>Revisar:</b> ${esc(o.rev)}</div>
+     <button class="btn mini" onclick="quitarRev('${tipo}','${o.id}')">Ya lo revisé</button></div></div>`
+  :'';
+const revPendientes=()=>{
+  const out=[];
+  Object.keys(COLS_REV).forEach(t=>COLS_REV[t]().forEach(o=>{if(o.rev)out.push({t,o});}));
+  return out;
+};
+function irARev(tipo,id){
+  go(TAB_REV[tipo]||'inicio');
+  if(tipo==='bas'){const s=document.getElementById('selAux');if(s){s.value=id;renderAux();}}
+  if(tipo==='cua'){const s=document.getElementById('selCuad');if(s){s.value=id;renderCuad();}}
+  setTimeout(()=>{const el=document.querySelector(`[data-rev="${id}"]`)||document.querySelector('.rev-row,.rev-box');
+    if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},90);
+}
+
 const notasAbiertas=new Set();
 const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad(),ins:()=>renderInsumos()};
 function togNota(key,vista){
@@ -1225,8 +1275,8 @@ function renderInsumos(){
   const vis=db.insumos.map((i,ix)=>({i,ix}))
     .filter(o=>!filtro||((o.i.cat||'').trim()||SIN_CAT)===filtro);
 
-  const fila=o=>{const i=o.i,ix=o.ix,r=resolveRef(i.id);return `<tr data-id="${i.id}">
-      <td><input value="${esc(i.clave)}" oninput="upIns('${i.id}','clave',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="MAT-00"></td>
+  const fila=o=>{const i=o.i,ix=o.ix,r=resolveRef(i.id);return `<tr data-id="${i.id}" data-rev="${i.rev?i.id:''}">
+      <td>${revDot(i)}<input value="${esc(i.clave)}" oninput="upIns('${i.id}','clave',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="MAT-00" style="width:calc(100% - 12px)"></td>
       <td><input value="${esc(i.desc)}" oninput="upIns('${i.id}','desc',this.value)" onkeydown="${enterAdd('addInsumo()')}" placeholder="Descripción del insumo"></td>
       <td class="int"><input value="${esc(i.cat||'')}" list="catList" placeholder="—" oninput="upIns('${i.id}','cat',this.value)" onchange="renderInsumos()"></td>
       <td>${unidSel(i.unidad,`upIns('${i.id}','unidad',this.value)`)}</td>
@@ -1242,7 +1292,7 @@ function renderInsumos(){
       ?`<tr class="nota"><td></td><td class="int"></td><td colspan="7"><input class="nota-in" data-nota="${i.id}"
           value="${esc(i.nota||'')}" placeholder="De dónde sale este precio, qué incluye, con quién se cotizó"
           oninput="upIns('${i.id}','nota',this.value,1)" onchange="renderInsumos()"></td><td class="act"></td></tr>`
-      :'');};
+      :'')+revFila('ins',i,7);};
 
   let body='';
   if(modo==='tipo'){
@@ -1391,7 +1441,7 @@ function renderAux(){
     </tr>`+filaNota(d.row.id,'aux',d.row.nota,6,`upAuxRow('${a.id}','${d.row.id}','nota',this.value,1)`);}).join('');
     cuerpo+=`<tr class="sub"><td colspan="6">${esc(L('mSub'))} ${esc(t.label.toLowerCase())}</td><td class="num mono">${dec(g.reduce((x,d)=>x+d.imp,0))}</td><td></td></tr>`;
   });
-  box.innerHTML=`
+  box.innerHTML=`${revCaja('bas',a)}
   <div style="padding:12px 15px 4px" class="f-grid">
     <div class="f"><label>Clave</label><input class="f-in" value="${esc(a.clave)}" oninput="upAux('${a.id}','clave',this.value)"></div>
     <div class="f"><label>Unidad</label><input class="f-in" value="${esc(a.unidad)}" oninput="upAux('${a.id}','unidad',this.value)"></div>
@@ -1547,7 +1597,7 @@ function renderCuad(){
       <td class="act">${btnNota(d.row.id,'cuad',!!d.row.nota)}${rowBtns(`movCuadRow('${a.id}',${ix},-1)`,`movCuadRow('${a.id}',${ix},1)`,`dupCuadRow('${a.id}',${ix})`,`delCuadRow('${a.id}','${d.row.id}')`)}</td>
     </tr>`+filaNota(d.row.id,'cuad',d.row.nota,5,`upCuadRow('${a.id}','${d.row.id}','nota',this.value,1)`);
   });
-  box.innerHTML=`
+  box.innerHTML=`${revCaja('cua',a)}
   <div style="padding:12px 15px 4px" class="f-grid">
     <div class="f"><label>Clave</label><input class="f-in" value="${esc(a.clave)}" oninput="upCuad('${a.id}','clave',this.value)"></div>
     <div class="f"><label>Unidad</label><input class="f-in" value="${esc(a.unidad)}" oninput="upCuad('${a.id}','unidad',this.value)"></div>
@@ -1739,8 +1789,8 @@ function nextClave(pid){
    partida quedan al final, visibles, para que no se te pierdan. */
 function renderConceptos(){
   const completas=!!db.ui.descCompletas;
-  const fila=(c,ix)=>`<tr class="${completas?'':'compacta'}">
-      <td><input value="${esc(c.clave)}" oninput="upCon('${c.id}','clave',this.value)" onkeydown="${enterAdd('addConcepto()')}"></td>
+  const fila=(c,ix)=>`<tr class="${completas?'':'compacta'}" data-rev="${c.rev?c.id:''}">
+      <td>${revDot(c)}<input value="${esc(c.clave)}" oninput="upCon('${c.id}','clave',this.value)" onkeydown="${enterAdd('addConcepto()')}" style="width:calc(100% - 12px)"></td>
       <td><select onchange="upCon('${c.id}','partida',this.value)">
         <option value="">—</option>
         ${db.partidas.map(p=>`<option value="${p.id}" ${c.partida===p.id?'selected':''}>${esc(p.clave)}</option>`).join('')}</select></td>
@@ -1751,7 +1801,7 @@ function renderConceptos(){
       <td><div class="ro" style="text-align:right">${dec(cdu(c.id))}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(puVenta(c.id))}</div></td>
       <td class="act">${rowBtns(`movCon(${ix},-1)`,`movCon(${ix},1)`,`dupCon(${ix})`,`delCon('${c.id}')`)}</td>
-    </tr>`;
+    </tr>`+revFila('con',c,6);
 
   const conIx=db.conceptos.map((c,ix)=>({c,ix}));
   let cuerpo='';
@@ -2409,6 +2459,18 @@ function validar(){
 }
 function renderVal(){
   const v=validar();
+  const pend=revPendientes();
+  const bloqueRev=pend.length?`
+    <div class="panel"><div class="panel-hd"><h2>Cambios por revisar</h2>
+      <div class="sub">${pend.length} pendiente${pend.length===1?'':'s'}</div></div>
+      <div class="panel-bd flush rev-lista">${pend.map(({t,o})=>`
+        <div class="val a" onclick="irARev('${t}','${o.id}')">
+          <div class="dot"></div>
+          <div class="tx"><div class="tt">${esc(NOM_REV[t])} ${esc(o.clave||o.nombre||'')}</div>
+            <div class="ds">${esc(o.rev)}</div></div>
+        </div>`).join('')}</div>
+      <div style="padding:9px 11px"><button class="btn mini" onclick="revisarTodo()">Marcar todo como revisado</button></div>
+    </div>`:'';
   const c={r:v.filter(x=>x.n==='r').length,a:v.filter(x=>x.n==='a').length,v:v.filter(x=>x.n==='v').length};
   document.getElementById('valBody').innerHTML=`
     <div class="sem">
@@ -2416,9 +2478,18 @@ function renderVal(){
       <div class="a"><b>${c.a}</b><small>Por revisar</small></div>
       <div class="v"><b>${c.v}</b><small>Correctos</small></div>
     </div>
+    ${bloqueRev}
     <div class="panel"><div class="panel-hd"><h2>Revisión de consistencia</h2></div>
       <div class="panel-bd flush">${v.map(x=>`<div class="val ${x.n}"><div class="dot"></div>
         <div class="tx"><div class="tt">${esc(x.t)}</div>${x.d?`<div class="ds">${esc(x.d)}</div>`:''}</div></div>`).join('')}</div></div>`;
+}
+
+function revisarTodo(){
+  const p=revPendientes();
+  if(!p.length)return;
+  if(!confirm('Se quitan las '+p.length+' marcas de revisión. Los cambios se quedan; lo único que se borra es el recordatorio. ¿Continuar?'))return;
+  p.forEach(({o})=>delete o.rev);
+  save();boot();flash('Todo marcado como revisado');
 }
 
 /* ==================================================================
