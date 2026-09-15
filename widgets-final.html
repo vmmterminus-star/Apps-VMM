@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mis widgets y sus parámetros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+ color-scheme:light;
+ --bg:#F7F4EF;--card:#FFFFFF;--soft:#FBF9F5;
+ --txt:#33302C;--mut:#7A7267;--hint:#A79E92;--line:#E9E3DA;--line2:#D8CFC3;
+ --acc:#C97B5A;--accbg:#F4E2D9;--acctx:#8A4529;
+ --blu:#4A6272;--blubg:#DFE6EB;--blutx:#2F4553;
+ --grn:#5F8A7D;--grnbg:#DFEAE6;--grntx:#3A5E53;
+ --amb:#A98545;--ambbg:#F0E8D8;--ambtx:#6E5522;
+ --pur:#7A6A8C;--purbg:#EDE7F0;--purtx:#544763;
+ --dan:#B5503F;--danbg:#FBE9E4;--dantx:#8C3325;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0 auto;max-width:1180px;background:var(--bg);color:var(--txt);
+ font-family:'Josefin Sans',system-ui,sans-serif;font-size:13px;line-height:1.4;
+ padding:20px 16px calc(60px + env(safe-area-inset-bottom))}
+h1{font-size:21px;font-weight:600;margin:0 0 3px}
+.sub{font-size:12px;color:var(--mut);margin-bottom:8px;max-width:720px;line-height:1.55}
+.bh{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+ padding:4px 11px;border-radius:11px;display:inline-block;margin:32px 0 4px;
+ background:var(--accbg);color:var(--acctx)}
+.bhx{font-size:11.5px;color:var(--mut);margin:0 0 14px;max-width:720px;line-height:1.55}
+.bhx b{color:var(--txt)}
+
+/* tarjeta: widget a la izquierda, parámetro a la derecha */
+.op{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px;
+ margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.opL{flex:none}
+.opR{flex:1;min-width:230px}
+.opt{font-size:13px;font-weight:600;margin-bottom:3px}
+.opt em{font-style:normal;background:var(--accbg);color:var(--acctx);border-radius:9px;
+ padding:1px 8px;font-size:10.5px;font-weight:600;margin-right:7px;letter-spacing:.04em}
+.opd{font-size:11.5px;color:var(--mut);line-height:1.5;margin-bottom:9px}
+.campo{margin-bottom:7px}
+.campo .et{font-size:9px;color:var(--hint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.param{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+ background:var(--soft);border:1.5px solid var(--acc);border-radius:9px;padding:5px 11px;color:var(--acctx);
+ word-break:break-all}
+.param.vacio{border-style:dashed;border-color:var(--line2);color:var(--hint)}
+.tam{display:inline-block;font-size:11px;background:var(--blubg);color:var(--blutx);
+ border-radius:9px;padding:3px 10px;font-weight:500}
+
+/* lienzos */
+.lock{background:linear-gradient(160deg,#3b3550,#6b5a72 55%,#9c8b86);border-radius:16px;padding:13px;display:inline-block}
+.lockw{width:160px;height:72px;color:#fff;font-family:-apple-system,system-ui,sans-serif;
+ display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden}
+.lockw .l1{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lockw .l2{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lockw .l3{font-size:10px;opacity:.7}
+.ring{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+ background:conic-gradient(#fff 0 29%,rgba(255,255,255,.28) 29% 100%)}
+.ring i{width:57px;height:57px;border-radius:50%;background:#6b5a72;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;color:#fff;font-family:-apple-system,system-ui,sans-serif}
+.ring .n{font-size:16px;font-weight:600;line-height:1}
+.ring .s{font-size:8px;opacity:.85}
+.home{background:linear-gradient(160deg,#e8dfd6,#d9ccc2);border-radius:18px;padding:13px;display:inline-block}
+.w{background:#F7F4EF;border-radius:18px;padding:12px 13px;font-family:'Josefin Sans',system-ui,sans-serif;
+ overflow:hidden;box-shadow:0 2px 10px rgba(90,60,45,.13)}
+.w.med{width:345px;height:160px}
+.w.sm{width:160px;height:160px}
+.w.lg{width:345px;height:355px}
+
+/* piezas del widget */
+.wh{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.wh .f{font-size:13px;font-weight:600;color:var(--txt)}
+.wh .c{font-size:10.5px;margin-left:auto;font-weight:500}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.wr{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.wr .b{width:3px;height:15px;border-radius:2px;flex:none}
+.wr .t{font-size:12px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.wr .d{font-size:10.5px;font-weight:500;white-space:nowrap}
+.sec{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:0 0 4px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hcol{display:flex;gap:6px;align-items:center;margin-bottom:5px}
+.hcol .hh{font-size:10.5px;font-weight:600;color:var(--acctx);width:40px;flex:none;text-align:right}
+.hcol .t{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.tira{display:flex;gap:5px;margin-bottom:8px}
+.tira .d{flex:1;background:var(--soft);border-radius:7px;padding:4px 6px;min-width:0}
+.tira .dd{font-size:8px;color:var(--hint);text-transform:uppercase}
+.tira .hh{font-size:11px;font-weight:600;color:var(--txt)}
+.tira .tt{font-size:8.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tira .d.hoy{background:var(--accbg)}
+.tira .d.hoy .dd,.tira .d.hoy .hh,.tira .d.hoy .tt{color:var(--acctx)}
+.mtxg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mq{border-radius:9px;padding:6px 8px;min-width:0}
+.mq .qh{font-size:8.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;display:flex;align-items:baseline;gap:5px}
+.mq .qn{margin-left:auto;font-size:13px;font-weight:600}
+.mq .qi{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt);margin-bottom:2px}
+.scols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sh{font-size:8.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+ padding:2px 7px;border-radius:7px;display:inline-block;margin-bottom:3px}
+.si{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.pasos{display:flex;gap:8px;align-items:center;margin-bottom:5px}
+.pasos .n{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+ font-size:9.5px;font-weight:600;border:1.5px solid var(--line);color:var(--hint);background:#fff}
+.pasos .n.ok{background:var(--grn);border-color:var(--grn);color:#fff}
+.pasos .n.cur{border-color:var(--acc);color:var(--acctx)}
+.pasos .tx{font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{font-size:9px;padding:1px 7px;border-radius:8px;font-weight:600;white-space:nowrap}
+
+/* tabla resumen */
+.tabla{width:100%;border-collapse:collapse;font-size:12px;background:var(--card);
+ border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.tabla th{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);
+ text-align:left;padding:8px 11px;background:var(--soft);border-bottom:1px solid var(--line)}
+.tabla td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tabla tr:last-child td{border-bottom:none}
+.tabla code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:var(--soft);
+ border:1px solid var(--line2);border-radius:6px;padding:2px 7px;color:var(--acctx);white-space:nowrap}
+.nota{background:var(--card);border:1.5px solid var(--acc);border-radius:13px;padding:12px 14px;margin-top:22px}
+.nota b{color:var(--acctx)}
+.nota p{font-size:12px;color:var(--mut);margin:7px 0 0;line-height:1.6}
+.nota p b{color:var(--txt)}
+@media (pointer:coarse){input,select,textarea{font-size:16px !important}}
+@media(max-width:560px){
+ body{padding:16px 12px 60px}
+ .op{gap:11px}.home,.lock{padding:9px}
+ .w.med,.w.lg{width:100%;max-width:318px}
+ .lockw{width:150px}
+ .tabla td,.tabla th{padding:6px 8px;font-size:11px}
+}
+</style></head><body>
+
+<h1>Mis widgets y sus parámetros</h1>
+<div class="sub">Los diez que te armé. Junto a cada uno va el <b>tamaño</b> que tienes que agregar y lo que escribes en el campo <b>Parameter</b> de «Editar widget».</div>
+
+<!-- ============ BLOQUEO ============ -->
+<div class="bh" style="background:var(--danbg);color:var(--dantx)">Pantalla de bloqueo</div>
+<div class="bhx">Van en blanco porque iOS los pinta de un solo color, siempre.</div>
+
+<div class="op">
+  <div class="opL"><div class="lock"><div class="lockw">
+    <div class="l1">17:00 · Junta de obra Laprida</div>
+    <div class="l2">Mandar generadores de CUCBA</div>
+    <div class="l3">3 atrasadas · 46 pendientes</div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>B1</em>Lo próximo + lo que importa</div>
+    <div class="opd">El siguiente evento con hora, la primera de tu lista corta, y los contadores.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Rectangular (bloqueo)</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param vacio">déjalo vacío</span></div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="lock"><div class="ring"><i><span class="n">2/7</span><span class="s">hoy</span></i></div></div></div>
+  <div class="opR">
+    <div class="opt"><em>C2</em>Anillo del día</div>
+    <div class="opd">Se llena conforme cierras lo de hoy. En el iPhone son 12 puntitos alrededor, no un anillo continuo — Scriptable no sabe dibujar arcos.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Circular (bloqueo)</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param vacio">déjalo vacío</span></div>
+  </div>
+</div>
+
+<!-- ============ INICIO ============ -->
+<div class="bh">Pantalla de inicio · lo general</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w sm" style="display:flex;flex-direction:column">
+    <div style="font-size:12px;font-weight:600">martes 15</div>
+    <div style="flex:1"></div>
+    <div style="font-size:34px;font-weight:600;line-height:1;color:var(--dantx)">3</div>
+    <div style="font-size:10.5px;color:var(--mut)">atrasadas</div>
+    <div style="height:9px"></div>
+    <div style="font-size:22px;font-weight:600;line-height:1;color:var(--acctx)">5</div>
+    <div style="font-size:10.5px;color:var(--mut)">para hoy</div>
+    <div style="flex:1"></div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>S2</em>Contadores</div>
+    <div class="opd">Dos números. «Para hoy» ya descuenta las que cerraste.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Chico</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param vacio">vacío</span> <span style="font-size:11px;color:var(--mut)">o <code style="font-family:ui-monospace,monospace">s2</code></span></div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w med">
+    <div class="dos">
+      <div>
+        <div class="sec">Con hora</div>
+        <div class="hcol"><span class="hh">17:00</span><span class="t">Junta Laprida</span></div>
+        <div class="hcol"><span class="hh">09:00</span><span class="t">Comprar fluox…</span></div>
+        <div class="hcol"><span class="hh">10:00</span><span class="t">Terna de temas</span></div>
+      </div>
+      <div>
+        <div class="sec">Importa ahorita</div>
+        <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Mandar generad…</span></div>
+        <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Correcciones d…</span></div>
+        <div class="wr"><span class="b" style="background:#7A6A8C"></span><span class="t">Armar mi horar…</span></div>
+      </div>
+    </div>
+    <div style="display:flex;margin-top:8px;border-top:1px solid var(--line);padding-top:6px">
+      <span style="font-size:10.5px;color:var(--dantx);font-weight:500">3 atrasadas</span>
+      <span style="margin-left:auto;font-size:10.5px;color:var(--mut)">46 pendientes</span>
+    </div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>M3</em>Dos columnas</div>
+    <div class="opd">Lo que tiene hora a la izquierda, lo que elegiste a la derecha. Seis cosas de un vistazo.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Mediano</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param vacio">vacío</span> <span style="font-size:11px;color:var(--mut)">o <code style="font-family:ui-monospace,monospace">m3</code></span></div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w med">
+    <div class="tira">
+      <div class="d hoy"><div class="dd">Hoy</div><div class="hh">17:00</div><div class="tt">Junta Lap…</div></div>
+      <div class="d"><div class="dd">mié</div><div class="hh">09:00</div><div class="tt">Fluoxetina</div></div>
+      <div class="d"><div class="dd">jue</div><div class="hh">—</div></div>
+      <div class="d"><div class="dd">vie</div><div class="hh">10:00</div><div class="tt">Terna</div></div>
+      <div class="d"><div class="dd">sáb</div><div class="hh">—</div></div>
+    </div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Mandar generadores de CUCBA</span><span class="d" style="color:var(--dantx)">venció</span></div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Correcciones de CUCEI con mamá</span><span class="d" style="color:var(--dantx)">hoy</span></div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>M4</em>La semana + lo de hoy</div>
+    <div class="opd">Cinco días con su primer evento, y debajo dos de tu lista corta.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Mediano</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param">m4</span></div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w med">
+    <div class="wh"><span class="f" style="font-size:12px">Lo que importa ahorita</span><span class="c" style="color:var(--mut)">5</span></div>
+    <div class="mtxg">
+      <div class="mq" style="background:var(--danbg)">
+        <div class="qh" style="color:var(--dantx)">Hazlo ya<span class="qn">2</span></div>
+        <div class="qi">Generadores CUCBA</div>
+        <div class="qi">Correcciones CUCEI</div>
+      </div>
+      <div class="mq" style="background:var(--grnbg)">
+        <div class="qh" style="color:var(--grntx)">Agéndalo<span class="qn">1</span></div>
+        <div class="qi">Armar mi horario</div>
+      </div>
+      <div class="mq" style="background:var(--ambbg)">
+        <div class="qh" style="color:var(--ambtx)">Sácatelo rápido<span class="qn">2</span></div>
+        <div class="qi">Pagar la luz</div>
+      </div>
+      <div class="mq" style="background:var(--soft)">
+        <div class="qh" style="color:var(--mut)">¿De verdad?<span class="qn">0</span></div>
+      </div>
+    </div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>X1</em>Los cuatro cuadrantes</div>
+    <div class="opd">La matriz. Respeta lo que arrastraste tú; lo que no moviste se acomoda por su fecha.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Mediano</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param">x1</span></div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w lg">
+    <div class="wh"><span class="f">martes 15</span><span class="c" style="color:var(--dantx)">3 atrasadas</span></div>
+    <div class="sec" style="margin-top:9px">Con hora</div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Junta de obra Laprida</span><span class="d" style="color:var(--acctx)">17:00</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Comprar fluoxetina y topiramato</span><span class="d" style="color:var(--acctx)">09:00</span></div>
+    <div class="sec" style="margin-top:11px">Lo que importa ahorita</div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Mandar generadores de CUCBA</span><span class="d" style="color:var(--dantx)">venció</span></div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Correcciones de CUCEI con mamá</span><span class="d" style="color:var(--dantx)">hoy</span></div>
+    <div class="wr"><span class="b" style="background:#7A6A8C"></span><span class="t">Armar mi horario y materias</span><span class="d" style="color:var(--ambtx)">jue 17</span></div>
+    <div class="wr"><span class="b" style="background:#8A7263"></span><span class="t">Pagar la luz</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Comprar mis inyecciones</span><span class="d">vie 19</span></div>
+    <div class="sec" style="margin-top:11px;color:var(--dantx)">Vencen hoy o antes</div>
+    <div class="wr"><span class="b" style="background:#C97B5A"></span><span class="t">Imprimir y firmar la estimación</span><span class="d" style="color:var(--dantx)">venció</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Cita veterinaria de Luli</span><span class="d" style="color:var(--dantx)">venció</span></div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>G1</em>Por secciones</div>
+    <div class="opd">Tu agenda completa sin abrirla: con hora, lo que importa, y lo vencido.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Grande</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param vacio">vacío</span> <span style="font-size:11px;color:var(--mut)">o <code style="font-family:ui-monospace,monospace">g1</code></span></div>
+  </div>
+</div>
+
+<!-- ============ POR BLOQUE ============ -->
+<div class="bh" style="background:var(--blubg);color:var(--blutx)">Un widget por bloque</div>
+<div class="bhx">Aquí el Parameter sí importa: es donde escribes de qué bloque. Basta parte del nombre y sin acentos — <b>estim</b> encuentra «Estimaciones y obras».</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w med">
+    <div class="wh"><span class="dot" style="background:#C97B5A"></span><span class="f">Estimaciones y obras</span>
+      <span class="c" style="color:var(--dantx)">2 vencidas</span></div>
+    <div class="scols">
+      <div>
+        <span class="sh" style="background:var(--accbg);color:var(--acctx)">CUCBA</span>
+        <div class="si">Mandar generadores</div>
+        <div class="si">Pedir archivo a mamá</div>
+        <span class="sh" style="background:var(--accbg);color:var(--acctx);margin-top:5px">CUCEI</span>
+        <div class="si">Correcciones con mamá</div>
+      </div>
+      <div>
+        <span class="sh" style="background:var(--accbg);color:var(--acctx)">CUCSH</span>
+        <div class="si">Verificar los planos</div>
+        <div class="si">Croquis de cámaras</div>
+        <div class="si">Ajustar formato interno</div>
+      </div>
+    </div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>P2</em>Un bloque, por secciones</div>
+    <div class="opd">Las secciones del bloque en dos columnas. Cuenta las vencidas <b>de ese bloque</b>, no las globales.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Mediano</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param">p2:Estimaciones</span></div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5">Para otro bloque: <code style="font-family:ui-monospace,monospace">p2:Casa</code>, <code style="font-family:ui-monospace,monospace">p2:Escuela</code>, <code style="font-family:ui-monospace,monospace">p2:Airbnb</code>…</div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w lg">
+    <div class="wh"><span class="dot" style="background:#A98545"></span><span class="f">Casa</span>
+      <span class="chip" style="background:var(--danbg);color:var(--dantx);margin-left:auto">1 vencida</span></div>
+    <span class="sh" style="background:var(--ambbg);color:var(--ambtx);margin-top:9px">SALUD / MÍAS</span>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Comprar fluoxetina y topiramato</span><span class="d" style="color:var(--acctx)">09:00</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Comprar mis inyecciones</span><span class="d">vie 19</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Psicóloga en línea</span></div>
+    <span class="sh" style="background:var(--ambbg);color:var(--ambtx);margin-top:9px">MAMÁ Y YO</span>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Hacer la compra</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Cita para el refrendo</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Preguntar a mamá por su lista</span></div>
+    <span class="sh" style="background:var(--ambbg);color:var(--ambtx);margin-top:9px">LULI / FAMILIA</span>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Cita veterinaria del sábado</span><span class="d" style="color:var(--dantx)">venció</span></div>
+    <div class="wr"><span class="b" style="background:#A98545"></span><span class="t">Avisarle a papá de la cita</span></div>
+    <div style="font-size:10px;color:var(--hint);margin-top:7px">+4 más en este bloque</div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>P5</em>Un bloque completo</div>
+    <div class="opd">Hasta ocho tareas con sus secciones, y te dice cuántas quedaron fuera.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Grande</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param">p5:Casa</span></div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5">Ojo: en el grande, escribir solo <code style="font-family:ui-monospace,monospace">Casa</code> ya hace esto mismo.</div>
+  </div>
+</div>
+
+<div class="op">
+  <div class="opL"><div class="home"><div class="w med">
+    <div class="wh"><span class="dot" style="background:#C97B5A"></span><span class="f" style="font-size:12px">Estimaciones y ob… · CUCSH</span>
+      <span class="c" style="color:var(--grntx)">2 de 6</span></div>
+    <div class="pasos"><span class="n ok">✓</span><span class="tx" style="opacity:.45;text-decoration:line-through">Llenar la info contractual</span></div>
+    <div class="pasos"><span class="n ok">✓</span><span class="tx" style="opacity:.45;text-decoration:line-through">Llenar la carpeta con los planos</span></div>
+    <div class="pasos"><span class="n cur">3</span><span class="tx" style="font-weight:500">Verificar los planos de CUCSH</span></div>
+    <div class="pasos"><span class="n">4</span><span class="tx">Croquis con correcciones de Teté</span></div>
+  </div></div></div>
+  <div class="opR">
+    <div class="opt"><em>P6</em>Una sección en pasos</div>
+    <div class="opd">Para las secciones que pusiste en modo pasos. Te marca en cuál vas.</div>
+    <div class="campo"><div class="et">Tamaño del widget</div><span class="tam">Mediano</span></div>
+    <div class="campo"><div class="et">Parameter</div><span class="param">p6:Estimaciones/CUCSH</span></div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5">Si escribes solo <code style="font-family:ui-monospace,monospace">p6:Estimaciones</code>, agarra sola la sección que tengas en modo pasos.</div>
+  </div>
+</div>
+
+<!-- ============ RESUMEN ============ -->
+<div class="bh" style="background:var(--grnbg);color:var(--grntx)">Todo junto, para copiar</div>
+<table class="tabla">
+  <tr><th></th><th>Tamaño que agregas</th><th>Parameter</th></tr>
+  <tr><td><b>B1</b> lo próximo</td><td>Rectangular · bloqueo</td><td><span style="color:var(--hint);font-size:11px">vacío</span></td></tr>
+  <tr><td><b>C2</b> anillo del día</td><td>Circular · bloqueo</td><td><span style="color:var(--hint);font-size:11px">vacío</span></td></tr>
+  <tr><td><b>S2</b> contadores</td><td>Chico</td><td><code>s2</code></td></tr>
+  <tr><td><b>M3</b> dos columnas</td><td>Mediano</td><td><code>m3</code></td></tr>
+  <tr><td><b>M4</b> la semana</td><td>Mediano</td><td><code>m4</code></td></tr>
+  <tr><td><b>X1</b> la matriz</td><td>Mediano</td><td><code>x1</code></td></tr>
+  <tr><td><b>G1</b> por secciones</td><td>Grande</td><td><code>g1</code></td></tr>
+  <tr><td><b>P2</b> bloque por secciones</td><td>Mediano</td><td><code>p2:Estimaciones</code></td></tr>
+  <tr><td><b>P5</b> bloque completo</td><td>Grande</td><td><code>p5:Casa</code></td></tr>
+  <tr><td><b>P6</b> sección en pasos</td><td>Mediano</td><td><code>p6:Estimaciones/CUCSH</code></td></tr>
+</table>
+
+<div class="nota">
+  <b>Los tres campos de «Editar widget»</b>
+  <p><b>Script</b> → Mi agenda · <b>When Interacting</b> → Run Script · <b>Parameter</b> → lo de la tabla.</p>
+  <p>Olvidar el <b>When Interacting</b> es el error más común: el widget se dibuja bien pero al tocarlo abre Scriptable en vez de tu agenda.</p>
+  <p>Si escribes mal un bloque, el widget <b>te lista los que sí existen</b> en vez de quedarse en blanco. No te va a dejar adivinando.</p>
+</div>
+
+</body></html>
