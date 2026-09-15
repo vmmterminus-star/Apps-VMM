@@ -375,7 +375,7 @@ create policy "acceso abierto" on costos_sync for all using (true) with check (t
         <button class="btn" onclick="copiarCodigo()">Copiar</button>
       </div>
       <textarea class="f-in" id="codeArea" rows="4" spellcheck="false" placeholder="Aquí aparece el código al generarlo, o pega uno para importarlo" style="font-family:'IBM Plex Mono',monospace;font-size:11px;resize:vertical"></textarea>
-      <div style="font-size:10.5px;color:var(--soft);margin-top:7px">Generas el código aquí, lo pegas allá y le das Importar. Reemplaza todo lo que haya en el destino.</div>
+      <div style="font-size:10.5px;color:var(--soft);margin-top:7px">Generas el código aquí, lo pegas allá y le das Importar. También puedes pegar aquí el contenido completo de un archivo .json de respaldo. Reemplaza todo lo que haya en el destino.</div>
     </div>
   </div>
 </section>
@@ -964,18 +964,28 @@ function copiarCodigo(){
   ta.select();
   navigator.clipboard?.writeText(ta.value).then(()=>flash('Copiado'),()=>document.execCommand('copy'));
 }
+/* Acepta las dos formas: el código comprimido que genera el botón de
+   arriba, o el JSON del respaldo pegado tal cual. Antes solo tomaba el
+   código y pegar el JSON daba "código no válido", que no ayudaba nada. */
 function importCode(){
   const txt=(document.getElementById('codeArea').value||'').trim();
   if(!txt){flash('Pega un código primero');return;}
-  try{
-    const json=decodeURIComponent(atob(txt));
-    const d=JSON.parse(json);
-    if(!d.conceptos||!d.insumos)throw 0;
-    if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
-    localStorage.setItem(KEY,json);
-    if(supaListo()&&syncCode){syncCode&&localStorage.setItem(K_TS,'');cloudPush();}
-    location.reload();
-  }catch(e){alert('Ese código no es válido o está incompleto.');}
+  let json=null;
+  if(txt[0]==='{'){                       // viene el respaldo tal cual
+    json=txt;
+  }else{
+    try{json=decodeURIComponent(atob(txt));}catch(e){json=null;}
+  }
+  let d=null;
+  try{d=JSON.parse(json);}catch(e){d=null;}
+  if(!d||!d.conceptos||!d.insumos){
+    alert('Eso no es ni un código ni un respaldo válido.\n\nPuedes pegar cualquiera de los dos: el código que genera el botón de arriba, o el contenido completo del archivo .json de respaldo.');
+    return;
+  }
+  if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
+  localStorage.setItem(KEY,json);
+  if(supaListo()&&syncCode){syncCode&&localStorage.setItem(K_TS,'');cloudPush();}
+  location.reload();
 }
 const flash=t=>{document.getElementById('statusTxt').textContent=t;};
 
