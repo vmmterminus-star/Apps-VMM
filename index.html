@@ -671,9 +671,10 @@ function widgetBlob(){
          cuadrantes:cuad,semana:semana,bloques:bloques};}
 
 async function doPush(){const ts=new Date().toISOString();const body=[{code:syncCode,data:localBlob(),updated_at:ts}];
- try{body.push({code:syncCode+"__widget",data:widgetBlob(),updated_at:ts});}catch(e){}
+ let wErr="";
+ try{body.push({code:syncCode+"__widget",data:widgetBlob(),updated_at:ts});}catch(e){wErr=' · ⚠ el widget no se armó: '+(e.message||e);}
  const r=await fetch(SUPA_URL+"/rest/v1/agenda_sync?on_conflict=code",{method:"POST",headers:Object.assign({},SUPA_HDR,{Prefer:"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify(body)});
- if(r.ok){localStorage.setItem('agenda_remote_ts',ts);dirty=false;setSyncStatus('✓ guardado en la nube');return true;}setSyncStatus('error al guardar ('+r.status+')');return false;}
+ if(r.ok){localStorage.setItem('agenda_remote_ts',ts);dirty=false;setSyncStatus('✓ guardado en la nube'+wErr);return true;}setSyncStatus('error al guardar ('+r.status+')');return false;}
 async function syncCycle(){
  if(!syncCode||cloudBusy)return;if(offlineFileWarn())return;cloudBusy=true;
  try{
