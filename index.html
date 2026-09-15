@@ -623,9 +623,52 @@ function widgetBlob(){
  const hoyMan=TK().filter(t=>{if(!activo(t))return false;const d=dateOf(t);if(!d)return false;
    return dayDiff(d)<=1;}).sort((a,b)=>dayDiff(dateOf(a))-dayDiff(dateOf(b))).slice(0,8).map(meta);
  const atras=TK().filter(t=>activo(t)&&overdue(t)).length;
- return {v:1,ts:new Date().toISOString(),atrasadas:atras,
+
+ /* cuadrantes de la matriz, con lo que tú arrastraste ya respetado */
+ const QN=['Hazlo ya','Agéndalo','Sácatelo rápido','¿De verdad?'];
+ const cuad=QN.map(n=>({n:n,c:0,it:[]}));
+ short.forEach(e=>{
+   let t='',col='#8A7263';
+   if(e.free){if(e.done)return;t=e.t;}
+   else{const tk=tkById(e.id);if(!tk||state[tk.id]||archived[tk.id])return;
+        t=txtOf(tk);col=colOf(areaObjOf(tk)).sol;}
+   const q=quadDe(e);cuad[q].c++;
+   if(cuad[q].it.length<3)cuad[q].it.push({t:t,c:col});});
+
+ /* los próximos días, para la tira de la semana */
+ const semana=[];
+ for(let i=0;i<6;i++){const dd=addDays(todayStr(),i);
+   const ev=TK().filter(t=>activo(t)&&dateOf(t)===dd&&timeOf(t))
+     .sort((a,b)=>(parseDT(a)||0)-(parseDT(b)||0)).slice(0,2)
+     .map(t=>({h:timeOf(t),t:txtOf(t)}));
+   semana.push({d:dd,ev:ev});}
+
+ /* cada bloque con sus secciones — para los widgets por bloque */
+ const bloques=[];
+ areas().forEach(a=>{
+   if(hiddenB[a.key])return;
+   const c=colOf(a);
+   const mias=TK().filter(t=>areaOf(t)===a.key&&activo(t));
+   if(a.inbox&&!mias.length)return;
+   const secs=[];
+   sgNames(a).slice(0,6).forEach(sg=>{
+     const todas=tasksFor(a.key,sg);
+     if(!todas.length)return;
+     secs.push({n:labelOv[a.key+'|'+sg]||sg,p:!!stepMode[a.key+'|'+sg],
+       ts:todas.slice(0,7).map(tk=>({t:txtOf(tk),f:dateOf(tk)||'',h:timeOf(tk)||'',d:!!state[tk.id]}))});});
+   bloques.push({k:a.key,n:a.name,c:c.sol,bg:c.bg,tx:c.tx,
+     pend:mias.length,venc:mias.filter(overdue).length,
+     sem:mias.filter(t=>{const d=dateOf(t);if(!d)return false;const n=dayDiff(d);return n>=0&&n<=7;}).length,
+     secs:secs});});
+
+ const hechas=doneToday();
+ const porHacerHoy=TK().filter(t=>{if(!activo(t))return false;const d=dateOf(t);return !!(d&&dayDiff(d)<=0);}).length;
+
+ return {v:2,ts:new Date().toISOString(),atrasadas:atras,
          pendientes:TK().filter(activo).length,
-         corta:corta,conHora:conHora,hoyManana:hoyMan};}
+         hoyHechas:hechas,hoyTotal:hechas+porHacerHoy,
+         corta:corta,conHora:conHora,hoyManana:hoyMan,
+         cuadrantes:cuad,semana:semana,bloques:bloques};}
 
 async function doPush(){const ts=new Date().toISOString();const body=[{code:syncCode,data:localBlob(),updated_at:ts}];
  try{body.push({code:syncCode+"__widget",data:widgetBlob(),updated_at:ts});}catch(e){}
