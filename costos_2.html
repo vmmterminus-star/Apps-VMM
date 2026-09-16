@@ -138,10 +138,14 @@ td .ro.txt{font-family:'Alexandria',sans-serif;font-size:11px;font-weight:300;co
 .lightbox img{max-width:100%;max-height:86vh;object-fit:contain;background:#fff;border-radius:6px}
 .lightbox .lb-cap{color:#fff;font-size:11px;text-align:center;max-width:70ch}
 tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
+/* La nota es una caja de varios renglones que crece sola con el texto:
+   se lee completa de un vistazo, sin scroll horizontal. */
 .nota-in{width:100%;border:0;border-bottom:1px dashed #DDCCC2;background:transparent;font-size:10.5px;
-  font-style:italic;color:#8A6A55;padding:3px 2px;font-family:inherit}
+  font-style:italic;color:#8A6A55;padding:3px 2px;font-family:inherit;
+  line-height:1.55;resize:none;overflow:hidden;display:block;white-space:pre-wrap;overflow-wrap:break-word}
 .nota-in::placeholder{font-style:normal;color:#BFB4AC}
-.nota-in:focus{outline:none;border-bottom-color:var(--terra)}
+.nota-in:focus{outline:none;border-bottom-color:var(--terra);background:var(--wash);border-radius:4px}
+.pr-nota{display:none}
 .notag{padding:0 15px 14px}
 .notag label{display:block;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
 .notag textarea{width:100%;font-size:11px;line-height:1.55;resize:vertical;min-height:46px;font-family:inherit}
@@ -277,7 +281,10 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   tr.nota td{background:#fff!important;font-size:6.5pt;color:#000!important;padding:0 4pt 3pt!important}
   /* al imprimir el catálogo, las descripciones siempre van completas */
   textarea.dsc{height:auto!important;overflow:visible!important;white-space:normal!important}
-  .nota-in{border:0!important;color:#000!important;font-style:italic;font-size:6.5pt}
+  /* la nota se imprime desde su copia en texto, no desde la caja de
+     captura: un textarea no reparte su contenido entre páginas */
+  .nota-in{display:none!important}
+  .pr-nota{display:block!important;color:#000!important;font-style:italic;font-size:6.5pt;line-height:1.4;white-space:pre-wrap}
   .notag{padding:3pt 0 0!important}
   .notag label{color:#000!important}
   .notag textarea{display:none!important}
@@ -1191,10 +1198,29 @@ const btnNota=(key,vista,tiene)=>
 /* La nota se dibuja solo si tiene texto o si la abriste con el lápiz. */
 const filaNota=(key,vista,valor,span,setter)=>
   (valor||notasAbiertas.has(key))
-  ?`<tr class="nota"><td></td><td colspan="${span}"><input class="nota-in" data-nota="${key}"
-      value="${esc(valor||'')}" placeholder="De dónde sale este número"
-      oninput="${setter}" onchange="(VISTAS['${vista}']||(()=>{}))()"></td><td class="act"></td></tr>`
+  ?`<tr class="nota"><td></td><td colspan="${span}"><textarea class="nota-in" rows="1" data-nota="${key}"
+      spellcheck="false" placeholder="De dónde sale este número"
+      oninput="${setter};autoAltoNota(this)" onchange="(VISTAS['${vista}']||(()=>{}))()">${esc(valor||'')}</textarea><div class="pr-nota">${esc(valor||'')}</div></td><td class="act"></td></tr>`
   :'';
+/* Las notas crecen solas: se miden despues de cada redibujo. El observador
+   mira solo altas y bajas de nodos, no cambios de estilo, asi que ajustar
+   la altura no lo vuelve a disparar. */
+function autoAltoNota(el){
+  if(!el)return;
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight+2)+'px';
+}
+function ajustarNotas(){document.querySelectorAll('textarea.nota-in').forEach(autoAltoNota);}
+(function(){
+  let t=null;
+  const arranca=()=>{
+    new MutationObserver(()=>{clearTimeout(t);t=setTimeout(ajustarNotas,0);})
+      .observe(document.body,{childList:true,subtree:true});
+    ajustarNotas();
+  };
+  if(document.body)arranca();else document.addEventListener('DOMContentLoaded',arranca);
+  window.addEventListener('beforeprint',ajustarNotas);
+})();
 const notaGral=(valor,setter)=>`
   <div class="notag">
     <label>Notas del análisis</label>
@@ -1299,9 +1325,9 @@ function renderInsumos(){
       <td><input value="${esc(i.fuente)}" oninput="upIns('${i.id}','fuente',this.value)" placeholder="Cotización, fecha"></td>
       <td class="act">${btnNota(i.id,'ins',!!i.nota)}${rowBtns(`movIns(${ix},-1)`,`movIns(${ix},1)`,`dupIns(${ix})`,`delIns('${i.id}')`)}</td>
     </tr>`+((i.nota||notasAbiertas.has(i.id))
-      ?`<tr class="nota"><td></td><td class="int"></td><td colspan="7"><input class="nota-in" data-nota="${i.id}"
-          value="${esc(i.nota||'')}" placeholder="De dónde sale este precio, qué incluye, con quién se cotizó"
-          oninput="upIns('${i.id}','nota',this.value,1)" onchange="renderInsumos()"></td><td class="act"></td></tr>`
+      ?`<tr class="nota"><td></td><td class="int"></td><td colspan="7"><textarea class="nota-in" rows="1" data-nota="${i.id}"
+          spellcheck="false" placeholder="De dónde sale este precio, qué incluye, con quién se cotizó"
+          oninput="upIns('${i.id}','nota',this.value,1);autoAltoNota(this)" onchange="renderInsumos()">${esc(i.nota||'')}</textarea><div class="pr-nota">${esc(i.nota||'')}</div></td><td class="act"></td></tr>`
       :'')+revFila('ins',i,7);};
 
   let body='';
