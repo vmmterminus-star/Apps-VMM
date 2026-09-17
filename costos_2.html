@@ -1187,7 +1187,7 @@ function irARev(tipo,id){
 }
 
 const notasAbiertas=new Set();
-const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad(),ins:()=>renderInsumos()};
+const VISTAS={matriz:()=>renderMatriz(),aux:()=>renderAux(),cuad:()=>renderCuad(),ins:()=>renderInsumos(),con:()=>renderConceptos()};
 function togNota(key,vista){
   if(notasAbiertas.has(key))notasAbiertas.delete(key);else notasAbiertas.add(key);
   (VISTAS[vista]||(()=>{}))();
@@ -1196,10 +1196,10 @@ function togNota(key,vista){
 const btnNota=(key,vista,tiene)=>
   `<button class="icon${tiene?' on':''}" onclick="togNota('${key}','${vista}')" title="Nota: de dónde sale este número">&#9998;</button>`;
 /* La nota se dibuja solo si tiene texto o si la abriste con el lápiz. */
-const filaNota=(key,vista,valor,span,setter)=>
+const filaNota=(key,vista,valor,span,setter,ph)=>
   (valor||notasAbiertas.has(key))
   ?`<tr class="nota"><td></td><td colspan="${span}"><textarea class="nota-in" rows="1" data-nota="${key}"
-      spellcheck="false" placeholder="De dónde sale este número"
+      spellcheck="false" placeholder="${esc(ph||'De dónde sale este número')}"
       oninput="${setter};autoAltoNota(this)" onchange="(VISTAS['${vista}']||(()=>{}))()">${esc(valor||'')}</textarea><div class="pr-nota">${esc(valor||'')}</div></td><td class="act"></td></tr>`
   :'';
 /* Las notas crecen solas: se miden despues de cada redibujo. El observador
@@ -1836,8 +1836,11 @@ function renderConceptos(){
       <td>${unidSel(c.unidad,`upCon('${c.id}','unidad',this.value)`)}</td>
       <td><div class="ro" style="text-align:right">${dec(cdu(c.id))}</div></td>
       <td><div class="ro b" style="text-align:right">${dec(puVenta(c.id))}</div></td>
-      <td class="act">${rowBtns(`movCon(${ix},-1)`,`movCon(${ix},1)`,`dupCon(${ix})`,`delCon('${c.id}')`)}</td>
-    </tr>`+revFila('con',c,6);
+      <td class="act">${btnNota(c.id,'con',!!c.nota)}${rowBtns(`movCon(${ix},-1)`,`movCon(${ix},1)`,`dupCon(${ix})`,`delCon('${c.id}')`)}</td>
+    </tr>`
+    +filaNota(c.id,'con',c.nota,6,`upCon('${c.id}','nota',this.value)`,
+       'De dónde salió la descripción: plano, tabla o detalle, y qué falta confirmar')
+    +revFila('con',c,6);
 
   const conIx=db.conceptos.map((c,ix)=>({c,ix}));
   let cuerpo='';
