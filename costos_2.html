@@ -363,9 +363,15 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   #entregaDoc .ent-bloque b{font-weight:600;color:#123C47;white-space:nowrap}
   #entregaDoc .ent-rot{font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#3D8A8A;
     border-bottom:.5pt solid #D8ECEA;padding-bottom:1.2mm;margin-bottom:3mm}
-  #entregaDoc .ent-sec{page-break-before:always}
-  #entregaDoc .ent-sec>h2{font-size:13pt;font-weight:600;color:#123C47;margin:0 0 4mm;
-    padding-bottom:2mm;border-bottom:1.2pt solid #123C47}
+  /* Todo va apilado: las secciones no arrancan en hoja nueva, se separan
+     con una banda con su número y su nombre. Solo la portada va sola. */
+  #entregaDoc .ent-sec{margin-top:8mm}
+  #entregaDoc .ent-sec:first-of-type{margin-top:0}
+  #entregaDoc .ent-sec>h2{background:#123C47!important;color:#fff!important;font-size:11pt;
+    font-weight:600;letter-spacing:.02em;margin:0 0 4mm;padding:2.8mm 4mm;border:0;
+    break-after:avoid;page-break-after:avoid}
+  #entregaDoc .ent-sec>h2 span{color:#7FB8B4!important;font-family:'IBM Plex Mono',monospace;
+    font-size:9.5pt;margin-right:3mm}
   #entregaDoc .ent-sub{font-size:9pt;font-weight:600;color:#123C47;margin:5mm 0 1.5mm;page-break-after:avoid}
   #entregaDoc .ent-desc{font-size:7pt;color:#5A6E74;margin:0 0 1.8mm;line-height:1.38}
   #entregaDoc table{width:100%;border-collapse:collapse;font-size:7.5pt;margin-bottom:3mm}
@@ -377,6 +383,12 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   #entregaDoc tr.t td{background:#D8ECEA!important;color:#123C47!important;border-top:1pt solid #123C47!important;border-bottom:0!important;font-weight:700;font-size:8pt}
   #entregaDoc tr.grp td{background:#E8F2F1!important;color:#123C47!important;font-weight:600;
     text-transform:uppercase;letter-spacing:.05em;font-size:6.8pt!important;border-top:.5pt solid #3D8A8A!important}
+  #entregaDoc .ent-croq{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:3mm 0 5mm}
+  #entregaDoc .ent-croq.uno{grid-template-columns:1fr}
+  #entregaDoc .ent-croq.uno img{max-height:125mm}
+  #entregaDoc .ent-croq figure{margin:0;break-inside:avoid;border:.4pt solid #D8ECEA;padding:2mm}
+  #entregaDoc .ent-croq img{width:100%;height:auto;max-height:95mm;object-fit:contain;display:block}
+  #entregaDoc .ent-croq figcaption{font-size:6.5pt;color:#5A6E74;font-style:italic;padding-top:1.5mm}
   #entregaDoc .ent-blk{break-inside:avoid}
   #entregaDoc .ent-pie{margin-top:3mm;border-top:.5pt solid #D8ECEA;padding-top:1.5mm;font-size:6.8pt;
     color:#3D8A8A;display:flex;justify-content:space-between}
@@ -894,6 +906,7 @@ db.labels={...DEF_LABELS,...(db.labels||{})};
   const a=db.tipos.find(t=>t.k==='aux');
   if(a&&a.label==='Auxiliares'){a.label='Básicos';a.tag='BÁS';}
   if(!db.croquis||typeof db.croquis!=='object')db.croquis={};
+  if(!db.croquisMat||typeof db.croquisMat!=='object')db.croquisMat={};
   /* el agrupado del catálogo pasó de sí/no a tres modos */
   if(db.ui.agrupaIns===true)db.ui.agrupaIns='cat';
   else if(db.ui.agrupaIns===false||db.ui.agrupaIns==null)db.ui.agrupaIns='tipo';
@@ -1537,6 +1550,12 @@ function renderEntrega(){
     </div>`;
 }
 
+const entCroq=(cid,b)=>{
+  const cs=croqDe(cid,b);
+  if(!cs.length)return '';
+  return `<div class="ent-croq${cs.length===1?' uno':''}">${cs.map(k=>
+    `<figure><img src="${k.src}" alt="Croquis">${k.nota?`<figcaption>${esc(k.nota)}</figcaption>`:''}</figure>`).join('')}</div>`;
+};
 const entTbl=(cols,filas)=>`<table><thead><tr>${cols.map(c=>
   `<th class="${c[1]||''}" ${c[2]?`style="width:${c[2]}"`:''}>${esc(c[0])}</th>`).join('')}</tr></thead>
   <tbody>${filas}</tbody></table>`;
@@ -1550,6 +1569,8 @@ function entRenglones(rows){
 }
 function entregaHTML(){
   const e=entCfg(),o=db.obra,sec=e.sec;
+  let nsec=0;
+  const banda=t=>`<div class="ent-sec"><h2><span>${++nsec}</span>${esc(t)}</h2>`;
   const hoy=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
   const pie=t=>`<div class="ent-pie"><span>${esc(o.nombre||'')}</span><span>${esc(t)}</span><span>${esc(o.elab||o.alumno||'')}</span></div>`;
   const dato=(l,v)=>v?`<b>${esc(l)}</b><span>${esc(v)}</span>`:'';
@@ -1570,19 +1591,19 @@ function entregaHTML(){
   </div>`;
 
   if(sec.ins){
-    h+=`<div class="ent-sec"><h2>Catálogo de insumos</h2>`+entTbl(
+    h+=banda('Catálogo de insumos')+entTbl(
       [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
       entSel('ins').map(i=>{const r=resolveRef(i.id);return `<tr><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
         <td>${esc(i.unidad)}</td><td>${esc((db.tipos.find(t=>t.k===i.tipo)||{}).tag||'')}</td>
         <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`;}).join(''))+pie('Catálogo de insumos')+`</div>`;
   }
   if(sec.cua){
-    h+=`<div class="ent-sec"><h2>Cuadrillas</h2>`+entSel('cua').map(c=>
+    h+=banda('Cuadrillas')+entSel('cua').map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}</div>`).join('')+pie('Cuadrillas')+`</div>`;
   }
   if(sec.bas){
-    h+=`<div class="ent-sec"><h2>Básicos</h2>`+entSel('bas').map(a=>
+    h+=banda('Básicos')+entSel('bas').map(a=>
       `<div class="ent-blk"><div class="ent-sub">${esc(a.clave)} · por ${esc(a.unidad)}</div>
        <div class="ent-desc">${esc(a.desc)}</div>${entRenglones(a.comp)}
        ${a.notaGral?`<div class="ent-desc"><i>${esc(a.notaGral)}</i></div>`:''}</div>`).join('')+pie('Básicos')+`</div>`;
@@ -1595,21 +1616,22 @@ function entregaHTML(){
       cs.forEach(c=>{f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
         <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`;});
     });
-    h+=`<div class="ent-sec"><h2>Catálogo de conceptos</h2>`+entTbl(
+    h+=banda('Catálogo de conceptos')+entTbl(
       [['Clave','','56pt'],['Descripción','',''],['Unidad','','40pt'],['Costo directo','n','62pt'],['P. unitario','n','62pt']],f)
       +pie('Catálogo de conceptos')+`</div>`;
   }
   if(sec.mat){
     const con=entSel('mat');
-    h+=`<div class="ent-sec"><h2>Matrices de precio unitario</h2>`+(con.length?con.map(c=>
+    h+=banda('Matrices de precio unitario')+(con.length?con.map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(db.matrices[c.id])}
-       ${c.notaAnalisis?`<div class="ent-desc"><i>${esc(c.notaAnalisis)}</i></div>`:''}</div>`).join('')
+       ${c.notaAnalisis?`<div class="ent-desc"><i>${esc(c.notaAnalisis)}</i></div>`:''}
+       ${entCroq(c.id,'mat')}</div>`).join('')
       :'<div class="ent-desc">Todavía no hay matrices capturadas.</div>')+pie('Matrices de precio unitario')+`</div>`;
   }
   if(sec.gen){
     const con=entSel('gen');
-    h+=`<div class="ent-sec"><h2>Generadores</h2>`+(con.length?con.map(c=>{
+    h+=banda('Generadores')+(con.length?con.map(c=>{
       const rows=db.generadores[c.id];
       return `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>`+entTbl(
@@ -1617,12 +1639,12 @@ function entregaHTML(){
         rows.map(r=>`<tr>${db.genCols.map(g=>`<td class="${g.t==='num'?'n':''}">${esc((r.v||{})[g.id]||'')}</td>`).join('')}
           <td>${r.ded?'Sí':''}</td></tr>`).join('')
         +`<tr class="t"><td colspan="${db.genCols.length}">Cantidad total</td><td class="n">${dec(cantidad(c.id),3)}</td></tr>`)
-       +`</div>`;}).join('')
+       +entCroq(c.id,'gen')+`</div>`;}).join('')
       :'<div class="ent-desc">Todavía no hay generadores capturados.</div>')+pie('Generadores')+`</div>`;
   }
   if(sec.ind){
     const r=db.indirectos.rubros||[];
-    h+=`<div class="ent-sec"><h2>Indirectos</h2>`+entTbl(
+    h+=banda('Indirectos')+entTbl(
       [['Grupo','','90pt'],['Concepto','',''],['Mensual','n','70pt'],['Meses','n','48pt'],['Importe','n','76pt']],
       r.map(x=>`<tr><td>${esc(x.grupo||'')}</td><td>${esc(x.desc||'')}</td>
         <td class="n">${dec(x.mensual)}</td><td class="n">${dec(db.indirectos.meses,0)}</td>
@@ -1632,7 +1654,7 @@ function entregaHTML(){
   }
   if(sec.car){
     const g=db.cargos;
-    h+=`<div class="ent-sec"><h2>Utilidad y cargos</h2>`+entTbl(
+    h+=banda('Utilidad y cargos')+entTbl(
       [['Cargo','',''],['Valor','n','80pt']],
       [['ISR',dec(N(g.isr),2)+'%'],['PTU',dec(N(g.ptu),2)+'%'],['Utilidad esperada neta',dec(N(g.uen),2)+'%'],
        ['Utilidad integrada',dec(utilidadIntegrada()*100,2)+'%'],['Financiamiento',dec(N(g.fin),2)+'%'],
@@ -1649,7 +1671,7 @@ function entregaHTML(){
         f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.descCorta||c.desc)}</td><td>${esc(c.unidad)}</td>
           <td class="n">${dec(q,3)}</td><td class="n">${dec(pu)}</td><td class="n">${dec(q*pu)}</td></tr>`;});
     });
-    h+=`<div class="ent-sec"><h2>Presupuesto</h2>`+entTbl(
+    h+=banda('Presupuesto')+entTbl(
       [['Clave','','56pt'],['Concepto','',''],['Unidad','','38pt'],['Cantidad','n','56pt'],['P. unitario','n','62pt'],['Importe','n','72pt']],
       f+`<tr class="t"><td colspan="5">Subtotal</td><td class="n">${dec(tt.venta)}</td></tr>
          <tr class="t"><td colspan="5">IVA ${dec(N(db.cargos.iva),0)}%</td><td class="n">${dec(tt.total-tt.venta)}</td></tr>
@@ -2311,7 +2333,7 @@ function dupCon(ix){
 function movCon(ix,d){move(db.conceptos,ix,d);save();renderConceptos();fillSelects();renderPresup();}
 function delCon(id){
   if(!confirm('Se elimina el concepto con su matriz y su generador. ¿Seguro?'))return;
-  db.conceptos=db.conceptos.filter(c=>c.id!==id);delete db.matrices[id];delete db.generadores[id];
+  db.conceptos=db.conceptos.filter(c=>c.id!==id);delete db.matrices[id];delete db.generadores[id];delete (db.croquisMat||{})[id];delete (db.croquis||{})[id];
   save();renderConceptos();fillSelects();renderMatriz();renderGen();renderNav();renderPresup();
 }
 function fillSelects(){
@@ -2370,7 +2392,7 @@ function renderGen(){
       <tr class="tot"><td colspan="${nCols-4}">${esc(L('gTotal'))}</td><td class="mid">${esc(c.unidad)}</td><td class="num mono" id="genTot">${dec(cantidad(cid),3)}</td><td colspan="2"></td></tr>
     </tbody></table></div>
   <div style="padding:9px 11px"><button class="btn ghost" onclick="addGen('${cid}')">+ Agregar renglón · Enter también</button></div>
-  ${croqBox(cid)}
+  ${croqBox(cid,'gen')}
   <div class="hint">Eje y tramo son texto y no entran al cálculo. El subtotal multiplica piezas × largo × ancho × alto, y las casillas vacías valen 1. El botón &minus; convierte el renglón en deducción. Con <b>abc/123</b> cambias una columna de texto a número, y con su título la renombras.</div>`;
 }
 
@@ -2415,36 +2437,46 @@ function vistaTodos(){
    ================================================================== */
 const CROQ_LADO=1400, CROQ_CAL=0.72;
 const croqKB=src=>Math.round(String(src||'').length/1365);
-function croqDe(cid){db.croquis=db.croquis||{};db.croquis[cid]=db.croquis[cid]||[];return db.croquis[cid];}
-function croqBox(cid){
-  const cs=croqDe(cid),peso=cs.reduce((s,k)=>s+croqKB(k.src),0);
+/* Hay dos juegos de croquis por concepto y son independientes: el de la
+   matriz justifica las cantidades del análisis, el del generador justifica
+   las medidas tomadas del plano. */
+const croqBolsa=b=>{const k=b==='mat'?'croquisMat':'croquis';db[k]=db[k]||{};return db[k];};
+function croqDe(cid,b){const o=croqBolsa(b);o[cid]=o[cid]||[];return o[cid];}
+const croqPinta=b=>{if(b==='mat')renderMatriz();else renderGen();};
+function croqBox(cid,b){
+  b=b||'gen';
+  const cs=croqDe(cid,b),peso=cs.reduce((s,k)=>s+croqKB(k.src),0);
+  const vacio=b==='mat'
+    ?'Todavía no hay croquis de esta matriz. Sirven para mostrar de dónde sale cada cantidad: el armado, la sección, el despiece.'
+    :'Todavía no hay croquis de este concepto. Sirven para dejar constancia de dónde salió cada medida.';
   return `
   <div class="croq" ondragover="event.preventDefault();this.classList.add('drag')"
-    ondragleave="this.classList.remove('drag')" ondrop="croqDrop(event,'${cid}')">
+    ondragleave="this.classList.remove('drag')" ondrop="croqDrop(event,'${cid}','${b}')">
     <div class="croq-hd">
       <b>Croquis</b><span>Arrastra una imagen aquí, o toma un screenshot y pégalo con Ctrl+V</span>
       <label class="btn mini" style="cursor:pointer">Elegir imagen
-        <input type="file" accept="image/*" multiple style="display:none" onchange="croqFiles(this.files,'${cid}');this.value=''"></label>
+        <input type="file" accept="image/*" multiple style="display:none" onchange="croqFiles(this.files,'${cid}','${b}');this.value=''"></label>
       ${cs.length?`<span class="pes">${cs.length} · ${peso} KB</span>`:''}
     </div>
     ${cs.length?`<div class="croq-grid">${cs.map((k,ix)=>`
       <figure>
-        <img src="${k.src}" alt="Croquis ${ix+1}" onclick="croqZoom('${cid}','${k.id}')">
+        <img src="${k.src}" alt="Croquis ${ix+1}" onclick="croqZoom('${cid}','${k.id}','${b}')">
         <figcaption>
-          <input value="${esc(k.nota||'')}" placeholder="Nota del croquis" oninput="croqNota('${cid}','${k.id}',this.value)">
-          <button class="icon" title="Quitar croquis" onclick="croqDel('${cid}','${k.id}')">&times;</button>
+          <input value="${esc(k.nota||'')}" placeholder="Nota del croquis" oninput="croqNota('${cid}','${k.id}',this.value,'${b}')">
+          <button class="icon" title="Quitar croquis" onclick="croqDel('${cid}','${k.id}','${b}')">&times;</button>
         </figcaption>
         <div class="croq-pie">${esc(k.nota||'')}</div>
       </figure>`).join('')}</div>`
-    :`<div class="croq-vacio">Todavía no hay croquis de este concepto. Sirven para dejar constancia de dónde salió cada medida.</div>`}
+    :`<div class="croq-vacio">${esc(vacio)}</div>`}
   </div>`;
 }
-function croqDrop(ev,cid){
+function croqDrop(ev,cid,b){
   ev.preventDefault();ev.currentTarget.classList.remove('drag');
-  croqFiles(ev.dataTransfer.files,cid);
+  croqFiles(ev.dataTransfer.files,cid,b);
 }
-function croqFiles(lista,cid){[...(lista||[])].forEach(f=>croqAdd(cid,f));}
-function croqAdd(cid,file){
+function croqFiles(lista,cid,b){[...(lista||[])].forEach(f=>croqAdd(cid,f,b));}
+function croqAdd(cid,file,b){
+  b=b||'gen';
   if(!file||!/^image\//.test(file.type)){flash('Eso no es una imagen');return;}
   const rd=new FileReader();
   rd.onload=e=>{
@@ -2457,37 +2489,41 @@ function croqAdd(cid,file){
       const cv=document.createElement('canvas');cv.width=w;cv.height=h;
       const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.drawImage(img,0,0,w,h);
       const src=cv.toDataURL('image/jpeg',CROQ_CAL);
-      croqDe(cid).push({id:uid(),src,nota:''});
-      save();renderGen();flash('Croquis agregado · '+croqKB(src)+' KB');
+      croqDe(cid,b).push({id:uid(),src,nota:''});
+      save();croqPinta(b);flash('Croquis agregado · '+croqKB(src)+' KB');
     };
     img.onerror=()=>flash('No se pudo leer la imagen');
     img.src=e.target.result;
   };
   rd.readAsDataURL(file);
 }
-function croqNota(cid,id,v){const k=croqDe(cid).find(x=>x.id===id);if(!k)return;k.nota=v;save();}
-function croqDel(cid,id){
+function croqNota(cid,id,v,b){const k=croqDe(cid,b).find(x=>x.id===id);if(!k)return;k.nota=v;save();}
+function croqDel(cid,id,b){
+  b=b||'gen';
   if(!confirm('¿Quitar este croquis?'))return;
-  db.croquis[cid]=croqDe(cid).filter(k=>k.id!==id);save();renderGen();
+  croqBolsa(b)[cid]=croqDe(cid,b).filter(k=>k.id!==id);save();croqPinta(b);
 }
-function croqZoom(cid,id){
-  const k=croqDe(cid).find(x=>x.id===id);if(!k)return;
+function croqZoom(cid,id,b){
+  const k=croqDe(cid,b).find(x=>x.id===id);if(!k)return;
   const d=document.createElement('div');d.className='lightbox';
   d.innerHTML=`<img src="${k.src}" alt="Croquis">${k.nota?`<div class="lb-cap">${esc(k.nota)}</div>`:''}`;
   d.onclick=()=>d.remove();
   document.body.appendChild(d);
 }
-/* Pegar un screenshot con Ctrl+V estando en la pestaña de generadores.
+/* Pegar un screenshot con Ctrl+V estando en generadores o en matrices.
    Si estás escribiendo en un campo, no se interpone. */
 document.addEventListener('paste',ev=>{
-  if(db.ui.tab!=='generadores'||db.ui.genTodos)return;
+  const enGen=db.ui.tab==='generadores'&&!db.ui.genTodos;
+  const enMat=db.ui.tab==='matrices';
+  if(!enGen&&!enMat)return;
   const a=document.activeElement;
   if(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)&&a.type!=='file')return;
   const items=[...((ev.clipboardData||{}).items||[])].filter(i=>/^image\//.test(i.type));
   if(!items.length)return;
-  const cid=document.getElementById('selGen').value;if(!cid)return;
+  const b=enMat?'mat':'gen';
+  const cid=document.getElementById(enMat?'selMatriz':'selGen').value;if(!cid)return;
   ev.preventDefault();
-  items.forEach(i=>croqAdd(cid,i.getAsFile()));
+  items.forEach(i=>croqAdd(cid,i.getAsFile(),b));
 });
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){const l=document.querySelector('.lightbox');if(l)l.remove();}});
 
@@ -2601,6 +2637,7 @@ function renderMatriz(){
     </div>
     <div style="font-size:10.5px;color:var(--soft);margin-top:9px">Los porcentajes no se capturan aquí: salen de <span class="lnk" onclick="go('indirectos')">Indirectos</span> y de <span class="lnk" onclick="go('cargos')">Utilidad y cargos</span>, y son los mismos para toda la obra.</div>
   </div>
+  ${croqBox(cid,'mat')}
   ${notaGral(c.notaAnalisis,`setNotaAnalisis('${cid}',this.value)`)}`;
 }
 /* Quita los cargos porcentuales que la matriz carga por fuera cuando la
