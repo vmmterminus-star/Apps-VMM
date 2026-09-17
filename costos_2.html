@@ -1823,7 +1823,9 @@ function renderEntrega(){
     }
     return `<div class="ent-fila ${on?'on':''}">
         <input type="checkbox" ${on?'checked':''} onchange="togEnt('${k}')">
-        <span class="nm">${esc(l)}</span>${cuenta}${boton}</div>`
+        <span class="nm">${esc(l)}</span>${cuenta}${boton}
+        <button class="btn mini" onclick="imprimirEntrega('${k}')"
+          title="Genera un PDF con esta sección sola, con su portada">PDF suelto</button></div>`
       +(on&&pick&&e.abre[pick]?entListaHTML(pick):'');
   }).join('');
   box.innerHTML=`
@@ -1849,6 +1851,11 @@ function renderEntrega(){
       <button class="btn" onclick="bajarEntregaHTML()">HTML suelto</button>
       <button class="btn ghost" onclick="entTodo(1)">Marcar todas las secciones</button>
       <button class="btn ghost" onclick="entTodo(0)">Desmarcar todas</button>
+    </div>
+    <div style="font-size:10.5px;color:var(--soft);margin-top:7px">
+      «Imprimir entrega» junta todas las secciones marcadas en un solo PDF.
+      «PDF suelto» de cada renglón saca esa sección sola, con su portada y su membrete,
+      para entregar el catálogo por un lado y el presupuesto por otro.
     </div>
     <div class="rev-pub">
       <b>Vista para el profe — la misma página, filtrada y sin poder editar.</b><br>
@@ -1880,8 +1887,13 @@ function entRenglones(rows){
       +(x.row.nota?`<tr class="nt"><td></td><td colspan="5">${esc(x.row.nota)}</td></tr>`:'')).join('')
     +`<tr class="t"><td colspan="5">Costo directo</td><td class="n">${dec(m.total)}</td></tr>`);
 }
-function entregaHTML(){
-  const e=entCfg(),o=db.obra,sec=e.sec;
+/* Con un argumento —'ins', 'pre', 'mat'…— arma el documento con esa sola
+   sección, pero con la misma portada y el mismo membrete: sirve para
+   entregar el catálogo por un lado y el presupuesto por otro. Sin
+   argumento arma todo lo que tengas marcado. */
+function entregaHTML(solo){
+  const e=entCfg(),o=db.obra;
+  const sec=solo?{[solo]:1}:e.sec;
   let nsec=0;
   const banda=t=>`<div class="ent-sec" id="s${++nsec}"><h2><span>${nsec}</span>${esc(t)}</h2>`;
   const hoy=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
@@ -1904,22 +1916,37 @@ function entregaHTML(){
   </div>`;
 
   if(sec.ins){
-    h+=banda('Catálogo de insumos')+entTbl(
-      [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
-      entSel('ins').map(i=>{const r=resolveRef(i.id);return `<tr class="${i.nota?'cn':''}"><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
+    /* Los insumos salen partidos por tipo —materiales, mano de obra,
+       equipo, cargos porcentuales— con un renglón de separación que dice
+       cuántos trae cada bloque, igual que en la pantalla. El orden de los
+       bloques es el de db.tipos; dentro, alfabético por clave. */
+    const lista=entSel('ins'),ordCl=(a,b)=>String(a.clave).localeCompare(String(b.clave),'es',{numeric:true});
+    const filaIns=i=>{const r=resolveRef(i.id);
+      return `<tr class="${i.nota?'cn':''}"><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
         <td>${esc(i.unidad)}</td><td>${esc((db.tipos.find(t=>t.k===i.tipo)||{}).tag||'')}</td>
         <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`
         +(i.nota?`<tr class="nt"><td></td><td colspan="4">${esc(i.nota)}</td></tr>`:'')
-        +(i.fuente?`<tr class="nt"><td></td><td colspan="4">Fuente: ${esc(i.fuente)}</td></tr>`:'');}).join(''))+pie('Catálogo de insumos')+`</div>`;
+        +(i.fuente?`<tr class="nt"><td></td><td colspan="4">Fuente: ${esc(i.fuente)}</td></tr>`:'');};
+    let fi='';
+    db.tipos.filter(t=>!['aux','cuad'].includes(t.k)).forEach(t=>{
+      const rows=lista.filter(o=>o.tipo===t.k).sort(ordCl);
+      if(!rows.length)return;
+      fi+=`<tr class="grp"><td colspan="5">${esc(t.label)} · ${rows.length}</td></tr>`+rows.map(filaIns).join('');
+    });
+    const otrosIns=lista.filter(o=>!db.tipos.some(t=>t.k===o.tipo)).sort(ordCl);
+    if(otrosIns.length)fi+=`<tr class="grp"><td colspan="5">Sin tipo · ${otrosIns.length}</td></tr>`+otrosIns.map(filaIns).join('');
+    h+=banda('Catálogo de insumos')+entTbl(
+      [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
+      fi)+pie('Catálogo de insumos')+`</div>`;
   }
   if(sec.cua){
-    h+=banda('Cuadrillas')+entSel('cua').map(c=>
+    h+=banda('Cuadrillas')+`<div class="ent-rot">${entSel('cua').length} cuadrillas</div>`+entSel('cua').map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}
        ${c.notaGral?`<div class="ent-desc"><i>${esc(c.notaGral)}</i></div>`:''}</div>`).join('')+pie('Cuadrillas')+`</div>`;
   }
   if(sec.bas){
-    h+=banda('Básicos')+entSel('bas').map(a=>
+    h+=banda('Básicos')+`<div class="ent-rot">${entSel('bas').length} básicos</div>`+entSel('bas').map(a=>
       `<div class="ent-blk"><div class="ent-sub">${esc(a.clave)} · por ${esc(a.unidad)}</div>
        <div class="ent-desc">${esc(a.desc)}</div>${entRenglones(a.comp)}
        ${a.notaGral?`<div class="ent-desc"><i>${esc(a.notaGral)}</i></div>`:''}</div>`).join('')+pie('Básicos')+`</div>`;
@@ -1928,7 +1955,7 @@ function entregaHTML(){
     let f='';
     db.partidas.forEach(p=>{
       const cs=entSel('con').filter(c=>c.partida===p.id);if(!cs.length)return;
-      f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
+      f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)} · ${cs.length}</td></tr>`;
       cs.forEach(c=>{f+=`<tr class="${c.nota?'cn':''}"><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
         <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`
         +(c.nota?`<tr class="nt"><td></td><td colspan="4">${esc(c.nota)}</td></tr>`:'');});
@@ -1975,11 +2002,19 @@ function entregaHTML(){
   if(sec.ind){
     const r=db.indirectos.rubros||[];
     h+=banda('Indirectos')+entTbl(
-      [['Grupo','','90pt'],['Concepto','',''],['Mensual','n','70pt'],['Meses','n','48pt'],['Importe','n','76pt']],
-      r.map(x=>`<tr><td>${esc(x.grupo||'')}</td><td>${esc(x.desc||'')}</td>
-        <td class="n">${dec(x.mensual)}</td><td class="n">${dec(db.indirectos.meses,0)}</td>
-        <td class="n">${dec(N(x.mensual)*N(db.indirectos.meses))}</td></tr>`).join('')
-      +`<tr class="t"><td colspan="4">Porcentaje de indirectos aplicado</td><td class="n">${dec(pctIndirectos()*100,2)}%</td></tr>`)
+      [['Concepto','',''],['Mensual','n','78pt'],['Meses','n','52pt'],['Importe','n','84pt']],
+      (()=>{/* un renglón de separación por rubro, con su importe del rubro */
+        const grupos=[...new Set(r.map(x=>x.grupo||'Sin grupo'))];
+        const ms=N(db.indirectos.meses);
+        return grupos.map(g=>{
+          const rows=r.filter(x=>(x.grupo||'Sin grupo')===g);
+          const sub=rows.reduce((a,x)=>a+N(x.mensual)*ms,0);
+          return `<tr class="grp"><td colspan="3">${esc(g)} · ${rows.length}</td><td class="n">${dec(sub)}</td></tr>`
+            +rows.map(x=>`<tr><td>${esc(x.desc||'')}</td>
+              <td class="n">${dec(x.mensual)}</td><td class="n">${dec(ms,0)}</td>
+              <td class="n">${dec(N(x.mensual)*ms)}</td></tr>`).join('');
+        }).join('');})()
+      +`<tr class="t"><td colspan="3">Porcentaje de indirectos aplicado</td><td class="n">${dec(pctIndirectos()*100,2)}%</td></tr>`)
       +pie('Indirectos')+`</div>`;
   }
   if(sec.car){
@@ -1996,7 +2031,9 @@ function entregaHTML(){
     const tt=totalesObra();let f='';
     db.partidas.forEach(p=>{
       const cs=db.conceptos.filter(c=>c.partida===p.id);if(!cs.length)return;
-      f+=`<tr class="grp"><td colspan="6">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
+      const impPart=cs.reduce((a,c)=>a+cantidad(c.id)*puVenta(c.id),0);
+      f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)} · ${cs.length}</td>
+          <td class="n">${dec(impPart)}</td></tr>`;
       cs.forEach(c=>{const q=cantidad(c.id),pu=puVenta(c.id);
         f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.descCorta||c.desc)}</td><td>${esc(c.unidad)}</td>
           <td class="n">${dec(q,3)}</td><td class="n">${dec(pu)}</td><td class="n">${dec(q*pu)}</td></tr>`;});
@@ -2049,6 +2086,7 @@ tbody tr:nth-child(even) td{background:#FAFCFC}
 td.n,th.n{text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;white-space:nowrap}
 tr.t td{background:var(--mint);color:var(--deep);border-top:2px solid var(--deep);border-bottom:0;font-weight:700;font-size:12.5px}
 tr.grp td{background:#E8F2F1;color:var(--deep);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:10px;border-top:1px solid var(--teal)}
+tr.grp td.n{font-family:'IBM Plex Mono',ui-monospace,monospace;letter-spacing:0}
 tr.ded td{background:#FBF1EA;color:#8A4E35}
 tr.cn td{border-bottom:0;padding-bottom:1px}
 tr.nt td{font-size:10px;font-style:italic;color:var(--soft);padding:0 8px 7px;line-height:1.4;border-bottom:1px solid var(--line)}
@@ -2074,9 +2112,9 @@ tr.nt td{font-size:10px;font-style:italic;color:var(--soft);padding:0 8px 7px;li
   .ent-blk,.ent-croq figure,tbody tr{break-inside:avoid}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }`;
-function bajarEntregaHTML(){
+function bajarEntregaHTML(solo){
   const e=entCfg();
-  if(!ENT_SEC.some(([k])=>e.sec[k])){alert('Marca al menos una sección.');return;}
+  if(!solo&&!ENT_SEC.some(([k])=>e.sec[k])){alert('Marca al menos una sección.');return;}
   const o=db.obra;
   const hoy=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
   const tit=`${o.nombre||'Presupuesto'} — entrega`;
@@ -2089,7 +2127,7 @@ function bajarEntregaHTML(){
 <style>${ENT_CSS}</style></head>
 <body>
 <div class="avisoRO">Documento de <b>solo lectura</b> · generado el ${esc(hoy)} · ${esc(o.alumno||'')}</div>
-<div class="hoja">${entregaHTML()}</div>
+<div class="hoja">${entregaHTML(solo)}</div>
 </body></html>`;
   const nom=(o.nombre||'entrega').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const a=document.createElement('a');
@@ -2099,11 +2137,11 @@ function bajarEntregaHTML(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
   flash('HTML de entrega descargado · '+Math.round(doc.length/1024)+' KB');
 }
-function imprimirEntrega(){
+function imprimirEntrega(solo){
   const e=entCfg();
-  if(!ENT_SEC.some(([k])=>e.sec[k])){alert('Marca al menos una sección.');return;}
+  if(!solo&&!ENT_SEC.some(([k])=>e.sec[k])){alert('Marca al menos una sección.');return;}
   const box=document.getElementById('entregaDoc');
-  box.innerHTML=entregaHTML();
+  box.innerHTML=entregaHTML(solo);
   document.body.classList.add('entrega');
   const limpia=()=>{document.body.classList.remove('entrega');box.innerHTML='';
     window.removeEventListener('afterprint',limpia);};
