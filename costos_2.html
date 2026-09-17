@@ -380,6 +380,10 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   #entregaDoc td{border-bottom:.25pt solid #DDE7E7!important;padding:3.2pt 4pt;vertical-align:top;color:#1F3339!important}
   #entregaDoc tbody tr:nth-child(even) td{background:#FAFCFC!important}
   #entregaDoc td.n,#entregaDoc th.n{text-align:right;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+  #entregaDoc tr.ded td{background:#FBF1EA!important;color:#8A4E35!important}
+  #entregaDoc tr.cn td{border-bottom:0!important;padding-bottom:1pt}
+  #entregaDoc tr.nt td{font-size:6.6pt;font-style:italic;color:#5A6E74!important;
+    padding:0 4pt 3.4pt;line-height:1.35;border-bottom:.25pt solid #DDE7E7!important}
   #entregaDoc tr.t td{background:#D8ECEA!important;color:#123C47!important;border-top:1pt solid #123C47!important;border-bottom:0!important;font-weight:700;font-size:8pt}
   #entregaDoc tr.grp td{background:#E8F2F1!important;color:#123C47!important;font-weight:600;
     text-transform:uppercase;letter-spacing:.05em;font-size:6.8pt!important;border-top:.5pt solid #3D8A8A!important}
@@ -1562,9 +1566,10 @@ const entTbl=(cols,filas)=>`<table><thead><tr>${cols.map(c=>
 function entRenglones(rows){
   const m=calcRows(rows);
   return entTbl([['Clave','',''],['Insumo','',''],['Unidad','','48pt'],['Cantidad','n','60pt'],['Costo','n','60pt'],['Importe','n','66pt']],
-    m.det.map(x=>`<tr><td>${esc(x.o.clave)}</td><td>${esc(x.o.desc)}</td>
+    m.det.map(x=>`<tr class="${x.row.nota?'cn':''}"><td>${esc(x.o.clave)}</td><td>${esc(x.o.desc)}</td>
       <td>${esc(x.o.unidad)}</td><td class="n">${dec(x.row.cant,4)}</td>
-      <td class="n">${x.o.tipo==='pct'?'—':dec(x.o.costo)}</td><td class="n">${dec(x.imp)}</td></tr>`).join('')
+      <td class="n">${x.o.tipo==='pct'?'—':dec(x.o.costo)}</td><td class="n">${dec(x.imp)}</td></tr>`
+      +(x.row.nota?`<tr class="nt"><td></td><td colspan="5">${esc(x.row.nota)}</td></tr>`:'')).join('')
     +`<tr class="t"><td colspan="5">Costo directo</td><td class="n">${dec(m.total)}</td></tr>`);
 }
 function entregaHTML(){
@@ -1593,14 +1598,17 @@ function entregaHTML(){
   if(sec.ins){
     h+=banda('Catálogo de insumos')+entTbl(
       [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
-      entSel('ins').map(i=>{const r=resolveRef(i.id);return `<tr><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
+      entSel('ins').map(i=>{const r=resolveRef(i.id);return `<tr class="${i.nota?'cn':''}"><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
         <td>${esc(i.unidad)}</td><td>${esc((db.tipos.find(t=>t.k===i.tipo)||{}).tag||'')}</td>
-        <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`;}).join(''))+pie('Catálogo de insumos')+`</div>`;
+        <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`
+        +(i.nota?`<tr class="nt"><td></td><td colspan="4">${esc(i.nota)}</td></tr>`:'')
+        +(i.fuente?`<tr class="nt"><td></td><td colspan="4">Fuente: ${esc(i.fuente)}</td></tr>`:'');}).join(''))+pie('Catálogo de insumos')+`</div>`;
   }
   if(sec.cua){
     h+=banda('Cuadrillas')+entSel('cua').map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
-       <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}</div>`).join('')+pie('Cuadrillas')+`</div>`;
+       <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}
+       ${c.notaGral?`<div class="ent-desc"><i>${esc(c.notaGral)}</i></div>`:''}</div>`).join('')+pie('Cuadrillas')+`</div>`;
   }
   if(sec.bas){
     h+=banda('Básicos')+entSel('bas').map(a=>
@@ -1613,8 +1621,9 @@ function entregaHTML(){
     db.partidas.forEach(p=>{
       const cs=entSel('con').filter(c=>c.partida===p.id);if(!cs.length)return;
       f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
-      cs.forEach(c=>{f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
-        <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`;});
+      cs.forEach(c=>{f+=`<tr class="${c.nota?'cn':''}"><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
+        <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`
+        +(c.nota?`<tr class="nt"><td></td><td colspan="4">${esc(c.nota)}</td></tr>`:'');});
     });
     h+=banda('Catálogo de conceptos')+entTbl(
       [['Clave','','56pt'],['Descripción','',''],['Unidad','','40pt'],['Costo directo','n','62pt'],['P. unitario','n','62pt']],f)
@@ -1624,7 +1633,9 @@ function entregaHTML(){
     const con=entSel('mat');
     h+=banda('Matrices de precio unitario')+(con.length?con.map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
-       <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(db.matrices[c.id])}
+       <div class="ent-desc">${esc(c.desc)}</div>
+       ${c.nota?`<div class="ent-desc"><i>${esc(c.nota)}</i></div>`:''}
+       ${entRenglones(db.matrices[c.id])}
        ${c.notaAnalisis?`<div class="ent-desc"><i>${esc(c.notaAnalisis)}</i></div>`:''}
        ${entCroq(c.id,'mat')}</div>`).join('')
       :'<div class="ent-desc">Todavía no hay matrices capturadas.</div>')+pie('Matrices de precio unitario')+`</div>`;
@@ -1633,12 +1644,23 @@ function entregaHTML(){
     const con=entSel('gen');
     h+=banda('Generadores')+(con.length?con.map(c=>{
       const rows=db.generadores[c.id];
-      return `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · ${esc(c.unidad)}</div>
-       <div class="ent-desc">${esc(c.desc)}</div>`+entTbl(
-        db.genCols.map(g=>[g.label,g.t==='num'?'n':'']).concat([['Deduce','','48pt']]),
-        rows.map(r=>`<tr>${db.genCols.map(g=>`<td class="${g.t==='num'?'n':''}">${esc((r.v||{})[g.id]||'')}</td>`).join('')}
-          <td>${r.ded?'Sí':''}</td></tr>`).join('')
-        +`<tr class="t"><td colspan="${db.genCols.length}">Cantidad total</td><td class="n">${dec(cantidad(c.id),3)}</td></tr>`)
+      const suma=rows.filter(r=>!r.ded).reduce((a,r)=>a+parcialRaw(r),0);
+      const dedu=rows.filter(r=>r.ded).reduce((a,r)=>a+parcialRaw(r),0);
+      return `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · resultado en ${esc(c.unidad)}</div>
+       <div class="ent-desc">${esc(c.desc)}</div>
+       ${c.nota?`<div class="ent-desc"><i>${esc(c.nota)}</i></div>`:''}`+entTbl(
+        [['#','','24pt']].concat(db.genCols.map(g=>[g.label,g.t==='num'?'n':'']))
+          .concat([['Unidad','','38pt'],['Subtotal','n','60pt'],['Referencia','','96pt']]),
+        rows.map((r,ix)=>`<tr class="${r.ded?'ded':''}">
+          <td class="n">${ix+1}</td>
+          ${db.genCols.map(g=>`<td class="${g.t==='num'?'n':''}">${esc((r.v||{})[g.id]??'')}</td>`).join('')}
+          <td>${esc(c.unidad)}</td>
+          <td class="n">${r.ded?'&minus;&nbsp;':''}${dec(parcialRaw(r),3)}</td>
+          <td>${esc((r.v||{}).ref??'')}</td></tr>`).join('')
+        +(dedu?`<tr class="t"><td colspan="${db.genCols.length+2}">Suma</td><td class="n">${dec(suma,3)}</td><td></td></tr>
+           <tr class="t"><td colspan="${db.genCols.length+2}">Deducciones</td><td class="n">&minus;&nbsp;${dec(dedu,3)}</td><td></td></tr>`:'')
+        +`<tr class="t"><td colspan="${db.genCols.length+2}">Cantidad total en ${esc(c.unidad)}</td><td class="n">${dec(cantidad(c.id),3)}</td><td></td></tr>`)
+       +(dedu?`<div class="ent-desc">Los renglones marcados con signo menos son <b>deducciones</b>: se restan en vez de sumarse. Sirven para descontar huecos, vanos o tramos que no llevan el concepto.</div>`:'')
        +entCroq(c.id,'gen')+`</div>`;}).join('')
       :'<div class="ent-desc">Todavía no hay generadores capturados.</div>')+pie('Generadores')+`</div>`;
   }
