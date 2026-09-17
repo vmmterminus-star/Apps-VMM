@@ -146,6 +146,19 @@ tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
 .nota-in::placeholder{font-style:normal;color:#BFB4AC}
 .nota-in:focus{outline:none;border-bottom-color:var(--terra);background:var(--wash);border-radius:4px}
 .pr-nota{display:none}
+/* --- tablero de avance: etiquetas de estado --- */
+.est-sel{font-size:10px;padding:2px 4px;border-radius:5px;border:1px solid #DDE7E7;background:#fff;font-family:inherit;color:var(--ink)}
+.est-sel[data-e=""]{background:#F4F6F6;color:#8A9797}
+.est-sel[data-e="proc"]{background:#FFF4E6;border-color:#F0D9BC;color:#8A5A28}
+.est-sel[data-e="esp"]{background:#FBF1EA;border-color:#EBD5CA;color:#8A4E35}
+.est-sel[data-e="ok"]{background:#E4F2EC;border-color:#BEDCCF;color:#1F6B4C}
+.av-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.av-chips button{font-size:10.5px;padding:4px 9px;border-radius:999px;border:1px solid #DDE7E7;background:#fff;cursor:pointer;font-family:inherit;color:var(--ink)}
+.av-chips button.on{background:var(--deep);border-color:var(--deep);color:#fff}
+.av-cuenta{display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px;color:var(--soft);margin-bottom:9px}
+.av-cuenta b{color:var(--ink);font-weight:600}
+#tAvance td{font-size:11px}
+#tAvance td.av-ti{color:var(--soft)}
 .notag{padding:0 15px 14px}
 .notag label{display:block;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
 .notag textarea{width:100%;font-size:11px;line-height:1.55;resize:vertical;min-height:46px;font-family:inherit}
@@ -278,6 +291,8 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   .croq-pie{display:block!important;padding:3pt 4pt;font-size:6.5pt;color:#000}
   /* al imprimir se muestra todo, aunque lo tengas plegado en pantalla */
   .panel.plegado>.panel-bd{display:block!important}
+  /* el tablero de avance es de uso interno: nunca se imprime */
+  #pAvance{display:none!important}
   tr.nota td{background:#fff!important;font-size:6.5pt;color:#000!important;padding:0 4pt 3pt!important}
   /* al imprimir el catálogo, las descripciones siempre van completas */
   textarea.dsc{height:auto!important;overflow:visible!important;white-space:normal!important}
@@ -334,6 +349,11 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   <div class="panel">
     <div class="panel-hd"><h2>Estado del trabajo</h2><div class="sub" id="stFecha"></div></div>
     <div class="panel-bd" id="estadoBody"></div>
+  </div>
+  <div class="panel" id="pAvance">
+    <div class="panel-hd"><h2>Tablero de avance</h2><div class="sub">Tú pones la etiqueta de cada cosa</div>
+      <button class="icon pleg" onclick="togPanel('pAvance')" title="Mostrar u ocultar">&#9660;</button></div>
+    <div class="panel-bd" id="avanceBody"></div>
   </div>
   <div class="panel">
     <div class="panel-hd"><h2>Datos de obra</h2><div class="sub">Se imprimen en el membrete de todos los formatos</div></div>
@@ -1277,6 +1297,67 @@ function renderEstado(){
       <div class="kpi"><small>Utilidad integrada</small><b>${dec(ui*100,2)}%</b></div>
       <div class="kpi"><small>Factor de sobrecosto</small><b>${dec(factorSobrecosto(),4)}</b></div>
     </div>`;
+  renderAvance();
+}
+
+/* ------------------------------------------------------------------
+   TABLERO DE AVANCE
+   La etiqueta la pones tú a mano: la app no adivina si algo está bien,
+   solo si tiene renglones. Vive plegado porque la lista es larga.
+   ------------------------------------------------------------------ */
+const ESTADOS=[['','Sin llenar'],['proc','En proceso'],['esp','A espera de datos'],['ok','Completo']];
+const AV_LISTAS=[['mat','Matrices'],['gen','Generadores'],['con','Conceptos'],['bas','Básicos'],['cua','Cuadrillas'],['ins','Insumos']];
+function avFilas(k){
+  const corta=o=>String(o.descCorta||o.desc||'').replace(/\s+/g,' ').slice(0,90);
+  if(k==='mat')return db.conceptos.map(c=>({id:c.id,tipo:'conMat',clave:c.clave,ti:corta(c),est:c.estMat||'',
+    hint:(db.matrices[c.id]||[]).length?'con renglones':'vacía'}));
+  if(k==='gen')return db.conceptos.map(c=>({id:c.id,tipo:'conGen',clave:c.clave,ti:corta(c),est:c.estGen||'',
+    hint:(db.generadores[c.id]||[]).length?'con renglones':'vacío'}));
+  if(k==='con')return db.conceptos.map(c=>({id:c.id,tipo:'con',clave:c.clave,ti:corta(c),est:c.est||'',
+    hint:c.desc?'con descripción':'sin descripción'}));
+  if(k==='bas')return db.auxiliares.map(a=>({id:a.id,tipo:'aux',clave:a.clave,ti:corta(a),est:a.est||'',
+    hint:(a.comp||[]).length+' renglones'}));
+  if(k==='cua')return db.cuadrillas.map(a=>({id:a.id,tipo:'cua',clave:a.clave,ti:corta(a),est:a.est||'',
+    hint:(a.comp||[]).length+' integrantes'}));
+  return db.insumos.map(i=>({id:i.id,tipo:'ins',clave:i.clave,ti:corta(i),est:i.est||'',
+    hint:N(i.costo)?'con precio':'en cero'}));
+}
+function renderAvance(){
+  const box=document.getElementById('avanceBody');if(!box)return;
+  const k=db.ui.avLista||'mat';
+  const filas=avFilas(k);
+  const cuenta=e=>filas.filter(f=>f.est===e).length;
+  box.innerHTML=`
+    <div class="av-chips">${AV_LISTAS.map(([v,l])=>
+      `<button class="${v===k?'on':''}" onclick="setAvLista('${v}')">${esc(l)}</button>`).join('')}</div>
+    <div class="av-cuenta">${ESTADOS.map(([v,l])=>`<span>${esc(l)} <b>${cuenta(v)}</b></span>`).join('')}
+      <span>Total <b>${filas.length}</b></span></div>
+    <div class="tbl-wrap"><table id="tAvance">
+      <thead><tr><th style="width:84px">Clave</th><th>Título</th>
+        <th style="width:118px" class="mid">Cómo va</th><th style="width:148px">Etiqueta</th></tr></thead>
+      <tbody>${filas.map(f=>`<tr>
+        <td><span class="lnk" onclick="avIr('${k}','${f.id}')">${esc(f.clave)}</span></td>
+        <td>${esc(f.ti)}</td>
+        <td class="mid av-ti" style="text-align:center">${esc(f.hint)}</td>
+        <td><select class="est-sel" data-e="${esc(f.est)}" onchange="setEst('${f.tipo}','${f.id}',this.value)">
+          ${ESTADOS.map(([v,l])=>`<option value="${v}" ${f.est===v?'selected':''}>${esc(l)}</option>`).join('')}
+        </select></td></tr>`).join('')||'<tr><td colspan="4"><div class="empty"><b>Nada que mostrar</b>Esta lista está vacía.</div></td></tr>'}
+      </tbody></table></div>`;
+}
+function setAvLista(v){db.ui.avLista=v;save();renderAvance();}
+function setEst(tipo,id,v){
+  const campo=tipo==='conMat'?'estMat':tipo==='conGen'?'estGen':'est';
+  const col=tipo==='aux'?db.auxiliares:tipo==='cua'?db.cuadrillas:tipo==='ins'?db.insumos:db.conceptos;
+  const o=col.find(x=>x.id===id);if(!o)return;
+  o[campo]=v;save();renderAvance();
+}
+function avIr(k,id){
+  if(k==='mat')return go('matrices',id);
+  if(k==='gen')return go('generadores',id);
+  if(k==='con')return go('conceptos');
+  if(k==='ins')return go('insumos');
+  if(k==='bas')return irAnalisis('aux',id);
+  if(k==='cua')return irAnalisis('cuad',id);
 }
 
 /* ==================================================================
@@ -1554,7 +1635,7 @@ function togPanel(id){
 }
 function aplicarPlegado(){
   const p=db.ui.plegado||{};
-  ['pInsumos','pCuadrillas','pBasicos'].forEach(id=>{
+  ['pInsumos','pCuadrillas','pBasicos','pAvance'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.classList.toggle('plegado',!!p[id]);
   });
@@ -2168,7 +2249,13 @@ function renderMatriz(){
     <tbody>${body||`<tr><td colspan="8"><div class="empty"><b>Matriz vacía</b>Agrega lo que se necesita para producir un ${esc(c.unidad)}.</div></td></tr>`}
       <tr class="tot"><td colspan="6">${esc(L('mCD'))} ${esc(c.unidad)}</td><td class="num mono">${dec(cd)}</td><td></td></tr>
     </tbody></table></div>
-  <div style="padding:9px 11px"><button class="btn ghost" onclick="addMat('${cid}')">+ Agregar renglón · Enter también</button></div>
+  <div style="padding:9px 11px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button class="btn ghost" onclick="addMat('${cid}')">+ Agregar renglón · Enter también</button>
+    ${(()=>{const otros=db.conceptos.filter(x=>x.id!==cid&&(db.matrices[x.id]||[]).length);
+      return otros.length?`<select class="sel" id="selCopiaMat" style="max-width:300px">${otros.map(x=>
+        `<option value="${x.id}">${esc(x.clave)} — ${esc((x.descCorta||x.desc)).slice(0,44)}</option>`).join('')}</select>
+        <button class="btn ghost" onclick="copiarMatriz('${cid}')" title="Trae los renglones de otra matriz a ésta">Copiar esa matriz aquí</button>`:'';})()}
+  </div>
   ${dobleHM(cid)?`<div class="avisos"><div class="aviso"><div><b>Herramienta menor cobrada dos veces.</b>
     ${esc(cuadsDe(cid).filter(cuadTraePct).map(q=>q.clave).join(', '))} ya trae herramienta menor y equipo de seguridad adentro,
     y esta matriz además carga ${esc(pctExternos(cid).map(r=>{const o=resolveRef(r.ref);return o?o.clave:'?';}).join(', '))} por fuera.</div>
@@ -2212,6 +2299,19 @@ function addMat(cid){if(!db.insumos.length){alert('Primero agrega insumos.');ret
   (db.matrices[cid]=db.matrices[cid]||[]).push({id:uid(),ref:db.insumos[0].id,cant:0});
   save();renderMatriz();renderNav();recalc();}
 function dupMat(cid,ix){db.matrices[cid].splice(ix+1,0,{...db.matrices[cid][ix],id:uid()});save();renderMatriz();recalc();}
+/* Trae los renglones de otra matriz a ésta, con sus notas. Se usa cuando
+   dos conceptos son el mismo análisis con distintas cantidades. */
+function copiarMatriz(cid){
+  const sel=document.getElementById('selCopiaMat');if(!sel||!sel.value)return;
+  const orig=db.matrices[sel.value]||[];
+  if(!orig.length){alert('Esa matriz está vacía.');return;}
+  const hay=(db.matrices[cid]||[]).length;
+  const o=db.conceptos.find(x=>x.id===sel.value);
+  if(hay&&!confirm('Esta matriz ya tiene '+hay+' renglón(es). Se reemplazan por los '+orig.length+' de '+(o?o.clave:'la otra')+'. ¿Continuar?'))return;
+  db.matrices[cid]=orig.map(r=>({...r,id:uid()}));
+  save();renderMatriz();renderNav();recalc();
+  flash('Matriz copiada de '+(o?o.clave:'otro concepto')+' — ajusta las cantidades');
+}
 function movMat(cid,ix,d){move(db.matrices[cid],ix,d);save();renderMatriz();}
 function delMat(cid,rid){db.matrices[cid]=db.matrices[cid].filter(r=>r.id!==rid);save();renderMatriz();renderNav();recalc();}
 
@@ -2613,6 +2713,9 @@ function recalc(){
   renderHeader();renderPartidas();renderConceptos();renderPresup();renderCargos();renderVal();renderNav();renderEstado();
 }
 function boot(){
+  /* el tablero de avance arranca plegado: la lista es larga y estorba */
+  db.ui.plegado=db.ui.plegado||{};
+  if(db.ui.plegado.pAvance===undefined)db.ui.plegado.pAvance=true;
   renderObraForm();printHeads();
   renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();aplicarPlegado();
   renderPartidas();renderConceptos();fillSelects();
