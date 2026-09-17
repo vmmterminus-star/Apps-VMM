@@ -146,6 +146,13 @@ tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
 .nota-in::placeholder{font-style:normal;color:#BFB4AC}
 .nota-in:focus{outline:none;border-bottom-color:var(--terra);background:var(--wash);border-radius:4px}
 .pr-nota{display:none}
+/* --- modo entrega: documento que solo existe al imprimir --- */
+#entregaDoc{display:none}
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:7px;margin:10px 0 13px}
+.ent-grid label{display:flex;gap:7px;align-items:center;font-size:11.5px;background:var(--wash);
+  border:1px solid #DDE7E7;border-radius:8px;padding:7px 10px;cursor:pointer}
+.ent-grid label.on{background:var(--mint);border-color:var(--teal)}
+.ent-grid input{width:14px;height:14px;accent-color:var(--deep);flex:0 0 auto}
 /* --- tablero de avance: etiquetas de estado --- */
 .est-sel{font-size:10px;padding:2px 4px;border-radius:5px;border:1px solid #DDE7E7;background:#fff;font-family:inherit;color:var(--ink)}
 .est-sel[data-e=""]{background:#F4F6F6;color:#8A9797}
@@ -322,6 +329,39 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
   .print-hd .g b{font-weight:600}
   .print-ft{display:flex!important;justify-content:space-between;margin-top:4mm;border-top:.5pt solid #000;padding-top:2mm;font-size:6.8pt}
   .empty,.cfg-grid,.int{display:none!important}
+  /* modo entrega: se oculta la app entera y se imprime el documento armado */
+  body.entrega .app,body.entrega .dock{display:none!important}
+  body.entrega #entregaDoc{display:block!important}
+  /* La entrega se imprime con la paleta de la app, no en blanco y negro.
+     print-color-adjust obliga al navegador a respetar los fondos. */
+  #entregaDoc,#entregaDoc *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #entregaDoc{color:#1F3339}
+  #entregaDoc .ent-portada{height:95vh;display:flex;flex-direction:column;page-break-after:always;
+    border-top:3mm solid #123C47;border-bottom:.6pt solid #3D8A8A;padding:12mm 2mm 8mm}
+  #entregaDoc .ent-portada h1{font-size:26pt;font-weight:600;letter-spacing:-.02em;color:#123C47;margin:0 0 2mm}
+  #entregaDoc .ent-portada .sub{font-size:11pt;color:#3D8A8A;margin-bottom:12mm;max-width:130mm;line-height:1.4}
+  #entregaDoc .ent-bloque{display:grid;grid-template-columns:auto 1fr;gap:1.6mm 7mm;font-size:9pt;
+    margin-bottom:9mm;background:#F4F9F9;padding:4mm 5mm;border-left:1mm solid #D8ECEA}
+  #entregaDoc .ent-bloque b{font-weight:600;color:#123C47;white-space:nowrap}
+  #entregaDoc .ent-rot{font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#3D8A8A;
+    border-bottom:.5pt solid #D8ECEA;padding-bottom:1.2mm;margin-bottom:3mm}
+  #entregaDoc .ent-sec{page-break-before:always}
+  #entregaDoc .ent-sec>h2{font-size:13pt;font-weight:600;color:#123C47;margin:0 0 4mm;
+    padding-bottom:2mm;border-bottom:1.2pt solid #123C47}
+  #entregaDoc .ent-sub{font-size:9pt;font-weight:600;color:#123C47;margin:5mm 0 1.5mm;page-break-after:avoid}
+  #entregaDoc .ent-desc{font-size:7pt;color:#5A6E74;margin:0 0 1.8mm;line-height:1.38}
+  #entregaDoc table{width:100%;border-collapse:collapse;font-size:7.5pt;margin-bottom:3mm}
+  #entregaDoc thead th{background:#123C47!important;color:#fff!important;font-size:6.3pt!important;font-weight:600;
+    text-transform:uppercase;letter-spacing:.07em;padding:3.4pt 4pt!important;text-align:left;border:0!important}
+  #entregaDoc td{border-bottom:.25pt solid #DDE7E7!important;padding:3.2pt 4pt;vertical-align:top;color:#1F3339!important}
+  #entregaDoc tbody tr:nth-child(even) td{background:#FAFCFC!important}
+  #entregaDoc td.n,#entregaDoc th.n{text-align:right;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+  #entregaDoc tr.t td{background:#D8ECEA!important;color:#123C47!important;border-top:1pt solid #123C47!important;border-bottom:0!important;font-weight:700;font-size:8pt}
+  #entregaDoc tr.grp td{background:#E8F2F1!important;color:#123C47!important;font-weight:600;
+    text-transform:uppercase;letter-spacing:.05em;font-size:6.8pt!important;border-top:.5pt solid #3D8A8A!important}
+  #entregaDoc .ent-blk{break-inside:avoid}
+  #entregaDoc .ent-pie{margin-top:3mm;border-top:.5pt solid #D8ECEA;padding-top:1.5mm;font-size:6.8pt;
+    color:#3D8A8A;display:flex;justify-content:space-between}
 }
 </style>
 </head>
@@ -354,6 +394,11 @@ details.help .hb p{margin:0 0 7px} details.help .hb p:last-child{margin:0}
     <div class="panel-hd"><h2>Tablero de avance</h2><div class="sub">Tú pones la etiqueta de cada cosa</div>
       <button class="icon pleg" onclick="togPanel('pAvance')" title="Mostrar u ocultar">&#9660;</button></div>
     <div class="panel-bd" id="avanceBody"></div>
+  </div>
+  <div class="panel" id="pEntrega">
+    <div class="panel-hd"><h2>Preparar entrega</h2><div class="sub">Tú eliges qué ve el profe</div>
+      <button class="icon pleg" onclick="togPanel('pEntrega')" title="Mostrar u ocultar">&#9660;</button></div>
+    <div class="panel-bd" id="entregaBody"></div>
   </div>
   <div class="panel">
     <div class="panel-hd"><h2>Datos de obra</h2><div class="sub">Se imprimen en el membrete de todos los formatos</div></div>
@@ -625,6 +670,8 @@ create policy "acceso abierto" on costos_sync for all using (true) with check (t
 </main>
 <div class="print-ft" id="printFt"></div>
 </div>
+
+<div id="entregaDoc"></div>
 
 <div class="dock">
   <div class="status"><i></i><span id="statusTxt">Guardado automático</span></div>
@@ -1345,6 +1392,172 @@ function renderAvance(){
       </tbody></table></div>`;
 }
 function setAvLista(v){db.ui.avLista=v;save();renderAvance();}
+
+/* ------------------------------------------------------------------
+   MODO ENTREGA
+   Arma un documento aparte, solo para imprimir, con la portada y las
+   secciones que tú marques. No toca ninguna pantalla de la app.
+   ------------------------------------------------------------------ */
+const ENT_SEC=[['ins','Catálogo de insumos'],['cua','Cuadrillas'],['bas','Básicos'],
+  ['con','Catálogo de conceptos'],['mat','Matrices de precio unitario'],['gen','Generadores'],
+  ['ind','Indirectos'],['car','Utilidad y cargos'],['pre','Presupuesto']];
+const entCfg=()=>{
+  const e=db.ui.entrega=db.ui.entrega||{};
+  if(e.sec===undefined)e.sec={ins:1,cua:1,bas:1,con:1,mat:1,gen:0,ind:0,car:0,pre:0};
+  return e;
+};
+function renderEntrega(){
+  const box=document.getElementById('entregaBody');if(!box)return;
+  const e=entCfg(),o=db.obra;
+  const f=(k,l,ph)=>`<div class="f"><label>${esc(l)}</label>
+    <input class="f-in" value="${esc(o[k]||'')}" placeholder="${esc(ph||'')}" oninput="upObra('${k}',this.value)"></div>`;
+  box.innerHTML=`
+    <div style="font-size:11.5px;color:var(--soft);margin-bottom:9px">Marca lo que va en la entrega, revisa los datos de la portada y dale imprimir. Guarda como PDF desde el diálogo del navegador.</div>
+    <div class="f-grid">${f('alumno','Alumna','Nombre completo')}${f('codigo','Código')}${f('materia','Materia')}${f('profesor','Profesor')}${f('ciclo','Ciclo escolar')}</div>
+    <div class="ent-grid">${ENT_SEC.map(([k,l])=>
+      `<label class="${e.sec[k]?'on':''}"><input type="checkbox" ${e.sec[k]?'checked':''} onchange="togEnt('${k}')">${esc(l)}</label>`).join('')}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn solid" onclick="imprimirEntrega()">Imprimir entrega</button>
+      <button class="btn ghost" onclick="entTodo(1)">Marcar todo</button>
+      <button class="btn ghost" onclick="entTodo(0)">Desmarcar todo</button>
+    </div>`;
+}
+function togEnt(k){const e=entCfg();e.sec[k]=e.sec[k]?0:1;save();renderEntrega();}
+function entTodo(v){const e=entCfg();ENT_SEC.forEach(([k])=>e.sec[k]=v);save();renderEntrega();}
+function upObra(k,v){db.obra[k]=v;save();}
+
+const entTbl=(cols,filas)=>`<table><thead><tr>${cols.map(c=>
+  `<th class="${c[1]||''}" ${c[2]?`style="width:${c[2]}"`:''}>${esc(c[0])}</th>`).join('')}</tr></thead>
+  <tbody>${filas}</tbody></table>`;
+function entRenglones(rows){
+  const m=calcRows(rows);
+  return entTbl([['Clave','',''],['Insumo','',''],['Unidad','','48pt'],['Cantidad','n','60pt'],['Costo','n','60pt'],['Importe','n','66pt']],
+    m.det.map(x=>`<tr><td>${esc(x.o.clave)}</td><td>${esc(x.o.desc)}</td>
+      <td>${esc(x.o.unidad)}</td><td class="n">${dec(x.row.cant,4)}</td>
+      <td class="n">${x.o.tipo==='pct'?'—':dec(x.o.costo)}</td><td class="n">${dec(x.imp)}</td></tr>`).join('')
+    +`<tr class="t"><td colspan="5">Costo directo</td><td class="n">${dec(m.total)}</td></tr>`);
+}
+function entregaHTML(){
+  const e=entCfg(),o=db.obra,sec=e.sec;
+  const hoy=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+  const pie=t=>`<div class="ent-pie"><span>${esc(o.nombre||'')}</span><span>${esc(t)}</span><span>${esc(o.elab||o.alumno||'')}</span></div>`;
+  const dato=(l,v)=>v?`<b>${esc(l)}</b><span>${esc(v)}</span>`:'';
+  let h=`<div class="ent-portada">
+    <div class="ent-rot">${esc(o.empresa||'Presupuesto de obra')}</div>
+    <h1>${esc(o.nombre||'Obra sin nombre')}</h1>
+    <div class="sub">${esc(o.descTrabajos||'Catálogo de conceptos y precios unitarios')}</div>
+    <div class="ent-rot">Datos de la obra</div>
+    <div class="ent-bloque">${dato('Ubicación',o.ubic)}${dato('Cliente',o.cliente)}${dato('Contrato',o.contrato)}
+      ${dato('Inicio',o.fInicio)}${dato('Término',o.fTermino)}</div>
+    <div class="ent-rot">Datos de la alumna</div>
+    <div class="ent-bloque">${dato('Nombre',o.alumno)}${dato('Código',o.codigo)}${dato('Materia',o.materia)}
+      ${dato('Profesor',o.profesor)}${dato('Ciclo',o.ciclo)}</div>
+    <div class="ent-rot">Contenido de esta entrega</div>
+    <div class="ent-bloque">${ENT_SEC.filter(([k])=>sec[k]).map(([k,l],i)=>
+      `<b>${i+1}</b><span>${esc(l)}</span>`).join('')}</div>
+    <div style="margin-top:auto;font-size:8pt">Impreso el ${esc(hoy)}</div>
+  </div>`;
+
+  if(sec.ins){
+    h+=`<div class="ent-sec"><h2>Catálogo de insumos</h2>`+entTbl(
+      [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
+      db.insumos.map(i=>{const r=resolveRef(i.id);return `<tr><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
+        <td>${esc(i.unidad)}</td><td>${esc((db.tipos.find(t=>t.k===i.tipo)||{}).tag||'')}</td>
+        <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`;}).join(''))+pie('Catálogo de insumos')+`</div>`;
+  }
+  if(sec.cua){
+    h+=`<div class="ent-sec"><h2>Cuadrillas</h2>`+db.cuadrillas.map(c=>
+      `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
+       <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}</div>`).join('')+pie('Cuadrillas')+`</div>`;
+  }
+  if(sec.bas){
+    h+=`<div class="ent-sec"><h2>Básicos</h2>`+db.auxiliares.map(a=>
+      `<div class="ent-blk"><div class="ent-sub">${esc(a.clave)} · por ${esc(a.unidad)}</div>
+       <div class="ent-desc">${esc(a.desc)}</div>${entRenglones(a.comp)}
+       ${a.notaGral?`<div class="ent-desc"><i>${esc(a.notaGral)}</i></div>`:''}</div>`).join('')+pie('Básicos')+`</div>`;
+  }
+  if(sec.con){
+    let f='';
+    db.partidas.forEach(p=>{
+      const cs=db.conceptos.filter(c=>c.partida===p.id);if(!cs.length)return;
+      f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
+      cs.forEach(c=>{f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
+        <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`;});
+    });
+    h+=`<div class="ent-sec"><h2>Catálogo de conceptos</h2>`+entTbl(
+      [['Clave','','56pt'],['Descripción','',''],['Unidad','','40pt'],['Costo directo','n','62pt'],['P. unitario','n','62pt']],f)
+      +pie('Catálogo de conceptos')+`</div>`;
+  }
+  if(sec.mat){
+    const con=db.conceptos.filter(c=>(db.matrices[c.id]||[]).length);
+    h+=`<div class="ent-sec"><h2>Matrices de precio unitario</h2>`+(con.length?con.map(c=>
+      `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
+       <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(db.matrices[c.id])}
+       ${c.notaAnalisis?`<div class="ent-desc"><i>${esc(c.notaAnalisis)}</i></div>`:''}</div>`).join('')
+      :'<div class="ent-desc">Todavía no hay matrices capturadas.</div>')+pie('Matrices de precio unitario')+`</div>`;
+  }
+  if(sec.gen){
+    const con=db.conceptos.filter(c=>(db.generadores[c.id]||[]).length);
+    h+=`<div class="ent-sec"><h2>Generadores</h2>`+(con.length?con.map(c=>{
+      const rows=db.generadores[c.id];
+      return `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · ${esc(c.unidad)}</div>
+       <div class="ent-desc">${esc(c.desc)}</div>`+entTbl(
+        db.genCols.map(g=>[g.label,g.t==='num'?'n':'']).concat([['Deduce','','48pt']]),
+        rows.map(r=>`<tr>${db.genCols.map(g=>`<td class="${g.t==='num'?'n':''}">${esc((r.v||{})[g.id]||'')}</td>`).join('')}
+          <td>${r.ded?'Sí':''}</td></tr>`).join('')
+        +`<tr class="t"><td colspan="${db.genCols.length}">Cantidad total</td><td class="n">${dec(cantidad(c.id),3)}</td></tr>`)
+       +`</div>`;}).join('')
+      :'<div class="ent-desc">Todavía no hay generadores capturados.</div>')+pie('Generadores')+`</div>`;
+  }
+  if(sec.ind){
+    const r=db.indirectos.rubros||[];
+    h+=`<div class="ent-sec"><h2>Indirectos</h2>`+entTbl(
+      [['Grupo','','90pt'],['Concepto','',''],['Mensual','n','70pt'],['Meses','n','48pt'],['Importe','n','76pt']],
+      r.map(x=>`<tr><td>${esc(x.grupo||'')}</td><td>${esc(x.desc||'')}</td>
+        <td class="n">${dec(x.mensual)}</td><td class="n">${dec(db.indirectos.meses,0)}</td>
+        <td class="n">${dec(N(x.mensual)*N(db.indirectos.meses))}</td></tr>`).join('')
+      +`<tr class="t"><td colspan="4">Porcentaje de indirectos aplicado</td><td class="n">${dec(pctIndirectos()*100,2)}%</td></tr>`)
+      +pie('Indirectos')+`</div>`;
+  }
+  if(sec.car){
+    const g=db.cargos;
+    h+=`<div class="ent-sec"><h2>Utilidad y cargos</h2>`+entTbl(
+      [['Cargo','',''],['Valor','n','80pt']],
+      [['ISR',dec(N(g.isr),2)+'%'],['PTU',dec(N(g.ptu),2)+'%'],['Utilidad esperada neta',dec(N(g.uen),2)+'%'],
+       ['Utilidad integrada',dec(utilidadIntegrada()*100,2)+'%'],['Financiamiento',dec(N(g.fin),2)+'%'],
+       ['Cargos adicionales',dec(N(g.ca),2)+'%'],['IVA',dec(N(g.iva),2)+'%'],
+       ['Indirectos',dec(pctIndirectos()*100,2)+'%'],['Factor de sobrecosto',dec(factorSobrecosto(),4)]]
+      .map(x=>`<tr><td>${esc(x[0])}</td><td class="n">${x[1]}</td></tr>`).join(''))+pie('Utilidad y cargos')+`</div>`;
+  }
+  if(sec.pre){
+    const tt=totalesObra();let f='';
+    db.partidas.forEach(p=>{
+      const cs=db.conceptos.filter(c=>c.partida===p.id);if(!cs.length)return;
+      f+=`<tr class="grp"><td colspan="6">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
+      cs.forEach(c=>{const q=cantidad(c.id),pu=puVenta(c.id);
+        f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.descCorta||c.desc)}</td><td>${esc(c.unidad)}</td>
+          <td class="n">${dec(q,3)}</td><td class="n">${dec(pu)}</td><td class="n">${dec(q*pu)}</td></tr>`;});
+    });
+    h+=`<div class="ent-sec"><h2>Presupuesto</h2>`+entTbl(
+      [['Clave','','56pt'],['Concepto','',''],['Unidad','','38pt'],['Cantidad','n','56pt'],['P. unitario','n','62pt'],['Importe','n','72pt']],
+      f+`<tr class="t"><td colspan="5">Subtotal</td><td class="n">${dec(tt.venta)}</td></tr>
+         <tr class="t"><td colspan="5">IVA ${dec(N(db.cargos.iva),0)}%</td><td class="n">${dec(tt.total-tt.venta)}</td></tr>
+         <tr class="t"><td colspan="5">Total</td><td class="n">${dec(tt.total)}</td></tr>`)
+      +pie('Presupuesto')+`</div>`;
+  }
+  return h;
+}
+function imprimirEntrega(){
+  const e=entCfg();
+  if(!ENT_SEC.some(([k])=>e.sec[k])){alert('Marca al menos una sección.');return;}
+  const box=document.getElementById('entregaDoc');
+  box.innerHTML=entregaHTML();
+  document.body.classList.add('entrega');
+  const limpia=()=>{document.body.classList.remove('entrega');box.innerHTML='';
+    window.removeEventListener('afterprint',limpia);};
+  window.addEventListener('afterprint',limpia);
+  setTimeout(()=>{window.print();setTimeout(limpia,1200);},60);
+}
 function setEst(tipo,id,v){
   const campo=tipo==='conMat'?'estMat':tipo==='conGen'?'estGen':'est';
   const col=tipo==='aux'?db.auxiliares:tipo==='cua'?db.cuadrillas:tipo==='ins'?db.insumos:db.conceptos;
@@ -1635,7 +1848,7 @@ function togPanel(id){
 }
 function aplicarPlegado(){
   const p=db.ui.plegado||{};
-  ['pInsumos','pCuadrillas','pBasicos','pAvance'].forEach(id=>{
+  ['pInsumos','pCuadrillas','pBasicos','pAvance','pEntrega'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.classList.toggle('plegado',!!p[id]);
   });
@@ -2716,9 +2929,10 @@ function boot(){
   /* el tablero de avance arranca plegado: la lista es larga y estorba */
   db.ui.plegado=db.ui.plegado||{};
   if(db.ui.plegado.pAvance===undefined)db.ui.plegado.pAvance=true;
+  if(db.ui.plegado.pEntrega===undefined)db.ui.plegado.pEntrega=true;
   renderObraForm();printHeads();
   renderInsumos();fillCuadSel();renderCuad();fillAuxSel();renderAux();aplicarPlegado();
-  renderPartidas();renderConceptos();fillSelects();
+  renderPartidas();renderConceptos();fillSelects();renderEntrega();
   renderGen();renderMatriz();renderIndirectos();renderCargos();
   renderPresup();renderVal();renderAjustes();renderEstado();renderHeader();
   document.querySelectorAll('.panel-hd .ed').forEach(el=>{
