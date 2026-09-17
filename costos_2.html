@@ -153,6 +153,24 @@ tr.nota td{background:#FCFAF8!important;padding:1px 7px 6px!important}
   border:1px solid #DDE7E7;border-radius:8px;padding:7px 10px;cursor:pointer}
 .ent-grid label.on{background:var(--mint);border-color:var(--teal)}
 .ent-grid input{width:14px;height:14px;accent-color:var(--deep);flex:0 0 auto}
+.ent-fila{display:flex;gap:9px;align-items:center;padding:8px 10px;border:1px solid #DDE7E7;
+  border-radius:9px;background:var(--wash);margin-bottom:6px;flex-wrap:wrap}
+.ent-fila.on{background:var(--mint);border-color:var(--teal)}
+.ent-fila input[type=checkbox]{width:15px;height:15px;accent-color:var(--deep);flex:0 0 auto}
+.ent-fila .nm{font-size:12px;font-weight:500;flex:1;min-width:150px}
+.ent-fila .ct{font-size:10.5px;color:var(--soft);font-family:'IBM Plex Mono',monospace}
+.ent-lista{border:1px solid #DDE7E7;border-top:0;border-radius:0 0 9px 9px;background:#fff;
+  padding:9px 12px 11px;margin:-9px 0 8px;max-height:230px;overflow:auto}
+.ent-lista .sub{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--teal);
+  margin:9px 0 4px;font-weight:600}
+.ent-lista .sub:first-child{margin-top:0}
+.ent-lista label{display:flex;gap:7px;align-items:flex-start;font-size:10.5px;line-height:1.45;
+  padding:2px 0;cursor:pointer;color:var(--ink)}
+.ent-lista label b{font-family:'IBM Plex Mono',monospace;font-weight:500;flex:0 0 auto;min-width:54px}
+.ent-lista input{width:13px;height:13px;accent-color:var(--deep);flex:0 0 auto;margin-top:2px}
+.ent-mini{display:flex;gap:7px;margin-bottom:7px}
+.ent-mini button{font-size:10px;padding:3px 9px;border-radius:999px;border:1px solid #DDE7E7;
+  background:#fff;cursor:pointer;font-family:inherit;color:var(--ink)}
 /* --- tablero de avance: etiquetas de estado --- */
 .est-sel{font-size:10px;padding:2px 4px;border-radius:5px;border:1px solid #DDE7E7;background:#fff;font-family:inherit;color:var(--ink)}
 .est-sel[data-e=""]{background:#F4F6F6;color:#8A9797}
@@ -891,6 +909,24 @@ db.labels={...DEF_LABELS,...(db.labels||{})};
    eje y tramo como texto, sin columna de factor. Lo que estaba en
    Referencia pasa a Eje y lo de Observaciones a Tramo; si alguna fila
    traía factor, se multiplica dentro de Piezas para no alterar cantidades. */
+/* Los datos de la alumna viven en db.obra como todo lo demás, así que se
+   guardan solos y viajan en el respaldo. Si un respaldo viejo no los trae,
+   se crean vacíos en vez de quedar indefinidos. */
+const ALUMNA_K=['alumno','codigo','materia','profesor','ciclo'];
+const K_ALUM='costos_alumna';
+/* Los datos de la alumna viven en db.obra, así que viajan en el respaldo.
+   Además se guardan en una llave aparte del navegador: así, si cargas un
+   respaldo que no los traiga, se recuperan solos en vez de perderse. */
+function guardaAlumna(){
+  try{const o={};ALUMNA_K.forEach(k=>o[k]=db.obra[k]||'');
+    localStorage.setItem(K_ALUM,JSON.stringify(o));}catch(e){}
+}
+function recuperaAlumna(){
+  db.obra=db.obra||{};
+  let g={};try{g=JSON.parse(localStorage.getItem(K_ALUM)||'{}');}catch(e){}
+  ALUMNA_K.forEach(k=>{if(!db.obra[k])db.obra[k]=g[k]||'';});
+}
+recuperaAlumna();
 (function migrarGenCols(){
   /* Se reconoce el formato viejo por sus columnas, sin importar en qué
      orden estén guardadas: si trae Factor y no trae Eje, es el viejo. */
@@ -1316,7 +1352,7 @@ function renderObraForm(){
     `<div class="f${wide?' wide':''}"><label>${esc(lbl)}</label>
       <input class="f-in" type="${isDate?'date':'text'}" value="${esc(db.obra[k]||'')}" oninput="upObra('${k}',this.value)"></div>`).join('');
 }
-function upObra(k,v){db.obra[k]=v;save();printHeads();renderHeader();}
+function upObra(k,v){db.obra[k]=v;if(ALUMNA_K.includes(k))guardaAlumna();save();printHeads();renderHeader();}
 function renderHeader(){
   document.getElementById('hdObra').textContent=db.obra.nombre||'—';
   document.getElementById('hdTot').textContent=money(totalesObra().total);
@@ -1398,33 +1434,108 @@ function setAvLista(v){db.ui.avLista=v;save();renderAvance();}
    Arma un documento aparte, solo para imprimir, con la portada y las
    secciones que tú marques. No toca ninguna pantalla de la app.
    ------------------------------------------------------------------ */
-const ENT_SEC=[['ins','Catálogo de insumos'],['cua','Cuadrillas'],['bas','Básicos'],
-  ['con','Catálogo de conceptos'],['mat','Matrices de precio unitario'],['gen','Generadores'],
-  ['ind','Indirectos'],['car','Utilidad y cargos'],['pre','Presupuesto']];
+const ENT_SEC=[['ins','Catálogo de insumos','ins'],['cua','Cuadrillas','cua'],['bas','Básicos','bas'],
+  ['con','Catálogo de conceptos','con'],['mat','Matrices de precio unitario','mat'],
+  ['gen','Generadores','gen'],['ind','Indirectos',''],['car','Utilidad y cargos',''],['pre','Presupuesto','']];
 const entCfg=()=>{
   const e=db.ui.entrega=db.ui.entrega||{};
   if(e.sec===undefined)e.sec={ins:1,cua:1,bas:1,con:1,mat:1,gen:0,ind:0,car:0,pre:0};
+  e.pick=e.pick||{};       /* null o ausente = van todos */
+  e.abre=e.abre||{};
   return e;
 };
+/* El universo de cada lista. Para matrices y generadores solo salen los
+   conceptos que ya tienen renglones: no tiene caso ofrecer los vacíos. */
+function entUniverso(k){
+  if(k==='ins')return db.insumos;
+  if(k==='cua')return db.cuadrillas;
+  if(k==='bas')return db.auxiliares;
+  if(k==='con')return db.conceptos;
+  if(k==='mat')return db.conceptos.filter(c=>(db.matrices[c.id]||[]).length);
+  if(k==='gen')return db.conceptos.filter(c=>(db.generadores[c.id]||[]).length);
+  return [];
+}
+/* Devuelve la lista ya filtrada por lo que marcaste. */
+function entSel(k){
+  const e=entCfg(),u=entUniverso(k),p=e.pick[k];
+  if(!p)return u;
+  const set=new Set(p);
+  return u.filter(o=>set.has(o.id));
+}
+function entMarcado(k,id){const p=entCfg().pick[k];return !p||p.includes(id);}
+function togEntItem(k,id){
+  const e=entCfg(),u=entUniverso(k);
+  let p=e.pick[k]||u.map(o=>o.id);
+  p=p.includes(id)?p.filter(x=>x!==id):p.concat([id]);
+  e.pick[k]=p.length===u.length?null:p;
+  save();renderEntrega();
+}
+function entTodosItems(k,v){
+  const e=entCfg();
+  e.pick[k]=v?null:[];
+  save();renderEntrega();
+}
+function togEntPartida(k,pid){
+  const e=entCfg(),u=entUniverso(k);
+  const ids=u.filter(o=>o.partida===pid).map(o=>o.id);
+  let p=e.pick[k]||u.map(o=>o.id);
+  const todos=ids.every(i=>p.includes(i));
+  p=todos?p.filter(i=>!ids.includes(i)):[...new Set(p.concat(ids))];
+  e.pick[k]=p.length===u.length?null:p;
+  save();renderEntrega();
+}
+function togEntLista(k){const e=entCfg();e.abre[k]=!e.abre[k];save();renderEntrega();}
+function togEnt(k){const e=entCfg();e.sec[k]=e.sec[k]?0:1;save();renderEntrega();}
+function entTodo(v){const e=entCfg();ENT_SEC.forEach(([k])=>e.sec[k]=v);save();renderEntrega();}
+
+function entListaHTML(k){
+  const u=entUniverso(k);
+  if(!u.length)return `<div class="ent-lista"><div style="font-size:10.5px;color:var(--soft)">Todavía no hay nada aquí.</div></div>`;
+  const item=o=>`<label><input type="checkbox" ${entMarcado(k,o.id)?'checked':''}
+      onchange="togEntItem('${k}','${o.id}')"><b>${esc(o.clave)}</b>
+      <span>${esc(o.descCorta||o.desc||'').slice(0,110)}</span></label>`;
+  let cuerpo='';
+  if(['con','mat','gen'].includes(k)){
+    db.partidas.forEach(p=>{
+      const cs=u.filter(o=>o.partida===p.id);if(!cs.length)return;
+      cuerpo+=`<div class="sub" style="cursor:pointer" onclick="togEntPartida('${k}','${p.id}')"
+        title="Marcar o desmarcar la partida completa">${esc(p.clave)} · ${esc(p.nombre)}</div>`+cs.map(item).join('');
+    });
+    const sinP=u.filter(o=>!db.partidas.some(p=>p.id===o.partida));
+    if(sinP.length)cuerpo+=`<div class="sub">Sin partida</div>`+sinP.map(item).join('');
+  }else cuerpo=u.map(item).join('');
+  return `<div class="ent-lista">
+    <div class="ent-mini"><button onclick="entTodosItems('${k}',1)">Todos</button>
+      <button onclick="entTodosItems('${k}',0)">Ninguno</button></div>${cuerpo}</div>`;
+}
 function renderEntrega(){
   const box=document.getElementById('entregaBody');if(!box)return;
   const e=entCfg(),o=db.obra;
   const f=(k,l,ph)=>`<div class="f"><label>${esc(l)}</label>
     <input class="f-in" value="${esc(o[k]||'')}" placeholder="${esc(ph||'')}" oninput="upObra('${k}',this.value)"></div>`;
+  const filas=ENT_SEC.map(([k,l,pick])=>{
+    const on=!!e.sec[k];
+    let cuenta='',boton='';
+    if(pick){
+      const n=entUniverso(pick).length,sel=entSel(pick).length;
+      cuenta=`<span class="ct">${sel} de ${n}</span>`;
+      boton=`<button class="btn mini" onclick="togEntLista('${pick}')">${e.abre[pick]?'Cerrar':'Elegir cuáles'}</button>`;
+    }
+    return `<div class="ent-fila ${on?'on':''}">
+        <input type="checkbox" ${on?'checked':''} onchange="togEnt('${k}')">
+        <span class="nm">${esc(l)}</span>${cuenta}${boton}</div>`
+      +(on&&pick&&e.abre[pick]?entListaHTML(pick):'');
+  }).join('');
   box.innerHTML=`
-    <div style="font-size:11.5px;color:var(--soft);margin-bottom:9px">Marca lo que va en la entrega, revisa los datos de la portada y dale imprimir. Guarda como PDF desde el diálogo del navegador.</div>
+    <div style="font-size:11.5px;color:var(--soft);margin-bottom:9px">Marca las secciones que van, y dentro de cada una elige exactamente cuáles. Después dale imprimir y guarda como PDF desde el diálogo del navegador.</div>
     <div class="f-grid">${f('alumno','Alumna','Nombre completo')}${f('codigo','Código')}${f('materia','Materia')}${f('profesor','Profesor')}${f('ciclo','Ciclo escolar')}</div>
-    <div class="ent-grid">${ENT_SEC.map(([k,l])=>
-      `<label class="${e.sec[k]?'on':''}"><input type="checkbox" ${e.sec[k]?'checked':''} onchange="togEnt('${k}')">${esc(l)}</label>`).join('')}</div>
+    <div style="margin:12px 0 10px">${filas}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn solid" onclick="imprimirEntrega()">Imprimir entrega</button>
-      <button class="btn ghost" onclick="entTodo(1)">Marcar todo</button>
-      <button class="btn ghost" onclick="entTodo(0)">Desmarcar todo</button>
+      <button class="btn ghost" onclick="entTodo(1)">Marcar todas las secciones</button>
+      <button class="btn ghost" onclick="entTodo(0)">Desmarcar todas</button>
     </div>`;
 }
-function togEnt(k){const e=entCfg();e.sec[k]=e.sec[k]?0:1;save();renderEntrega();}
-function entTodo(v){const e=entCfg();ENT_SEC.forEach(([k])=>e.sec[k]=v);save();renderEntrega();}
-function upObra(k,v){db.obra[k]=v;save();}
 
 const entTbl=(cols,filas)=>`<table><thead><tr>${cols.map(c=>
   `<th class="${c[1]||''}" ${c[2]?`style="width:${c[2]}"`:''}>${esc(c[0])}</th>`).join('')}</tr></thead>
@@ -1461,17 +1572,17 @@ function entregaHTML(){
   if(sec.ins){
     h+=`<div class="ent-sec"><h2>Catálogo de insumos</h2>`+entTbl(
       [['Clave','','56pt'],['Descripción','',''],['Unidad','','44pt'],['Tipo','','44pt'],['Costo','n','66pt']],
-      db.insumos.map(i=>{const r=resolveRef(i.id);return `<tr><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
+      entSel('ins').map(i=>{const r=resolveRef(i.id);return `<tr><td>${esc(i.clave)}</td><td>${esc(i.desc)}</td>
         <td>${esc(i.unidad)}</td><td>${esc((db.tipos.find(t=>t.k===i.tipo)||{}).tag||'')}</td>
         <td class="n">${i.tipo==='pct'?'—':dec(r?r.costo:0)}</td></tr>`;}).join(''))+pie('Catálogo de insumos')+`</div>`;
   }
   if(sec.cua){
-    h+=`<div class="ent-sec"><h2>Cuadrillas</h2>`+db.cuadrillas.map(c=>
+    h+=`<div class="ent-sec"><h2>Cuadrillas</h2>`+entSel('cua').map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(c.comp)}</div>`).join('')+pie('Cuadrillas')+`</div>`;
   }
   if(sec.bas){
-    h+=`<div class="ent-sec"><h2>Básicos</h2>`+db.auxiliares.map(a=>
+    h+=`<div class="ent-sec"><h2>Básicos</h2>`+entSel('bas').map(a=>
       `<div class="ent-blk"><div class="ent-sub">${esc(a.clave)} · por ${esc(a.unidad)}</div>
        <div class="ent-desc">${esc(a.desc)}</div>${entRenglones(a.comp)}
        ${a.notaGral?`<div class="ent-desc"><i>${esc(a.notaGral)}</i></div>`:''}</div>`).join('')+pie('Básicos')+`</div>`;
@@ -1479,7 +1590,7 @@ function entregaHTML(){
   if(sec.con){
     let f='';
     db.partidas.forEach(p=>{
-      const cs=db.conceptos.filter(c=>c.partida===p.id);if(!cs.length)return;
+      const cs=entSel('con').filter(c=>c.partida===p.id);if(!cs.length)return;
       f+=`<tr class="grp"><td colspan="5">${esc(p.clave)} · ${esc(p.nombre)}</td></tr>`;
       cs.forEach(c=>{f+=`<tr><td>${esc(c.clave)}</td><td>${esc(c.desc)}</td><td>${esc(c.unidad)}</td>
         <td class="n">${dec(cdu(c.id))}</td><td class="n">${dec(puVenta(c.id))}</td></tr>`;});
@@ -1489,7 +1600,7 @@ function entregaHTML(){
       +pie('Catálogo de conceptos')+`</div>`;
   }
   if(sec.mat){
-    const con=db.conceptos.filter(c=>(db.matrices[c.id]||[]).length);
+    const con=entSel('mat');
     h+=`<div class="ent-sec"><h2>Matrices de precio unitario</h2>`+(con.length?con.map(c=>
       `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · por ${esc(c.unidad)}</div>
        <div class="ent-desc">${esc(c.desc)}</div>${entRenglones(db.matrices[c.id])}
@@ -1497,7 +1608,7 @@ function entregaHTML(){
       :'<div class="ent-desc">Todavía no hay matrices capturadas.</div>')+pie('Matrices de precio unitario')+`</div>`;
   }
   if(sec.gen){
-    const con=db.conceptos.filter(c=>(db.generadores[c.id]||[]).length);
+    const con=entSel('gen');
     h+=`<div class="ent-sec"><h2>Generadores</h2>`+(con.length?con.map(c=>{
       const rows=db.generadores[c.id];
       return `<div class="ent-blk"><div class="ent-sub">${esc(c.clave)} · ${esc(c.unidad)}</div>
@@ -2912,7 +3023,7 @@ function importJSON(ev){
       const d=JSON.parse(e.target.result);
       if(!d.conceptos||!d.insumos)throw 0;
       if(!confirm('Se reemplaza todo lo que tienes ahora. ¿Continuar?'))return;
-      db=d;db.labels={...DEF_LABELS,...(db.labels||{})};
+      db=d;recuperaAlumna();db.labels={...DEF_LABELS,...(db.labels||{})};recuperaAlumna();
       const s=seed();['unidades','partidas','auxiliares','cuadrillas','genCols','tipos','cargos','indirectos','croquis','ui'].forEach(k=>{if(!db[k])db[k]=s[k];});
       save();boot();flash('Datos importados');
     }catch(err){alert('El archivo no tiene el formato esperado.');}};
