@@ -1545,6 +1545,12 @@ function renderEntrega(){
   }).join('');
   box.innerHTML=`
     <div style="font-size:11.5px;color:var(--soft);margin-bottom:9px">Marca las secciones que van, y dentro de cada una elige exactamente cuáles. Después dale imprimir y guarda como PDF desde el diálogo del navegador.</div>
+    <div style="font-size:11px;line-height:1.55;background:#FBF1EA;border:1px solid #EBD5CA;border-radius:9px;
+      padding:9px 12px;margin-bottom:12px;color:#7A4E35">
+      <b>En el diálogo de impresión, antes de guardar:</b> abre <b>Más ajustes</b>, <b>apaga</b> «Encabezados y pies de página»
+      —si no, el navegador te mete la fecha arriba y la dirección del archivo abajo— y <b>enciende</b> «Gráficos de fondo»,
+      para que salgan los colores. Chrome se acuerda de las dos la próxima vez.
+    </div>
     <div class="f-grid">${f('alumno','Alumna','Nombre completo')}${f('codigo','Código')}${f('materia','Materia')}${f('profesor','Profesor')}${f('ciclo','Ciclo escolar')}</div>
     <div style="margin:12px 0 10px">${filas}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
