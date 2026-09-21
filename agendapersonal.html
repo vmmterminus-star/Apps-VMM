@@ -61,6 +61,23 @@ input.add{color:var(--txt)}
 input.add::placeholder{color:var(--mut)}
 .tipo{font-size:9.5px;padding:1px 7px;border-radius:9px;font-weight:500;display:inline-block;white-space:nowrap}
 .lb{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;display:inline-block;font-weight:500}
+/* --- etiquetas de tipo --- */
+.tgc{font-size:9.5px;line-height:1.7;padding:1px 6px;border-radius:9px;font-weight:500;flex:none;width:var(--tgw,58px);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tgi{font-size:9.5px;line-height:1.7;padding:1px 0;border-radius:9px;font-weight:600;flex:none;width:19px;text-align:center;white-space:nowrap}
+.rdot{width:7px;height:7px;border-radius:50%;flex:none}
+.tgrow{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--card);margin-bottom:5px;cursor:pointer}
+.tgsw{width:15px;height:15px;border-radius:4px;flex:none;border:1px solid var(--line)}
+.tgnm{flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tgn{font-size:9.5px;color:var(--hint);flex:none}
+.tgar{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:5px;width:20px;height:20px;font-size:9px;line-height:1;padding:0;flex:none;cursor:pointer;font-family:inherit}
+.tgar[disabled]{opacity:.3;cursor:default}
+.tgexp{border:1px solid var(--acc);border-radius:11px;background:var(--card);padding:11px;margin-bottom:5px}
+.tgfl{font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+.tgin{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-family:inherit;font-size:12.5px;background:var(--bg);color:var(--txt);outline:none}
+.tgstrip{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tgchip{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);padding:0;cursor:pointer}
+.tgchip.on{border:2px solid var(--txt)}
+.tgchip.off{opacity:.35;cursor:not-allowed}
 .tim{font-size:10px;color:var(--hint)}
 .grip{color:var(--line2);font-size:13px;line-height:1;flex:none;cursor:grab;touch-action:none;user-select:none;padding:2px 1px}
 .grip:active{cursor:grabbing;color:var(--acc)}
@@ -546,6 +563,26 @@ const RMKEY2="agenda_remind_v1",DTKEY2="agenda_datetype_v1";
 /* nuevas */
 const SHKEY="agenda_short_v1",MGKEY="agenda_migr_v2",PNKEY="agenda_panels_v1",DSCKEY="agenda_desc_v1";
 const FOKEY="agenda_foco_v1",STKEY="agenda_stepmode_v1";
+/* --- etiquetas de tipo: catálogo + asignación por tarea --- */
+const TGKEY="agenda_tags_v1",TGOKEY="agenda_tagov_v1";
+/* paleta cerrada de 8. El gris (índice 7) queda apartado para "sin etiqueta". */
+const TGPAL=[{k:'mor',n:'Morado',bg:'#EEEDFE',tx:'#3C3489'},
+             {k:'ver',n:'Verde', bg:'#EAF3DE',tx:'#27500A'},
+             {k:'amb',n:'Ámbar', bg:'#FAEEDA',tx:'#633806'},
+             {k:'cor',n:'Coral', bg:'#FAECE7',tx:'#712B13'},
+             {k:'azu',n:'Azul',  bg:'#E6F1FB',tx:'#0C447C'},
+             {k:'ros',n:'Rosa',  bg:'#FBEAF0',tx:'#72243E'},
+             {k:'tea',n:'Teal',  bg:'#E1F5EE',tx:'#085041'},
+             {k:'gri',n:'Gris',  bg:'#F1EFE8',tx:'#444441'}];
+const TGGRIS=TGPAL[7];
+/* tanda 1. Solo se siembra la primera vez; después manda lo que tú tengas guardado. */
+const TGSEED=[{id:'tg_tram',n:'Trámite',  i:'T',c:'amb'},
+              {id:'tg_cont',n:'Contestar',i:'C',c:'azu'},
+              {id:'tg_prod',n:'Producir', i:'P',c:'mor'},
+              {id:'tg_revi',n:'Revisar',  i:'R',c:'tea'},
+              {id:'tg_ir',  n:'Ir',       i:'I',c:'cor'},
+              {id:'tg_deci',n:'Decidir',  i:'D',c:'ros'},
+              {id:'tg_apre',n:'Aprender', i:'A',c:'ver'}];
 
 const J=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||d)}catch(e){return JSON.parse(d)}};
 let state=J(KEY,"{}"),tiimoOv=J(TKEY,"{}"),impSt=J(IKEY,"{}"),impOrder=J(OKEY,"[]"),timeSt=J(MKEY,"{}");
@@ -558,6 +595,8 @@ let areaDesc=J(ADKEY,"{}"),sgDesc=J(SDKEY,"{}"),deletedSg=J(DSGKEY,"{}");
 let rmind=J(RMKEY2,"[]"),dtypeOv=J(DTKEY2,"{}");
 let short=J(SHKEY,"[]"),panels=J(PNKEY,"{}"),desc=J(DSCKEY,"{}");
 let foco=J(FOKEY,"[]"),stepMode=J(STKEY,"{}");
+let tags=localStorage.getItem(TGKEY)?J(TGKEY,"[]"):TGSEED.map(t=>Object.assign({},t));
+let tagOv=J(TGOKEY,"{}");
 let viewMode=localStorage.getItem(VMKEY)||"now";
 let shortView=localStorage.getItem("agenda_shortview")||"libre";   // libre · bloque · matriz · horas
 let archOpen=localStorage.getItem("agenda_archopen")==="1";
@@ -571,6 +610,7 @@ function save(){
  S(AOVKEY,areaOv);S(SYKEY,synced);S(SMKEY,syncMem);S(CSGKEY,customSg);S(HBKEY,hiddenB);S(DSGKEY,deletedSg);
  S(RMKEY2,rmind);S(DTKEY2,dtypeOv);S(ADKEY,areaDesc);S(SDKEY,sgDesc);S(BMKEY,blockMode);
  S(SHKEY,short);S(PNKEY,panels);S(DSCKEY,desc);S(FOKEY,foco);S(STKEY,stepMode);
+ S(TGKEY,tags);S(TGOKEY,tagOv);
  dirty=true;schedulePush();
 }
 
@@ -610,7 +650,8 @@ async function applyCloud(force){const r=await fetch(SUPA_URL+"/rest/v1/agenda_s
    --------------------------------------------------------------------- */
 function widgetBlob(){
  const meta=tk=>{const a=areaObjOf(tk),c=colOf(a);
-   return {t:txtOf(tk),b:a.name,c:c.sol,f:dateOf(tk)||'',h:timeOf(tk)||''};};
+   const o={t:txtOf(tk),b:a.name,c:c.sol,f:dateOf(tk)||'',h:timeOf(tk)||''};
+   const g=tgBlob(tk.id);if(g)o.g=g;return o;};
  const corta=[];
  short.forEach(e=>{
    if(corta.length>=8)return;
@@ -630,17 +671,18 @@ function widgetBlob(){
  short.forEach(e=>{
    let t='',col='#8A7263';
    if(e.free){if(e.done)return;t=e.t;}
-   else{const tk=tkById(e.id);if(!tk||state[tk.id]||archived[tk.id])return;
-        t=txtOf(tk);col=colOf(areaObjOf(tk)).sol;}
+   let gg=null;
+   if(!e.free){const tk=tkById(e.id);if(!tk||state[tk.id]||archived[tk.id])return;
+        t=txtOf(tk);col=colOf(areaObjOf(tk)).sol;gg=tgBlob(tk.id);}
    const q=quadDe(e);cuad[q].c++;
-   if(cuad[q].it.length<3)cuad[q].it.push({t:t,c:col});});
+   if(cuad[q].it.length<3){const o={t:t,c:col};if(gg)o.g=gg;cuad[q].it.push(o);}});
 
  /* los próximos días, para la tira de la semana */
  const semana=[];
  for(let i=0;i<6;i++){const dd=addDays(todayStr(),i);
    const ev=TK().filter(t=>activo(t)&&dateOf(t)===dd&&timeOf(t))
      .sort((a,b)=>(parseDT(a)||0)-(parseDT(b)||0)).slice(0,2)
-     .map(t=>({h:timeOf(t),t:txtOf(t)}));
+     .map(t=>{const o={h:timeOf(t),t:txtOf(t)};const g=tgBlob(t.id);if(g)o.g=g;return o;});
    semana.push({d:dd,ev:ev});}
 
  /* cada bloque con sus secciones — para los widgets por bloque */
@@ -655,7 +697,8 @@ function widgetBlob(){
      const todas=tasksFor(a.key,sg);
      if(!todas.length)return;
      secs.push({n:labelOv[a.key+'|'+sg]||sg,p:!!stepMode[a.key+'|'+sg],
-       ts:todas.slice(0,7).map(tk=>({t:txtOf(tk),f:dateOf(tk)||'',h:timeOf(tk)||'',d:!!state[tk.id]}))});});
+       ts:todas.slice(0,7).map(tk=>{const o={t:txtOf(tk),f:dateOf(tk)||'',h:timeOf(tk)||'',d:!!state[tk.id]};
+         const g=tgBlob(tk.id);if(g)o.g=g;return o;})});});
    bloques.push({k:a.key,n:a.name,c:c.sol,bg:c.bg,tx:c.tx,
      pend:mias.length,venc:mias.filter(overdue).length,
      sem:mias.filter(t=>{const d=dateOf(t);if(!d)return false;const n=dayDiff(d);return n>=0&&n<=7;}).length,
@@ -668,7 +711,9 @@ function widgetBlob(){
          pendientes:TK().filter(activo).length,
          hoyHechas:hechas,hoyTotal:hechas+porHacerHoy,
          corta:corta,conHora:conHora,hoyManana:hoyMan,
-         cuadrantes:cuad,semana:semana,bloques:bloques};}
+         cuadrantes:cuad,semana:semana,bloques:bloques,
+         etiquetas:tags.map(t=>{const c=tagPal(t);
+           return {id:t.id,n:t.n,i:tagIni(t),bg:c.bg,tx:c.tx};})};}
 
 async function doPush(){const ts=new Date().toISOString();const body=[{code:syncCode,data:localBlob(),updated_at:ts}];
  let wErr="";
@@ -702,6 +747,28 @@ function connectSync(){const v=document.getElementById('syncCodeInput').value.tr
 /* =======================================================================
    UNIVERSO DE TAREAS
    ======================================================================= */
+/* --- etiquetas de tipo --- */
+function tagById(id){return id?(tags.find(t=>t.id===id)||null):null;}
+function tagPal(t){return (t&&TGPAL.find(p=>p.k===t.c))||TGGRIS;}
+function tagDe(taskId){return tagById(tagOv[taskId]);}
+function tagIni(t){return (t.i||(t.n||'?').trim().charAt(0)||'?').toUpperCase();}
+/* el ancho de la columna se saca del nombre más largo del catálogo */
+function tgWidth(){let m=2;tags.forEach(t=>{m=Math.max(m,(t.n||'').length);});
+ const w=Math.min(74,Math.max(32,Math.round(m*5.6+16)));
+ document.documentElement.style.setProperty('--tgw',w+'px');}
+/* columna de ancho fijo, para la rejilla de bloques. Sin etiqueta = pastilla gris con guion. */
+function tgCol(taskId){const t=tagDe(taskId);const c=t?tagPal(t):TGGRIS;
+ return `<span class="tgc" style="background:${c.bg};color:${c.tx}" title="${t?esc(t.n):'sin etiqueta'}">${t?esc(t.n):'—'}</span>`;}
+/* solo la inicial, para la matriz */
+function tgIniHTML(taskId){const t=tagDe(taskId);if(!t)return"";const c=tagPal(t);
+ return `<span class="tgi" style="background:${c.bg};color:${c.tx}" title="${esc(t.n)}">${esc(tagIni(t))}</span>`;}
+/* pastilla normal, para la lista corta. Si no tiene etiqueta no pinta nada. */
+function tgPill(taskId){const t=tagDe(taskId);if(!t)return"";const c=tagPal(t);
+ return `<span class="tipo" style="background:${c.bg};color:${c.tx}">${esc(t.n)}</span>`;}
+/* lo que viaja al widget: nombre visible + los dos colores, nunca solo el id */
+function tgBlob(taskId){const t=tagDe(taskId);if(!t)return null;const c=tagPal(t);
+ return {id:t.id,n:t.n,i:tagIni(t),bg:c.bg,tx:c.tx};}
+
 function areas(){return [INBOX].concat(SEED,customAreas).filter(a=>!deletedAreas[a.key]);}
 function areaByKey(k){return [INBOX].concat(SEED,customAreas).find(a=>a.key===k);}
 function colOf(a){ // acepta el formato viejo (bg/fg/sgfg) y el nuevo (sol/bg/tx)
@@ -941,6 +1008,8 @@ function filaCorta(e,i,opts){
  if(opts.num)h+=`<span class="rnum">${i+1}</span>`;
  if(opts.estrella)h+=`<button class="star ${e.imp?'on':''}" title="Marcar como importante" onclick="cortaImp(${i})">${e.imp?'★':'☆'}</button>`;
  h+=`<span class="rc ${f.hecho?'on':''}" onclick="cortaToggle(${i})">${f.hecho?'✓':''}</span>`+
+    ((opts.pastillaArea&&f.col)?`<span class="rdot" style="background:${f.col.sol}" title="${esc(f.area.name)}"></span>`:'')+
+    (e.free?'':(opts.tgIni?tgIniHTML(e.id):tgPill(e.id)))+
     `<span class="rt" onclick="cortaEdit(${i})">${esc(f.texto)}</span>`;
  if(opts.hora!==false){
    const hv=horaDe(e);
@@ -948,7 +1017,6 @@ function filaCorta(e,i,opts){
    else h+=`<button class="hchip ${hv?'':'vacia'}" title="Poner o cambiar la hora aquí mismo" onclick="horaEdit(${i})">${hv?esc(hv):'＋ hora'}</button>`;
  }
  h+=pastillaCuando(f.n);
- if(opts.pastillaArea&&f.area)h+=`<span class="lb" style="background:${f.col.bg};color:${f.col.tx}">${esc(f.area.name)}</span>`;
  if(opts.auto&&e.q!=null)h+=`<button class="mini" title="Volver a acomodarla sola por su fecha" onclick="quadAuto(${i})">auto</button>`;
  h+=`<button class="qeb ${qeOpen===e.id?'on':''}" title="Cambiar fecha, hora, duración o bloque aquí mismo" onclick="toggleQE('${e.id}')">⋯</button>`;
  h+=`<span class="rx" title="Bajar de la lista" onclick="cortaDel(${i})">✕</span></div>`;
@@ -988,7 +1056,7 @@ function vistaMatriz(){
    r+=`<div class="mq" ondragover="mtxOver(event)" ondragleave="mtxLeave(event)" ondrop="mtxDrop(event,${qi})">`+
       `<div class="mqh" style="background:${q.bg};color:${q.tx}">${q.t}<span class="mqd">${q.d}</span></div>`;
    if(!q.items.length)r+=`<div class="lcempty" style="padding:10px 0">Suelta algo aquí</div>`;
-   q.items.forEach(({e,i})=>{r+=filaCorta(e,i,{estrella:1,pastillaArea:1,auto:1,hora:false});});
+   q.items.forEach(({e,i})=>{r+=filaCorta(e,i,{estrella:1,pastillaArea:1,auto:1,hora:false,tgIni:1});});
    r+=`</div>`;});
  r+=`</div><div class="lcempty" style="margin-top:8px">Arrastra entre cuadrantes para acomodarlas tú. Las que no muevas se acomodan solas por su fecha límite.</div>`;
  return r;}
@@ -1229,6 +1297,7 @@ function renglonHTML(tk){
    (dur?`<span class="fdur" style="height:${dur.h}px;background:${dur.c}"></span>`:"")+
    `<span class="grip">⠿</span>`+
    `<span class="tck ${hecho?'on':''}" onclick="chkToggle(event,'${tk.id}')">${hecho?'✓':''}</span>`+
+   tgCol(tk.id)+
    `<span class="nm"><b>${esc(txtOf(tk))}</b>${sub}</span>${der}`+
    `<button class="up ${enCorta(tk.id)?'on':''}" title="Subir a lo que importa ahorita" onclick="toggleCorta(event,'${tk.id}')">↑</button>${borrar}</div>`;
 }
@@ -1466,6 +1535,7 @@ function guardaBorrador(){const id=currentModalId;if(!id)return;
  const q=s=>document.getElementById(s+'_'+id);
  if(q('dt'))borrador.t=q('dt').value;
  if(q('dsc'))borrador.d=q('dsc').value;
+ if(q('dg'))borrador.g=q('dg').value;
  if(q('da'))borrador.a=q('da').value;
  if(q('ds'))borrador.s=q('ds').value;
  if(q('dd'))borrador.dd=q('dd').value;
@@ -1485,7 +1555,13 @@ function pintaModal(){
    const st=subs[id]||[];const hechos=st.filter(s=>s.done).length;
    let pasos="";
    st.forEach((s,i)=>{pasos+=`<div class="stp ${s.done?'done':''}"><span class="sc ${s.done?'on':''}" onclick="subToggle('${id}',${i})">${s.done?'✓':''}</span><span class="stt">${esc(s.t)}</span><span class="rx" onclick="subDel('${id}',${i})">✕</span></div>`;});
+   const gsel=borrador.g!==undefined?borrador.g:(tagOv[id]||'');
+   const gc=tagPal(tagById(gsel));const gOn=!!tagById(gsel);
+   let gOpts=`<option value="">— sin etiqueta —</option>`;
+   tags.forEach(t=>{gOpts+=`<option value="${t.id}" ${gsel===t.id?'selected':''}>${esc(t.n)}</option>`;});
    cuerpo=`<input class="titin" id="dt_${id}" value="${esc(borrador.t!==undefined?borrador.t:txtOf(tk))}">`+
+     `<div class="fld" style="margin-top:10px"><label>Tipo</label>`+
+     `<select id="dg_${id}" onchange="tgPreview('${id}')" style="${gOn?'background:'+gc.bg+';color:'+gc.tx+';font-weight:500':''}">${gOpts}</select></div>`+
      `<textarea class="dscin" id="dsc_${id}" rows="2" placeholder="¿De qué se trata? (opcional)" oninput="autoCrecer(this)">${esc(borrador.d!==undefined?borrador.d:(desc[id]||''))}</textarea>`+
      (st.length?`<div class="bar" style="margin-top:14px"><i style="width:${Math.round(hechos/st.length*100)}%"></i></div>`:'')+
      `<div style="font-size:10px;color:var(--mut);margin-top:${st.length?'6px':'14px'};text-transform:uppercase;letter-spacing:.05em">Pasos${st.length?' · '+hechos+' de '+st.length:''}</div>`+
@@ -1520,6 +1596,9 @@ function pintaModal(){
  if(modalTab==='cuando')llenaSg(id);
  if(modalTab==='tarea'){const ta=document.getElementById('dsc_'+id);if(ta)autoCrecer(ta);}
 }
+function tgPreview(id){const s=document.getElementById('dg_'+id);if(!s)return;
+ const t=tagById(s.value);const c=tagPal(t);
+ s.style.background=t?c.bg:'';s.style.color=t?c.tx:'';s.style.fontWeight=t?'500':'';}
 function autoCrecer(t){if(!t)return;t.style.height='auto';t.style.height=Math.max(38,t.scrollHeight+2)+'px';}
 function llenaSg(id){const sel=document.getElementById('ds_'+id);const ak=document.getElementById('da_'+id).value;
  const a=areaByKey(ak);const tk=tkById(id);const cur=borrador.s!==undefined?borrador.s:sgOf(tk);
@@ -1544,6 +1623,7 @@ function saveDetail(id){
  if(borrador.a!==undefined){const ak=borrador.a,sgv=borrador.s;
    if(id.includes('|c|')){const c=custom.find(x=>x.id===id);if(c){c.area=ak;if(sgv)c.sg=sgv;}delete areaOv[id];delete sgOv[id];}
    else{if(ak!==tk.area)areaOv[id]=ak;else delete areaOv[id];if(sgv)sgOv[id]=sgv;}}
+ if(borrador.g!==undefined){if(borrador.g&&tagById(borrador.g))tagOv[id]=borrador.g;else delete tagOv[id];}
  if(borrador.del!==undefined)delegSt[id]=borrador.del;
  borrador={};closeModal();save();render();}
 
@@ -1579,10 +1659,67 @@ function pintaMenu(){
   `<div style="display:flex;gap:6px;margin-top:6px"><button class="mini" onclick="exportData()">Generar y copiar</button><button class="mini" onclick="importData()">Importar</button></div>`+
   `<div class="msg" id="ioMsg"></div></div></div>`+
 
+  tgPanel()+
+
   (ocultos.length?`<div class="pnl"><div class="pnlh" style="cursor:default"><span class="ph" style="background:var(--ambbg);color:var(--ambtx)">Bloques ocultos</span><span class="n">${ocultos.length}</span></div>`+
    `<div style="display:flex;gap:5px;flex-wrap:wrap">${ocultos.map(k=>{const a=areaByKey(k);const nom=a?a.name:(k==='date'?'Con fecha':k==='rec'?'Recurrentes':k==='deleg'?'Delegadas':k);
      return `<button class="mini" onclick="showBlock('${k}');pintaMenu()">${esc(nom)} ↩</button>`;}).join('')}</div></div>`:'');
 }
+let tgOpen=null;
+function tgCount(id){return Object.keys(tagOv).filter(k=>tagOv[k]===id).length;}
+function tgToggleOpen(id){tgOpen=(tgOpen===id)?null:id;pintaMenu();}
+function tgMove(id,d){const i=tags.findIndex(t=>t.id===id),j=i+d;
+ if(i<0||j<0||j>=tags.length)return;const m=tags.splice(i,1)[0];tags.splice(j,0,m);save();render();pintaMenu();}
+function tgRename(id,v){const t=tagById(id);if(!t)return;const nv=(v||'').trim();if(!nv)return;
+ t.n=nv;if(!t.i)t.i=tagIni(t);save();render();pintaMenu();}
+function tgSetIni(id,v){const t=tagById(id);if(!t)return;
+ t.i=((v||'').trim().slice(0,2)||(t.n||'?').charAt(0)).toUpperCase();save();render();pintaMenu();}
+function tgColor(id,k){const t=tagById(id);if(!t)return;t.c=k;save();render();pintaMenu();}
+function tgAdd(e){if(e.key!=='Enter')return;const v=e.target.value.trim();if(!v)return;
+ if(tags.some(t=>t.n.toLowerCase()===v.toLowerCase())){alert('Ya tienes una etiqueta que se llama así.');return;}
+ const usados=tags.map(t=>t.c);
+ const libre=TGPAL.slice(0,7).find(p=>usados.indexOf(p.k)<0)||TGPAL[tags.length%7];
+ const id='tg'+Date.now().toString(36);
+ tags.push({id:id,n:v,i:v.charAt(0).toUpperCase(),c:libre.k});
+ e.target.value='';tgOpen=id;save();render();pintaMenu();}
+function tgDel(id){const t=tagById(id);if(!t)return;const c=tgCount(id);
+ const msg=c?(c+' '+(c===1?'tarea la trae':'tareas la traen')+'. Si la borras, esas tareas quedan sin etiqueta. ¿Seguir?')
+            :('¿Borrar la etiqueta "'+t.n+'"?');
+ if(!confirm(msg))return;
+ tags=tags.filter(x=>x.id!==id);if(tgOpen===id)tgOpen=null;save();render();pintaMenu();}
+function tgPanel(){
+ let h=`<div class="pnl"><div class="pnlh" style="cursor:default"><span class="ph" style="background:var(--purbg);color:var(--purtx)">Etiquetas</span><span class="n">${tags.length}</span></div>`+
+  `<div style="font-size:11.5px;color:var(--mut);line-height:1.5;margin-bottom:8px">Qué clase de cosa es la tarea. El orden de aquí es el orden en que aparecen al editarla. Toca una para cambiarle nombre, inicial o color.</div>`;
+ tags.forEach((t,ix)=>{
+  const c=tagPal(t),cn=tgCount(t.id),ab=tgOpen===t.id;
+  h+=`<div class="tgrow" onclick="tgToggleOpen('${t.id}')">`+
+     `<span class="tgsw" style="background:${c.bg}"></span>`+
+     `<span class="tgnm">${esc(t.n)}</span>`+
+     `<span class="tgn">${cn}</span>`+
+     `<button class="tgar" ${ix===0?'disabled':''} title="Subir" onclick="event.stopPropagation();tgMove('${t.id}',-1)">▲</button>`+
+     `<button class="tgar" ${ix===tags.length-1?'disabled':''} title="Bajar" onclick="event.stopPropagation();tgMove('${t.id}',1)">▼</button>`+
+     `<span class="tgn">${ab?'▾':'▸'}</span></div>`;
+  if(!ab)return;
+  h+=`<div class="tgexp" onclick="event.stopPropagation()">`+
+     `<label class="tgfl">Nombre</label><input class="tgin" value="${esc(t.n)}" onchange="tgRename('${t.id}',this.value)">`+
+     `<div style="display:flex;gap:9px;margin-top:11px">`+
+       `<div style="width:72px;flex:none"><label class="tgfl">Inicial</label>`+
+       `<input class="tgin" maxlength="2" style="text-align:center" value="${esc(tagIni(t))}" onchange="tgSetIni('${t.id}',this.value)"></div>`+
+       `<div style="flex:1;min-width:0"><label class="tgfl">Se ve así</label>`+
+       `<div style="padding-top:4px;display:flex;gap:6px;align-items:center">`+
+       `<span class="tipo" style="background:${c.bg};color:${c.tx}">${esc(t.n)}</span>`+
+       `<span class="tgi" style="display:inline-block;background:${c.bg};color:${c.tx}">${esc(tagIni(t))}</span></div></div>`+
+     `</div>`+
+     `<label class="tgfl" style="margin-top:12px">Color</label><div class="tgstrip">`+
+     TGPAL.map((p,pi)=>pi===7
+       ? `<button class="tgchip off" style="background:${p.bg}" title="El gris está apartado para las tareas sin etiqueta"></button>`
+       : `<button class="tgchip ${t.c===p.k?'on':''}" style="background:${p.bg}" title="${p.n}" onclick="tgColor('${t.id}','${p.k}')"></button>`).join('')+
+     `</div>`+
+     `<div style="display:flex;align-items:center;gap:9px;margin-top:13px">`+
+     `<span style="flex:1;font-size:10.5px;color:var(--mut);line-height:1.5">${cn?(cn+' '+(cn===1?'tarea la trae':'tareas la traen')+'. Si la borras, quedan sin etiqueta.'):'Todavía no la usa ninguna tarea.'}</span>`+
+     `<button class="mini" onclick="tgDel('${t.id}')">Borrar</button></div></div>`;});
+ return h+`<input class="add" placeholder="＋ nueva etiqueta y Enter" onkeydown="tgAdd(event)" style="margin-top:3px">`+`</div>`;}
+
 function decoHTML(){
  const escala=DUR.map(d=>`<i style="height:${d.h}px;background:${d.c}"></i>`).join('');
  return `<div class="decrow"><div class="decs"><span class="scaleN">${escala}</span></div>`+
@@ -1639,7 +1776,7 @@ function setMode(m){viewMode=m;
  window.scrollTo(0,0);}
 function renderNow(){if(viewMode!=='now')return;renderCd();renderDays();renderEnergy();renderStreak();}
 function renderTodo(){if(viewMode!=='all')return;renderGrid();renderHidden();renderDateBox();renderRec();renderDeleg();renderArch();}
-function render(){TKCACHE=null;renderShort();renderFoco();renderNow();renderTodo();}
+function render(){TKCACHE=null;tgWidth();renderShort();renderFoco();renderNow();renderTodo();}
 
 /* arranque */
 document.getElementById('fechaHoy').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
