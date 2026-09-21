@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Protocolo — Proyecto 9</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%223%22 y=%223%22 width=%2294%22 height=%2294%22 rx=%2221%22 fill=%22%232E5266%22/><rect x=%2229%22 y=%2223%22 width=%2242%22 height=%2254%22 rx=%225%22 fill=%22%23F2EDE4%22/><rect x=%2229%22 y=%2223%22 width=%227.5%22 height=%2254%22 rx=%223.5%22 fill=%22%232E5266%22 opacity=%220.2%22/><path d=%22M54 23 h11 v30 l-5.5 -6.5 -5.5 6.5 z%22 fill=%22%23C8873F%22/></svg>">
 <link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
@@ -121,6 +121,22 @@ button{cursor:pointer;border:none;background:none;padding:0}
 .fc{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--card);position:relative}
 .fc .kind{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;font-weight:600;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
 .fc .kind .pend{color:var(--warn);background:var(--warnsoft);border-radius:3px;padding:1px 5px;letter-spacing:.06em}
+/* verificación: si no la confirmaste tú, la ficha se ve distinta de un vistazo */
+.fc.nover{border-left:3px solid var(--warn)}
+.vok{color:var(--ok);background:var(--oksoft);border:1px solid var(--okline);border-radius:3px;
+  padding:1px 6px;letter-spacing:.06em;font-size:9px;font-weight:600}
+.vno{color:var(--warn);background:var(--warnsoft);border:1px solid var(--warnline);border-radius:3px;
+  padding:1px 6px;letter-spacing:.06em;font-size:9px;font-weight:600;cursor:pointer}
+.vno:hover{background:#F2E6D2}
+.tbl .vok,.tbl .vno{padding:1px 5px}
+/* clave BibTeX: el puente con LaTeX */
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em}
+.bk{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;
+  background:var(--soft);color:var(--accent);border:0;border-radius:4px;padding:1px 6px;
+  margin-left:7px;cursor:pointer;vertical-align:1px}
+.bk:hover{background:#DCE6EC}
+.bk.sin{background:var(--warnsoft);color:var(--warn);cursor:default}
+.bk2{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;color:var(--accent2);margin-top:2px}
 .fc .ttl{font-size:12.5px;font-weight:500;line-height:1.35;margin-bottom:6px}
 /* el extracto manda: es lo que vas a leer y lo que vas a usar */
 .fc .q{font-size:13.5px;color:var(--text);line-height:1.65;font-weight:300;
@@ -713,12 +729,15 @@ const RUTAMAP = {}; RUTA.forEach(a=>RUTAMAP[a.id]=a);
    TIPOS DE FUENTE Y CAMPOS
    ========================================================= */
 const TIPOS = [
- ['generica','Genérica'],['libro','Libro'],['articulo','Artículo'],['tesis','Tesis'],
+ ['generica','Genérica'],['libro','Libro'],['capitulo','Capítulo de libro'],['articulo','Artículo'],['tesis','Tesis'],
  ['ley','Ley'],['sitio','Sitio web'],['prensa','Prensa'],['video','Video']
 ];
 const CAMPOS = {
  generica:[['autor','Autor o institución',1],['titulo','Título',1],['anio','Año',0,'sm'],['liga','Liga',0,'lg']],
  libro:[['autor','Autor',1],['titulo','Título del libro',1],['ciudad','Ciudad',0],['editorial','Editorial',0],['anio','Año',0,'sm'],['liga','Liga',0,'lg']],
+ capitulo:[['autor','Autor del capítulo',1],['titulo','Título del capítulo',1],['libro','Título del libro',1],
+   ['editor','Editor o compilador del libro',0],['paginas','Páginas del capítulo',0,'sm'],['ciudad','Ciudad',0,'sm'],['anio','Año',0,'sm'],
+   ['editorial','Editorial',0],['liga','Liga',0,'lg']],
  articulo:[['autor','Autor',1],['titulo','Título del artículo',1],['revista','Revista',0],['volumen','Vol.',0,'sm'],['numero','No.',0,'sm'],['paginas','Páginas',0,'sm'],['anio','Año',0,'sm'],['liga','Liga',0,'lg']],
  tesis:[['autor','Autor',1],['titulo','Título de la tesis',1],['grado','Grado',0],['universidad','Universidad',0],['anio','Año',0,'sm'],['liga','Liga',0,'lg']],
  ley:[['autor','Entidad emisora',1],['titulo','Nombre de la ley o norma',1],['ciudad','Ciudad',0],['anio','Año',0,'sm'],['liga','Liga',0,'lg']],
@@ -729,6 +748,7 @@ const CAMPOS = {
 const REGLAS = {
  generica:'Autor. Título. Año. URL.',
  libro:'Apellido, Nombre. <i>Título</i>. Ciudad: Editorial, año.',
+ capitulo:'Apellido, Nombre. "Título del capítulo." En <i>Título del libro</i>, editado por Nombre Apellido, páginas. Ciudad: Editorial, año.',
  articulo:'Apellido, Nombre. "Título." <i>Revista</i> volumen, no. número (año): páginas.',
  tesis:'Apellido, Nombre. "Título." Tesis de grado, Universidad, año.',
  ley:'<i>Nombre de la ley</i>. Ciudad: Entidad emisora, año.',
@@ -747,7 +767,7 @@ const CAUSAS = [
    ESTADO
    ========================================================= */
 const KEY='protocolo_v1';
-const ESQUEMA=2;
+const ESQUEMA=3;
 const DEF={fichas:[],atorados:[],pendientes:{},redaccion:{},redacciones:{},ext:{},esquema:2,
   ajustes:{ppc:300,mult:2.5,umbral:80,estilo:'chicago-nb'},
   ui:{detalles:false,guia:{que:true,como:true,mide:true,tips:true}},
@@ -778,7 +798,7 @@ function tituloDefault(){
       'servicios complementarios','adulto mayor'].map(c=>({id:uid(),txt:c,estado:'por-definir'}))
   };
 }
-let S=load(), view='apartados', sel='1.1', filtro='', tipoFiltro='', srcFiltro='', claseFiltro='', modoAp='fichas';
+let S=load(), view='apartados', sel='1.1', filtro='', tipoFiltro='', srcFiltro='', claseFiltro='', verFiltro='', modoAp='fichas';
 
 function load(){
   try{ const r=localStorage.getItem(KEY); if(!r){ const d=JSON.parse(JSON.stringify(DEF)); d.esquema=ESQUEMA; return d; }
@@ -787,9 +807,13 @@ function load(){
     if((d.esquema||1) < ESQUEMA){
       try{ localStorage.setItem('protocolo_v1_respaldo_'+(d.esquema||1)+'_'+Date.now().toString(36), r); }catch(e){}
       d.redacciones = d.redacciones || {};
-      (d.fichas||[]).forEach(f=>{ if(f.fuente && typeof f.fuente==='object'){
-        if(f.fuente.notaC===undefined) f.fuente.notaC='';
-        if(f.fuente.notaA===undefined) f.fuente.notaA=''; } });
+      (d.fichas||[]).forEach(f=>{
+        /* nada se borra: los campos viejos se quedan guardados aunque ya no se muestren */
+        if(f.verificada===undefined) f.verificada=false;
+        if(f.fuente && typeof f.fuente==='object'){
+          if(f.fuente.bibkey===undefined) f.fuente.bibkey='';
+          if(f.fuente.notaC===undefined) f.fuente.notaC='';
+          if(f.fuente.notaA===undefined) f.fuente.notaA=''; } });
       d.esquema=ESQUEMA;
     }
     const s=Object.assign(JSON.parse(JSON.stringify(DEF)),d);
@@ -859,6 +883,13 @@ function chicago(s){
   const pt = A.slice(-1)==='.' ? ' ' : '. ';
   switch(s.tipo){
     case 'libro': return `${p(A)}${A?pt:''}<i>${T}</i>. ${s.ciudad?esc(s.ciudad)+': ':''}${esc(s.editorial||'')}${(s.ciudad||s.editorial)&&Y?', ':''}${Y}.`;
+    case 'capitulo': {
+      /* Apellido, Nombre. "Capítulo." En *Libro*, editado por X, 55–68. Ciudad: Editorial, año. */
+      const ed = s.editor? ', editado por '+esc(nombreDerecho(s.editor)) : '';
+      const pp = s.paginas? ', '+esc(s.paginas) : '';
+      const pie = s.ciudad? esc(s.ciudad)+(s.editorial?': '+esc(s.editorial):'') : esc(s.editorial||'');
+      return `${p(A)}${A?pt:''}"${T}." En <i>${esc(s.libro||'')}</i>${ed}${pp}. ${pie}${pie&&Y?', ':''}${Y}.`;
+    }
     case 'articulo': return `${p(A)}${A?pt:''}"${T}." <i>${esc(s.revista||'')}</i>${s.volumen?' '+esc(s.volumen):''}${s.numero?', no. '+esc(s.numero):''}${Y?' ('+Y+')':''}${s.paginas?': '+esc(s.paginas):''}.`;
     case 'tesis': return `${p(A)}${A?pt:''}"${T}." ${esc(s.grado||'Tesis')}, ${esc(s.universidad||'')}${Y?', '+Y:''}.`;
     case 'ley': return `<i>${T}</i>. ${s.ciudad?esc(s.ciudad)+': ':''}${A}${Y?', '+Y:''}.`;
@@ -891,6 +922,20 @@ function tituloCorto(t){
   const w=lim.split(/\s+/);
   return w.slice(0,4).join(' ');
 }
+/* CLAVE BIBTEX — el puente con el documento de LaTeX. apellidoaño, sin acentos */
+function bibkeyDe(s){
+  const ap=apellidoDe(s.autor||'').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/g,'');
+  const y=(String(s.anio||s.fecha||'').match(/\d{4}/)||[''])[0];
+  return ap+y;
+}
+function bibkeyRepetida(clave, exceptoKey){
+  if(!clave) return 0;
+  const vistos={};
+  S.fichas.forEach(f=>{ const k=fuenteKey(f); if(!k||k===exceptoKey) return;
+    if((f.fuente||{}).bibkey===clave) vistos[k]=1; });
+  return Object.keys(vistos).length;
+}
 function md2i(t){ return esc(t).replace(/[*_]{1,2}([^*_]{2,})[*_]{1,2}/g,'<i>$1</i>'); }
 
 /* NOTA AL PIE COMPLETA — nombre al derecho, comas, publicación entre paréntesis,
@@ -903,6 +948,8 @@ function chicagoNota(s, pag){
   switch(s.tipo){
     case 'libro':
       return `${A?A+', ':''}<i>${T}</i>${pub([esc(s.ciudad||''),esc(s.editorial||'')].filter(Boolean).join(': '),Y)}${P}.`;
+    case 'capitulo':
+      return `${A?A+', ':''}"${T}," en <i>${esc(s.libro||'')}</i>${s.editor?', ed. '+esc(nombreDerecho(s.editor)):''}${pub([esc(s.ciudad||''),esc(s.editorial||'')].filter(Boolean).join(': '),Y)}${P}.`;
     case 'articulo':
       return `${A?A+', ':''}"${T}," <i>${esc(s.revista||'')}</i>${s.volumen?' '+esc(s.volumen):''}${s.numero?', no. '+esc(s.numero):''}${Y?' ('+Y+')':''}${P?':'+P.slice(1):''}.`;
     case 'tesis':
@@ -944,6 +991,31 @@ function faltan(s){
    LOS TRES FORMATOS DE CITA, EDITABLES
    Lo generado es punto de partida; si escribes algo, manda lo tuyo.
    ========================================================= */
+/* ---- campo de clave BibTeX, igual en la ficha (M) y en el editor de fuente (F) ---- */
+function bibkeyFld(s, ctx){
+  const v=esc(s.bibkey||'');
+  const sug=bibkeyDe(s);
+  const rep=bibkeyRepetida(s.bibkey||'', ctx==='F'?(F&&F.key):fuenteKey({fuente:s}));
+  const oninput = ctx==='M'
+    ? `M.fuente.bibkey=this.value.trim().replace(/\\s+/g,'');avisoBibkey(this)`
+    : `setF('bibkey',this.value.trim().replace(/\\s+/g,''));avisoBibkey(this)`;
+  const poner = ctx==='M' ? `M.fuente.bibkey=bibkeyDe(M.fuente);drawModal()` : `setF('bibkey',bibkeyDe(F.s));drawFuente()`;
+  return `<div class="fld" style="margin-bottom:0"><label>Clave BibTeX
+      <span class="hintl">el puente con LaTeX — así la citas en el .tex</span></label>
+    <div style="display:flex;gap:7px;align-items:flex-start">
+      <input class="in mono" value="${v}" placeholder="${esc(sug||'hamchande1996')}" oninput="${oninput}">
+      ${sug&&sug!==(s.bibkey||'')?`<button class="btn o sm" style="flex:none" onclick="${poner}">usar ${esc(sug)}</button>`:''}
+    </div>
+    <div class="hint bkav" style="margin-top:5px">${rep?`<span style="color:var(--warn)">⚠ Otra fuente ya usa esa clave. En LaTeX no pueden repetirse — agrégale una letra (${esc((s.bibkey||'')+'b')}).</span>`:'Minúsculas, sin acentos ni espacios: apellido + año.'}</div>
+  </div>`;
+}
+function avisoBibkey(el){
+  const av=el.closest('.fld').querySelector('.bkav'); if(!av) return;
+  const v=el.value.trim();
+  const rep=bibkeyRepetida(v, F?F.key:(M?fuenteKey({fuente:M.fuente}):null));
+  av.innerHTML = rep? `<span style="color:var(--warn)">⚠ Otra fuente ya usa esa clave. En LaTeX no pueden repetirse — agrégale una letra (${esc(v+'b')}).</span>`
+    : 'Minúsculas, sin acentos ni espacios: apellido + año.';
+}
 function fmtRows(s, pag, ctx){
   /* ctx: 'M' (ficha abierta) o 'F' (editor de fuente) */
   const set = ctx==='M' ? 'setFmtM' : 'setFmtF';
@@ -1000,7 +1072,8 @@ function propagarFormatos(f){
   const k=fuenteKey(f); if(!k) return;
   S.fichas.forEach(x=>{ if(x!==f && fuenteKey(x)===k){
     x.fuente.refCruda=f.fuente.refCruda; x.fuente.usarCruda=f.fuente.usarCruda;
-    x.fuente.notaC=f.fuente.notaC; x.fuente.notaA=f.fuente.notaA; } });
+    x.fuente.notaC=f.fuente.notaC; x.fuente.notaA=f.fuente.notaA;
+    x.fuente.bibkey=f.fuente.bibkey; } });
   actualizarCitas(k, f.fuente);
 }
 
@@ -1060,6 +1133,7 @@ function viewApartado(){
   if(tipoFiltro) fs=fs.filter(f=>(f.fuente||{}).tipo===tipoFiltro);
   if(srcFiltro) fs=fs.filter(f=>fuenteKey(f)===srcFiltro);
   if(claseFiltro) fs=fs.filter(f=>(f.clase||'extracto')===claseFiltro);
+  if(verFiltro) fs=fs.filter(f=>f.clase==='redaccion'?false:(verFiltro==='si'?!!f.verificada:!f.verificada));
   const markPos = m.meta? Math.min(m.mMin/(m.meta*1.35)*100,98):70;
   return `<div class="wide">
    <div class="mh">
@@ -1115,6 +1189,9 @@ function viewApartado(){
      <button class="pill ${claseFiltro===''?'on':''}" onclick="claseFiltro='';render()">todas</button>
      <button class="pill ${claseFiltro==='extracto'?'on':''}" onclick="claseFiltro='extracto';render()">extractos</button>
      <button class="pill ${claseFiltro==='redaccion'?'on':''}" onclick="claseFiltro='redaccion';render()">redacción</button>
+     <span class="hint">·</span>
+     <button class="pill ${verFiltro==='si'?'on':''}" onclick="verFiltro=(verFiltro==='si'?'':'si');render()">✓ verificadas</button>
+     <button class="pill ${verFiltro==='no'?'on':''}" onclick="verFiltro=(verFiltro==='no'?'':'no');render()">⚠ sin verificar${(()=>{const n=S.fichas.filter(f=>(f.apartado===sel||(f.secundarios||[]).includes(sel))&&f.clase!=='redaccion'&&!f.verificada).length;return n?' · '+n:'';})()}</button>
      <span class="hint">·</span>
      <button class="pill ${tipoFiltro===''?'on':''}" onclick="tipoFiltro='';render()">todo tipo</button>
      ${TIPOS.slice(1).map(t=>`<button class="pill ${tipoFiltro===t[0]?'on':''}" onclick="tipoFiltro='${t[0]}';render()">${t[1]}</button>`).join('')}
@@ -1399,10 +1476,11 @@ function otraRedaccion(id){
   openFicha(f.apartado,null,null,{clase:'redaccion',tags:f.tags,archivo:f.archivo,
     confiabilidad:f.confiabilidad, fuentes:(f.fuentes||[]), secundarios:f.secundarios});
 }
-function redactarSobre(id){
+/* marcar verificada desde la tarjeta, sin abrir la ficha */
+function marcarVerif(id, v){
   const f=S.fichas.find(x=>x.id===id); if(!f) return;
-  openFicha(f.apartado,null,null,{clase:'redaccion',tags:f.tags,archivo:f.archivo,
-    confiabilidad:f.confiabilidad, fuentes:[f.fuente]});
+  f.verificada=!!v; save(); schedulePush(); render();
+  toast(v?'Verificada — ya es citable':'Marcada como sin verificar');
 }
 
 /* cuántas fichas comparten la misma fuente */
@@ -1419,9 +1497,11 @@ function fichasHTML(fs){
     const prestada = sel && f.apartado!==sel && (f.secundarios||[]).includes(sel);
     const bor = f.clase==='redaccion';
     const largo = (f.extracto||'').length>380;
-    return `<div class="fc ${bor?'bor':''}" ${prestada?'style="border-style:dashed"':''}>
+    return `<div class="fc ${bor?'bor':''} ${(!bor&&!f.verificada)?'nover':''}" ${prestada?'style="border-style:dashed"':''}>
       <div class="kind">${bor?'<span class="cbor">Redacción mía</span> ':''}${bor?'':esc((TIPOS.find(t=>t[0]===s.tipo)||['','fuente'])[1])}
         ${f.confiabilidad?'· '+esc(f.confiabilidad):''}
+        ${bor?'':(f.verificada?'<span class="vok" title="la confirmaste en el documento">✓ verificada</span>'
+                              :`<span class="vno" title="todavía no la confirmas — no citable" onclick="marcarVerif('${f.id}',true)">⚠ sin verificar</span>`)}
         ${fal.length?'<span class="pend">falta '+fal.join(', ')+'</span>':''}
         ${prestada?'<span class="pend" style="background:var(--soft);color:var(--accent)">también sirve aquí · vive en '+f.apartado+'</span>':''}
         ${viejaTitulo(f)?`<span class="avistit">de antes del cambio de título</span>`:''}</div>
@@ -1434,7 +1514,7 @@ function fichasHTML(fs){
         ${f.fuentes.map(fs=>`<div class="r1">${chicago(fs)}</div>`).join('')}
       </div>`:''}
       <div class="src" ${(bor && !s.autor && !s.titulo && !s.refCruda)?'style="display:none"':''}>
-        <span class="fcref">${chicago(s)}</span>
+        <span class="fcref">${chicago(s)}${s.bibkey?`<button class="bk" title="copiar la clave para LaTeX" onclick="event.stopPropagation();copiar('${esc(s.bibkey)}');toast('Clave copiada')">${esc(s.bibkey)}</button>`:''}</span>
         ${hermanas(f)>1?`<button class="nfu" onclick="verFuente('${esc(fuenteKey(f))}')"
           title="ver las ${hermanas(f)} fichas de esta fuente">${hermanas(f)} fichas</button>`:''}
       </div>
@@ -1448,7 +1528,7 @@ function fichasHTML(fs){
         ${bor?`<button onclick="vaciarFichaAlTexto('${f.id}')">pasar al texto</button>
                <button onclick="otraRedaccion('${f.id}')">otra igual</button>`
              :`<button onclick="dupFicha('${f.id}')">otra de esta fuente</button>
-               <button onclick="redactarSobre('${f.id}')">redactar sobre esta</button>`}
+               ${f.verificada?'':`<button style="color:var(--ok)" onclick="marcarVerif('${f.id}',true)">ya la verifiqué</button>`}`}
         ${viejaTitulo(f)?`<button style="color:var(--warn)" onclick="revisada('${f.id}')">ya la revisé</button>`:''}
       </div>
     </div>`;
@@ -1591,9 +1671,8 @@ function drawFuente(){
           </div></div>`:''}
 
         ${rowsCamposF(campos,s)}
+        ${bibkeyFld(s,'F')}
       </div>
-
-      ${fmtRows(s, '', 'F')}
 
       <div class="grp"><div class="gl">Se aplica a todas <span class="r">— solo si lo llenas</span></div>
         <div class="fld"><label>Confiabilidad</label>
@@ -1643,7 +1722,7 @@ function viewBiblio(){
   refs.forEach(r=>{
     const fal=faltan(r.s);
     h+=`<div class="ref ${fal.length?'inc':''}">
-      <div class="txt">${chicago(r.s)}
+      <div class="txt">${chicago(r.s)}${r.s.bibkey?`<button class="bk" title="copiar la clave para LaTeX" onclick="copiar('${esc(r.s.bibkey)}');toast('Clave copiada')">${esc(r.s.bibkey)}</button>`:'<span class="bk sin">sin clave</span>'}
         <div class="rule">${fal.length?'⚠ Le falta: '+fal.join(', ')+'. Complétala antes de usarla.':(REGLAS[r.s.tipo]||REGLAS.generica)}</div></div>
       <div class="used">${r.n} ficha${r.n>1?'s':''}<br>
         <button style="color:var(--accent);font-size:10.5px" onclick="openFuente('${esc(r.k)}')">editar</button></div></div>`;
@@ -1757,24 +1836,27 @@ function setExt(id,k,v){ S.ext[id]=S.ext[id]||{}; S.ext[id][k]=parseFloat(v)||0;
    MODAL FICHA
    ========================================================= */
 let M=null;
-function nuevaFuente(){ return {tipo:'generica'}; }
+function nuevaFuente(){ return {tipo:'generica', bibkey:''}; }
 function openFicha(apartado, editId, fuenteFija, extras){
   if(editId){ const f=S.fichas.find(x=>x.id===editId);
     M={modo:'edit', id:f.id, fuente:Object.assign({},f.fuente), extracto:f.extracto, apartado:f.apartado,
        secundarios:(f.secundarios||[]).slice(), pagina:f.pagina, confiabilidad:f.confiabilidad,
        paraQue:f.paraQue, tags:(f.tags||[]).slice(), archivo:f.archivo||'',
        clase:f.clase||'extracto', fuentes:(f.fuentes||[]).map(x=>JSON.parse(JSON.stringify(x))),
+       verificada:!!f.verificada,
        auto:{}, banner:null, fija:false}; }
   else if(fuenteFija){ const x=extras||{};
     M={modo:'nueva', fuente:Object.assign({},fuenteFija), extracto:'', apartado:apartado,
        secundarios:(x.secundarios||[]).slice(), pagina:'', confiabilidad:x.confiabilidad||'',
        paraQue:'', tags:(x.tags||[]).slice(), archivo:x.archivo||'', clase:x.clase||'extracto',
        fuentes:(x.fuentes||[]).map(y=>JSON.parse(JSON.stringify(y))),
+       verificada:false,
        auto:{}, banner:null, fija:true,
        cuenta:S.fichas.filter(f=>fuenteKey({fuente:f.fuente})===fuenteKey({fuente:fuenteFija})).length}; }
   else M={modo:'nueva', fuente:nuevaFuente(), extracto:'', apartado:apartado, secundarios:[], pagina:'',
        confiabilidad:'', paraQue:'', tags:[], archivo:'', clase:(extras&&extras.clase)||'extracto',
        fuentes:((extras&&extras.fuentes)||[]).map(y=>JSON.parse(JSON.stringify(y))),
+       verificada:false,
        auto:{}, banner:null, fija:false};
   drawModal();
 }
@@ -1835,8 +1917,8 @@ function drawModal(){
           : 'La referencia se va a armar con los campos de abajo, no con el texto que pegaste.'}</div>
       </div>`:''}
       ${rowsCampos(campos,s)}
-      </div>
-      ${(s.autor||s.titulo||s.refCruda)?fmtRows(s, M.pagina||'', 'M'):''}`;
+      ${bibkeyFld(s,'M')}
+      </div>`;
   } else {
     campoHTML = `<div class="lock"><div style="flex:1;min-width:0">
         <div class="t">${chicago(s)}</div>
@@ -1882,6 +1964,16 @@ function drawModal(){
           <div class="counter" id="cnt">${contadorHTML(wc,m)}</div>
         </div>
       </div>
+      ${M.clase==='redaccion'?'':`<div class="grp"><div class="gl">Verificación
+        <span class="r">— esto no es qué tan buena es la fuente, es si tú la confirmaste</span></div>
+        <div class="chips">
+          <button class="chip ${M.verificada?'on':''}" onclick="M.verificada=true;drawModal()">✓ Verificada por mí</button>
+          <button class="chip ${M.verificada?'':'on'}" onclick="M.verificada=false;drawModal()">⚠ Sin verificar</button>
+        </div>
+        <div class="hint" style="margin-top:7px">${M.verificada
+          ? 'Abriste el documento, buscaste la frase y confirmaste la página. <b>Ya es citable.</b>'
+          : 'Te la pasaron o la leyó una herramienta y todavía no la confirmas en el documento original. <b>No la cites así.</b>'}</div>
+      </div>`}
       ${S.ui.detalles? detallesHTML() : `<button class="fold" onclick="S.ui.detalles=true;save();drawModal()">＋ Detalles <span class="h">apartado · página · confiabilidad · para qué me sirve</span></button>`}
     </div>
     <div class="mfoot">
@@ -1935,8 +2027,9 @@ function detallesHTML(){
           <option value="">sin clasificar</option>
           ${RUTA.map(r=>`<option value="${r.id}" ${M.apartado===r.id?'selected':''}>${r.id} · ${esc(r.nom)}</option>`).join('')}
         </select></div>
-      <div class="fld" style="max-width:120px"><label><span class="op">opc.</span> Página</label>
-        <input class="in" value="${esc(M.pagina||'')}" oninput="M.pagina=this.value;actualizarPrevias()"></div>
+      <div class="fld"><label><span class="op">opc.</span> Página
+          <span class="hintl">texto libre: 118 · 120–121 · S452 · párr. 70</span></label>
+        <input class="in" value="${esc(M.pagina||'')}" placeholder="120–121" oninput="M.pagina=this.value;actualizarPrevias()"></div>
     </div>
     <div class="fld"><label><span class="op">opc.</span> También sirve en
         <span class="hintl">aparece ahí, pero solo suma palabras en el apartado de arriba</span></label>
@@ -1992,10 +2085,18 @@ function actualizarContador(){
 function setTipo(t){ M.fuente.tipo=t; delete M.auto.tipo; drawModal(); }
 
 function guardarFicha(otra){
+  /* si no le pusiste clave BibTeX, se pone sola (apellidoaño) y se evita repetirla */
+  if(M.clase!=='redaccion' && !((M.fuente.bibkey||'').trim())){
+    const base=bibkeyDe(M.fuente);
+    if(base){ let k=base, i=0; const suf='bcdefghij';
+      while(bibkeyRepetida(k, fuenteKey({fuente:M.fuente})) && i<suf.length) k=base+suf[i++];
+      M.fuente.bibkey=k; }
+  }
   const f={id:M.id||uid(), fuente:Object.assign({},M.fuente), extracto:M.extracto.trim(),
     apartado:M.apartado||'', secundarios:(M.secundarios||[]).slice(), pagina:M.pagina||'',
     confiabilidad:M.confiabilidad||'', paraQue:M.paraQue||'', tags:(M.tags||[]).slice(),
     archivo:M.archivo||'', clase:M.clase||'extracto',
+    verificada: M.clase==='redaccion'? false : !!M.verificada,
     fuentes:(M.clase==='redaccion'?(M.fuentes||[]):[]).map(y=>JSON.parse(JSON.stringify(y))), creada:M.modo==='edit'?undefined:new Date().toISOString()};
   if(f.creada===undefined) delete f.creada;
   if(M.modo==='edit'){ const i=S.fichas.findIndex(x=>x.id===M.id); S.fichas[i]=Object.assign(S.fichas[i],f); propagarFormatos(S.fichas[i]); }
@@ -2080,13 +2181,18 @@ function parseRef(t){
 function parseBibtex(t){
   const tipo=(t.match(/^@(\w+)/)||[])[1]||'';
   const g=k=>{ const r=new RegExp(k+'\\s*=\\s*[{"]([^}"]*)[}"]','i'); const m=t.match(r); return m?m[1].replace(/[{}]/g,'').trim():''; };
-  const map={article:'articulo',book:'libro',phdthesis:'tesis',mastersthesis:'tesis',misc:'generica',online:'sitio',inproceedings:'articulo'};
+  const map={article:'articulo',book:'libro',phdthesis:'tesis',mastersthesis:'tesis',misc:'generica',online:'sitio',inproceedings:'articulo',incollection:'capitulo',inbook:'capitulo'};
   const f=M.fuente; const auts=g('author');
   f.tipo = map[tipo.toLowerCase()]||'generica';
   const set=(k,v)=>{ if(v){ f[k]=v; M.auto[k]=true; } };
+  /* la clave del propio BibTeX es la que vas a usar en el .tex */
+  const clave=(t.match(/^@\w+\s*\{\s*([^,\s]+)\s*,/)||[])[1]||'';
+  set('bibkey', clave);
   set('autor', auts.split(/\s+and\s+/).map(a=>a.trim()).join('; '));
   set('titulo', g('title')); set('anio', g('year'));
-  set('revista', g('journal')||g('booktitle')); set('volumen', g('volume'));
+  if(f.tipo==='capitulo'){ set('libro', g('booktitle'));
+    set('editor', g('editor').split(/\s+and\s+/).map(a=>a.trim()).join('; ')); }
+  set('revista', g('journal')||(f.tipo==='capitulo'?'':g('booktitle'))); set('volumen', g('volume'));
   set('numero', g('number')); set('paginas', g('pages').replace(/--/g,'–'));
   set('editorial', g('publisher')); set('ciudad', g('address'));
   set('universidad', g('school')); set('liga', g('url')||g('doi'));
@@ -2346,7 +2452,9 @@ function viewFuentes(){
     </tr>
     ${gs.map(g=>{const fal=faltan(g.s);return `<tr>
       <td class="num"><span class="nfu" style="cursor:default">${g.n}</span></td>
-      <td>${esc(g.s.autor||'—')}${g.conf?`<div class="hint">${esc(g.conf)}</div>`:''}</td>
+      <td>${esc(g.s.autor||'—')}
+        ${g.s.bibkey?`<div class="bk2">${esc(g.s.bibkey)}</div>`:'<div class="hint" style="color:var(--warn)">sin clave BibTeX</div>'}
+        ${g.conf?`<div class="hint">${esc(g.conf)}</div>`:''}</td>
       <td><div style="font-weight:400">${chicago(g.s)}</div>
         ${fal.length?`<div class="hint" style="color:var(--warn)">falta ${fal.join(', ')}</div>`:''}
         ${g.tags.size?`<div class="tags">${[...g.tags].map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div>`:''}</td>
@@ -2364,6 +2472,7 @@ function viewFichas(){
   if(fq){ const q=fq.toLowerCase(); fs=fs.filter(f=>JSON.stringify(f).toLowerCase().includes(q)); }
   if(fTag) fs=fs.filter(f=>(f.tags||[]).includes(fTag));
   if(fModo==='fichas' && srcFiltro) fs=fs.filter(f=>fuenteKey(f)===srcFiltro);
+  if(verFiltro) fs=fs.filter(f=>f.clase==='redaccion'?false:(verFiltro==='si'?!!f.verificada:!f.verificada));
   const val=f=>{ const s=f.fuente||{};
     if(fOrden==='autor') return (s.autor||'zzz').toLowerCase();
     if(fOrden==='titulo') return (s.titulo||'zzz').toLowerCase();
@@ -2383,7 +2492,9 @@ function viewFichas(){
    <div class="fh">
      <button class="pill ${fModo==='fichas'?'on':''}" onclick="fModo='fichas';render()">por ficha</button>
      <button class="pill ${fModo==='fuentes'?'on':''}" onclick="fModo='fuentes';srcFiltro='';render()">por fuente</button>
-     <input class="search" placeholder="buscar en todo…" value="${esc(fq)}" oninput="fq=this.value;render()">
+     ${fModo==='fichas'?`<button class="pill ${verFiltro==='no'?'on':''}" onclick="verFiltro=(verFiltro==='no'?'':'no');render()">⚠ sin verificar${(()=>{const n=S.fichas.filter(f=>f.clase!=='redaccion'&&!f.verificada).length;return n?' · '+n:'';})()}</button>
+     <button class="pill ${verFiltro==='si'?'on':''}" onclick="verFiltro=(verFiltro==='si'?'':'si');render()">✓ verificadas</button>`:''}
+     <input class="search" placeholder="buscar en todo… (también por clave BibTeX)" value="${esc(fq)}" oninput="fq=this.value;render()">
      ${tags.length?`<span class="hint">etiquetas:</span>
        <button class="tg ${fTag===''?'on':'off'}" onclick="fTag='';render()">todas</button>
        ${tags.map(t=>`<button class="tg ${fTag===t?'on':''}" onclick="fTag='${esc(t)}';render()">${esc(t)}</button>`).join('')}`
@@ -2393,6 +2504,7 @@ function viewFichas(){
      <button onclick="srcFiltro='';render()">quitar el filtro</button></div>`:''}
    ${fModo==='fuentes'? viewFuentes() : (fs.length?`<table class="tbl">
      <tr>
+       <th title="verificada por ti"></th>
        <th onclick="ordenar('apartado')">Apart. ${fl('apartado')}</th>
        <th onclick="ordenar('autor')">Autor ${fl('autor')}</th>
        <th onclick="ordenar('titulo')">Título ${fl('titulo')}</th>
@@ -2402,8 +2514,9 @@ function viewFichas(){
        <th></th>
      </tr>
      ${fs.map(f=>{const s=f.fuente||{};return `<tr>
+       <td class="num">${f.clase==='redaccion'?'':(f.verificada?'<span class="vok">✓</span>':`<span class="vno" title="marcar como verificada" onclick="marcarVerif('${f.id}',true)">⚠</span>`)}</td>
        <td class="ap">${f.apartado||'—'}${(f.secundarios||[]).length?'<div class="hint">+'+f.secundarios.length+'</div>':''}</td>
-       <td>${esc(s.autor||'—')}</td>
+       <td>${esc(s.autor||'—')}${s.bibkey?`<div class="bk2">${esc(s.bibkey)}</div>`:''}</td>
        <td>${esc(s.titulo||'—')}${(f.tags||[]).length?`<div class="tags">${f.tags.map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div>`:''}</td>
        <td class="num">${esc(s.anio||'')}</td>
        <td class="ex">${esc((f.extracto||'').slice(0,150))}${(f.extracto||'').length>150?'…':''}</td>
