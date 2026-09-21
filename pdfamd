@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDF → Markdown</title>
+<meta name="theme-color" content="#F3EBE0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PDF → MD">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{
+  --crema:#F3EBE0; --crema-2:#FAF5EE; --blanco:#FFFFFF;
+  --malva:#8E6E85; --malva-claro:#B79BAE; --malva-suave:#EFE3EC;
+  --terra:#C06B4A; --terra-suave:#F6E4DA;
+  --oliva:#7D8B6A; --oliva-suave:#E7ECDF;
+  --tinta:#3A2F35; --tinta-2:#6B5C63; --linea:#E3D7CD;
+  --radio:14px; --sombra:0 1px 2px rgba(58,47,53,.06), 0 8px 24px rgba(58,47,53,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Alexandria',system-ui,-apple-system,sans-serif;
+  background:var(--blanco); color:var(--tinta);
+  font-size:15px; line-height:1.55; font-weight:300;
+  -webkit-text-size-adjust:100%;
+  padding:0 16px calc(32px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:860px;margin:0 auto}
+header{padding:28px 0 18px;display:flex;align-items:center;gap:14px}
+header img{width:46px;height:46px;border-radius:11px;flex:0 0 auto}
+h1{font-size:1.32rem;font-weight:600;margin:0;letter-spacing:-.01em}
+header p{margin:2px 0 0;font-size:.82rem;color:var(--tinta-2)}
+
+.card{background:var(--crema-2);border:1px solid var(--linea);border-radius:var(--radio);box-shadow:var(--sombra)}
+
+/* ---- zona de carga ---- */
+#drop{
+  display:block;width:100%;border:2px dashed var(--malva-claro);background:var(--crema);
+  border-radius:var(--radio);padding:34px 20px;text-align:center;cursor:pointer;
+  transition:background .15s,border-color .15s;
+}
+#drop:hover,#drop.hot{background:var(--malva-suave);border-color:var(--malva)}
+#drop .big{font-size:1rem;font-weight:500;color:var(--malva);display:block}
+#drop .small{font-size:.8rem;color:var(--tinta-2);display:block;margin-top:5px}
+#file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* ---- lista de archivos ---- */
+#lista{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+#lista li{
+  display:flex;align-items:center;gap:10px;background:var(--crema-2);
+  border:1px solid var(--linea);border-left:3px solid var(--malva);
+  border-radius:10px;padding:9px 12px;font-size:.85rem;
+}
+#lista .nom{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lista .est{font-size:.74rem;color:var(--tinta-2);white-space:nowrap}
+#lista .est.ok{color:var(--oliva)}
+#lista .est.err{color:var(--terra)}
+#lista .quitar{border:0;background:none;color:var(--tinta-2);font-size:1.1rem;line-height:1;cursor:pointer;padding:0 2px}
+
+/* ---- opciones ---- */
+details{margin-top:16px;border:1px solid var(--linea);border-radius:var(--radio);background:var(--crema-2)}
+summary{cursor:pointer;padding:12px 14px;font-size:.85rem;font-weight:500;color:var(--malva);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▸ ';color:var(--terra)}
+details[open] summary::before{content:'▾ '}
+.ops{padding:2px 14px 14px;display:grid;gap:9px}
+.ops label{display:flex;align-items:center;gap:9px;font-size:.85rem;cursor:pointer}
+.ops input[type=checkbox]{width:17px;height:17px;accent-color:var(--malva);flex:0 0 auto;margin:0}
+.fila{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:.85rem}
+input[type=text],select{
+  font-family:inherit;font-size:16px;font-weight:300;color:var(--tinta);
+  background:var(--blanco);border:1px solid var(--linea);border-radius:9px;
+  padding:7px 10px;min-height:40px;
+}
+input[type=text]{flex:1;min-width:120px}
+input:focus,select:focus{outline:2px solid var(--malva-claro);outline-offset:1px;border-color:var(--malva)}
+.pista{font-size:.74rem;color:var(--tinta-2);margin:0}
+
+/* ---- botones ---- */
+.btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+button{
+  font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;
+  border-radius:10px;padding:11px 18px;min-height:44px;border:1px solid transparent;
+  transition:filter .15s,background .15s;
+}
+button:disabled{opacity:.45;cursor:default}
+button:not(:disabled):hover{filter:brightness(.96)}
+.p{background:var(--malva);color:#fff}
+.s{background:var(--blanco);color:var(--malva);border-color:var(--malva-claro)}
+.t{background:var(--oliva-suave);color:#4E5A40;border-color:#CBD6BB}
+.g{background:none;color:var(--tinta-2);border-color:var(--linea)}
+
+/* ---- progreso ---- */
+#prog{display:none;margin-top:16px}
+#prog.on{display:block}
+.barra{height:7px;background:var(--crema);border-radius:99px;overflow:hidden;border:1px solid var(--linea)}
+.barra i{display:block;height:100%;width:0;background:var(--terra);transition:width .2s}
+#progTxt{font-size:.78rem;color:var(--tinta-2);margin:6px 0 0}
+
+/* ---- resultado ---- */
+#res{display:none;margin-top:26px}
+#res.on{display:block}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.tabs button{
+  background:var(--crema);border:1px solid var(--linea);color:var(--tinta-2);
+  padding:8px 13px;font-size:.8rem;border-radius:9px;white-space:nowrap;min-height:38px;
+}
+.tabs button.act{background:var(--malva-suave);border-color:var(--malva-claro);color:var(--malva);font-weight:500}
+#salida{
+  width:100%;min-height:340px;margin-top:10px;resize:vertical;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;line-height:1.6;
+  color:var(--tinta);background:var(--crema-2);border:1px solid var(--linea);
+  border-radius:var(--radio);padding:16px;
+}
+#meta{font-size:.76rem;color:var(--tinta-2);margin:8px 0 0}
+footer{margin:34px 0 0;padding-top:16px;border-top:1px solid var(--linea);font-size:.75rem;color:var(--tinta-2)}
+.aviso{
+  margin-top:14px;padding:10px 13px;border-left:3px solid var(--terra);
+  background:var(--terra-suave);border-radius:0 9px 9px 0;font-size:.8rem;color:#7A4230;display:none;
+}
+.aviso.on{display:block}
+@media (max-width:520px){
+  header{padding:20px 0 14px}
+  h1{font-size:1.15rem}
+  .btns button{flex:1 1 calc(50% - 5px)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img src="data:image/png;base64,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" alt="">
+  <div>
+    <h1>PDF → Markdown</h1>
+    <p>Todo se procesa en tu navegador. Ningún archivo se sube a internet.</p>
+  </div>
+</header>
+
+<label id="drop" for="file">
+  <span class="big">Arrastra tus PDFs aquí</span>
+  <span class="small">o toca para elegirlos · puedes soltar varios a la vez</span>
+</label>
+<input type="file" id="file" accept="application/pdf,.pdf" multiple>
+
+<ul id="lista"></ul>
+
+<details id="opsBox">
+  <summary>Opciones</summary>
+  <div class="ops">
+    <div class="fila">
+      <span>Páginas:</span>
+      <input type="text" id="rango" placeholder="todas · ej. 1-5, 8, 12-">
+    </div>
+    <label><input type="checkbox" id="oTitulos" checked> Detectar títulos por tamaño de letra</label>
+    <label><input type="checkbox" id="oTablas" checked> Reconstruir tablas</label>
+    <label><input type="checkbox" id="oListas" checked> Detectar listas y viñetas</label>
+    <label><input type="checkbox" id="oLimpiar" checked> Quitar encabezados y pies repetidos</label>
+    <label><input type="checkbox" id="oGuion" checked> Unir palabras cortadas con guion</label>
+    <label><input type="checkbox" id="oNegritas"> Conservar negritas y cursivas</label>
+    <label><input type="checkbox" id="oUnir"> Unir todos los PDFs en un solo archivo</label>
+    <div class="fila">
+      <span>Marcar páginas:</span>
+      <select id="oPagina">
+        <option value="no">no marcar</option>
+        <option value="com">comentario oculto</option>
+        <option value="sep">separador ---</option>
+        <option value="tit">título "Página N"</option>
+      </select>
+    </div>
+    <p class="pista">Si un PDF es un escaneo o una foto, no tiene texto que extraer y saldrá vacío: eso necesita OCR.</p>
+  </div>
+</details>
+
+<div class="btns">
+  <button class="p" id="btnGo" disabled>Convertir</button>
+  <button class="g" id="btnClear" disabled>Limpiar todo</button>
+</div>
+
+<div id="prog"><div class="barra"><i></i></div><p id="progTxt"></p></div>
+<div class="aviso" id="aviso"></div>
+
+<div id="res">
+  <div class="tabs" id="tabs"></div>
+  <textarea id="salida" spellcheck="false"></textarea>
+  <p id="meta"></p>
+  <div class="btns">
+    <button class="s" id="btnCopy">Copiar</button>
+    <button class="t" id="btnDl">Descargar .md</button>
+    <button class="g" id="btnDlAll">Descargar todos</button>
+  </div>
+</div>
+
+<footer>PDF → Markdown · malva terrosa · funciona sin conexión una vez cargada</footer>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ============ estado ============ */
+var archivos = [];      // {file, nombre, estado, md}
+var resultados = [];    // {nombre, md}
+var activo = 0;
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* ============ opciones (se recuerdan) ============ */
+var OPS = ['oTitulos','oTablas','oListas','oLimpiar','oGuion','oNegritas','oUnir'];
+function cargarOps(){
+  try{
+    var g = JSON.parse(localStorage.getItem('pdfmd_ops') || '{}');
+    OPS.forEach(function(k){ if(k in g) $(k).checked = !!g[k]; });
+    if(g.oPagina) $('oPagina').value = g.oPagina;
+  }catch(e){}
+}
+function guardarOps(){
+  try{
+    var g = {}; OPS.forEach(function(k){ g[k] = $(k).checked; });
+    g.oPagina = $('oPagina').value;
+    localStorage.setItem('pdfmd_ops', JSON.stringify(g));
+  }catch(e){}
+}
+cargarOps();
+OPS.forEach(function(k){ $(k).addEventListener('change', guardarOps); });
+$('oPagina').addEventListener('change', guardarOps);
+
+/* ============ carga de archivos ============ */
+var drop = $('drop');
+['dragenter','dragover'].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('hot'); });
+});
+['dragleave','drop'].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('hot'); });
+});
+drop.addEventListener('drop', function(e){ agregar(e.dataTransfer.files); });
+$('file').addEventListener('change', function(e){ agregar(e.target.files); e.target.value = ''; });
+
+function agregar(fl){
+  for(var i=0;i<fl.length;i++){
+    var f = fl[i];
+    if(!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') continue;
+    archivos.push({ file:f, nombre:f.name.replace(/\.pdf$/i,''), estado:'listo', md:null });
+  }
+  pintarLista();
+}
+function pintarLista(){
+  var ul = $('lista'); ul.innerHTML = '';
+  archivos.forEach(function(a, i){
+    var li = document.createElement('li');
+    var kb = (a.file.size/1024/1024).toFixed(1) + ' MB';
+    li.innerHTML = '<span class="nom">' + esc(a.file.name) + '</span>' +
+      '<span class="est ' + (a.estado==='listo'?'':(a.estado.indexOf('Error')===0?'err':'ok')) + '">' +
+      esc(a.estado==='listo' ? kb : a.estado) + '</span>';
+    var x = document.createElement('button');
+    x.className = 'quitar'; x.type = 'button'; x.textContent = '×';
+    x.setAttribute('aria-label','Quitar');
+    x.onclick = function(){ archivos.splice(i,1); pintarLista(); };
+    li.appendChild(x);
+    ul.appendChild(li);
+  });
+  $('btnGo').disabled = archivos.length === 0;
+  $('btnClear').disabled = archivos.length === 0;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+$('btnClear').onclick = function(){
+  archivos = []; resultados = [];
+  pintarLista(); $('res').classList.remove('on'); $('aviso').classList.remove('on');
+};
+
+/* ============ utilidades de texto ============ */
+function tam(it){
+  var t = it.transform;
+  return Math.hypot(t[2], t[3]) || Math.abs(t[3]) || it.height || 10;
+}
+function esNegrita(f){ return /bold|black|heavy|semib|demib/i.test(f||''); }
+function esCursiva(f){ return /italic|oblique/i.test(f||''); }
+function normNum(s){ return s.replace(/\d+/g,'#').replace(/\s+/g,' ').trim().toLowerCase(); }
+
+function parseRango(txt, total){
+  txt = (txt||'').trim();
+  if(!txt) { var t=[]; for(var i=1;i<=total;i++) t.push(i); return t; }
+  var set = {};
+  txt.split(',').forEach(function(p){
+    p = p.trim(); if(!p) return;
+    var m = p.match(/^(\d+)\s*-\s*(\d*)$/);
+    if(m){
+      var a = parseInt(m[1],10), b = m[2] ? parseInt(m[2],10) : total;
+      for(var i=a;i<=Math.min(b,total);i++) if(i>=1) set[i]=1;
+    } else if(/^\d+$/.test(p)){
+      var n = parseInt(p,10); if(n>=1 && n<=total) set[n]=1;
+    }
+  });
+  return Object.keys(set).map(Number).sort(function(a,b){return a-b;});
+}
+
+/* ============ construcción de líneas ============ */
+function construirLineas(items){
+  var its = [];
+  for(var i=0;i<items.length;i++){
+    var it = items[i];
+    if(!it.str || !it.str.trim()) continue;
+    its.push({ x:it.transform[4], y:it.transform[5], w:it.width||0,
+               s:tam(it), f:it.fontName||'', t:it.str });
+  }
+  its.sort(function(a,b){ return (b.y - a.y) || (a.x - b.x); });
+  var lineas = [];
+  for(var j=0;j<its.length;j++){
+    var o = its[j], L = lineas[lineas.length-1];
+    if(L && Math.abs(L.y - o.y) <= Math.max(1.5, o.s * 0.45)){
+      L.items.push(o);
+      L.y = (L.y * (L.items.length-1) + o.y) / L.items.length;
+    } else {
+      lineas.push({ y:o.y, items:[o] });
+    }
+  }
+  lineas.forEach(function(L){ L.items.sort(function(a,b){ return a.x - b.x; }); });
+  return lineas;
+}
+
+function celdas(L, brecha, negritas){
+  var out = [], cur = null;
+  L.items.forEach(function(o){
+    if(cur && (o.x - cur.x1) < brecha){
+      var g = o.x - cur.x1;
+      cur.partes.push(o);
+      cur.txt += ((g > o.s*0.2 && !/\s$/.test(cur.txt) && !/^\s/.test(o.t)) ? ' ' : '') + o.t;
+      cur.x1 = o.x + o.w;
+    } else {
+      cur = { x0:o.x, x1:o.x + o.w, txt:o.t, s:o.s, f:o.f, partes:[o] };
+      out.push(cur);
+    }
+  });
+  out.forEach(function(c){
+    c.txt = c.txt.replace(/\s+/g,' ').trim();
+    if(negritas){
+      var todoN = c.partes.every(function(p){ return esNegrita(p.f); });
+      var todoC = c.partes.every(function(p){ return esCursiva(p.f); });
+      if(c.txt){
+        if(todoN && todoC) c.txt = '***' + c.txt + '***';
+        else if(todoN) c.txt = '**' + c.txt + '**';
+        else if(todoC) c.txt = '*' + c.txt + '*';
+      }
+    }
+  });
+  return out.filter(function(c){ return c.txt !== ''; });
+}
+
+/* ============ tablas ============ */
+function agruparTablas(filas, base){
+  var grupos = [], cur = null;
+  filas.forEach(function(f, i){
+    if(f.celdas.length >= 2){
+      if(cur && (i - cur.fin) === 1) { cur.idx.push(i); cur.fin = i; }
+      else { cur = { idx:[i], fin:i }; grupos.push(cur); }
+    } else { cur = null; }
+  });
+  return grupos.filter(function(g){
+    if(g.idx.length < 2) return false;
+    var cuenta = {};
+    g.idx.forEach(function(i){ var n = filas[i].celdas.length; cuenta[n] = (cuenta[n]||0)+1; });
+    var mejor = 0, moda = 0;
+    Object.keys(cuenta).forEach(function(n){ if(cuenta[n] > mejor){ mejor = cuenta[n]; moda = +n; } });
+    g.cols = moda;
+    return moda >= 2 && (mejor / g.idx.length) >= 0.6;
+  });
+}
+function tablaMD(filas, g, base){
+  var xs = [];
+  g.idx.forEach(function(i){ filas[i].celdas.forEach(function(c){ xs.push(c.x0); }); });
+  xs.sort(function(a,b){ return a-b; });
+  var tol = Math.max(base * 2.2, 10), cols = [], acum = [];
+  xs.forEach(function(x){
+    if(acum.length && (x - acum[acum.length-1]) > tol){ cols.push(prom(acum)); acum = []; }
+    acum.push(x);
+  });
+  if(acum.length) cols.push(prom(acum));
+  if(cols.length < 2) return null;
+
+  var mat = g.idx.map(function(i){
+    var fila = new Array(cols.length).fill('');
+    filas[i].celdas.forEach(function(c){
+      var k = 0, d = Infinity;
+      cols.forEach(function(cx, ci){ var dd = Math.abs(cx - c.x0); if(dd < d){ d = dd; k = ci; } });
+      fila[k] = (fila[k] ? fila[k] + ' ' : '') + c.txt.replace(/\|/g,'\\|');
+    });
+    return fila;
+  });
+  var md = '| ' + mat[0].join(' | ') + ' |\n';
+  md += '| ' + cols.map(function(){ return '---'; }).join(' | ') + ' |\n';
+  for(var r=1;r<mat.length;r++) md += '| ' + mat[r].join(' | ') + ' |\n';
+  return md;
+}
+function prom(a){ var s=0; a.forEach(function(v){ s+=v; }); return s/a.length; }
+
+/* ============ conversión ============ */
+function convertir(pdf, paginas, o, onProg){
+  var partes = [];
+  var cadena = Promise.resolve();
+  var datos = [];
+
+  paginas.forEach(function(np){
+    cadena = cadena.then(function(){
+      return pdf.getPage(np).then(function(page){
+        return page.getTextContent().then(function(tc){
+          datos.push({ np:np, lineas:construirLineas(tc.items) });
+          onProg(datos.length);
+        });
+      });
+    });
+  });
+
+  return cadena.then(function(){
+    /* tamaño de letra base (moda ponderada) */
+    var pesos = {};
+    datos.forEach(function(p){ p.lineas.forEach(function(L){ L.items.forEach(function(o){
+      var k = Math.round(o.s * 2) / 2;
+      pesos[k] = (pesos[k] || 0) + o.t.length;
+    }); }); });
+    var base = 10, mejor = 0;
+    Object.keys(pesos).forEach(function(k){ if(pesos[k] > mejor){ mejor = pesos[k]; base = +k; } });
+    if(!base || base <= 0) base = 10;
+
+    /* encabezados y pies repetidos */
+    var repes = {};
+    if(o.limpiar && datos.length >= 3){
+      var conteo = {};
+      datos.forEach(function(p){
+        var L = p.lineas;
+        [L[0], L[1], L[L.length-1], L[L.length-2]].forEach(function(l){
+          if(!l) return;
+          var t = normNum(l.items.map(function(i){ return i.t; }).join(' '));
+          if(t.length > 1 && t.length < 90) conteo[t] = (conteo[t] || 0) + 1;
+        });
+      });
+      Object.keys(conteo).forEach(function(t){
+        if(conteo[t] >= Math.max(3, Math.ceil(datos.length * 0.6))) repes[t] = 1;
+      });
+    }
+
+    datos.forEach(function(p){
+      var bloque = [];
+
+      if(o.pagina === 'com') bloque.push('<!-- página ' + p.np + ' -->');
+      else if(o.pagina === 'sep') bloque.push('---');
+      else if(o.pagina === 'tit') bloque.push('## Página ' + p.np);
+
+      var filas = p.lineas.map(function(L){
+        return { L:L, y:L.y, celdas: celdas(L, Math.max(base * 1.5, 6), o.negritas) };
+      }).filter(function(f){
+        if(!f.celdas.length) return false;
+        if(o.limpiar){
+          var t = normNum(f.celdas.map(function(c){ return c.txt; }).join(' '));
+          if(repes[t]) return false;
+          if(/^(página|pag\.?|p\.)?\s*#+\s*(de|\/)?\s*#*$/.test(t)) return false;
+        }
+        return true;
+      });
+
+      var enTabla = {};
+      var grupos = o.tablas ? agruparTablas(filas, base) : [];
+      grupos.forEach(function(g){
+        var md = tablaMD(filas, g, base);
+        if(md){ g.md = md; g.idx.forEach(function(i){ enTabla[i] = g; }); }
+        else g.idx = [];
+      });
+
+      /* separación típica entre líneas */
+      var gaps = [];
+      for(var i=1;i<filas.length;i++){
+        var d = filas[i-1].y - filas[i].y;
+        if(d > 0 && d < base * 4) gaps.push(d);
+      }
+      gaps.sort(function(a,b){ return a-b; });
+      var gapTipico = gaps.length ? gaps[Math.floor(gaps.length/2)] : base * 1.2;
+
+      var derecha = 0, izq = Infinity;
+      filas.forEach(function(f){
+        derecha = Math.max(derecha, f.celdas[f.celdas.length-1].x1);
+        izq = Math.min(izq, f.celdas[0].x0);
+      });
+
+      var parr = '';
+      var hechas = {};
+
+      function cerrar(){ if(parr.trim()){ bloque.push(parr.trim()); } parr = ''; }
+
+      for(var k=0;k<filas.length;k++){
+        var g = enTabla[k];
+        if(g){
+          if(!hechas[g.idx[0]]){ cerrar(); bloque.push(g.md.trim()); hechas[g.idx[0]] = 1; }
+          continue;
+        }
+        var f = filas[k];
+        var texto = f.celdas.map(function(c){ return c.txt; }).join('  ');
+        var maxS = 0, hayNeg = true;
+        f.celdas.forEach(function(c){
+          c.partes.forEach(function(pp){
+            if(pp.s > maxS) maxS = pp.s;
+            if(!esNegrita(pp.f)) hayNeg = false;
+          });
+        });
+        var r = maxS / base;
+        var limpio = texto.replace(/^[*_]+|[*_]+$/g,'').trim();
+
+        /* título */
+        var nivel = 0;
+        if(o.titulos){
+          if(r >= 1.55) nivel = 1;
+          else if(r >= 1.22) nivel = 2;
+          else if(r >= 1.12) nivel = 3;
+          else if(hayNeg && limpio.length <= 80 && limpio.length > 1 && !/[.,;]$/.test(limpio)) nivel = 4;
+        }
+        if(nivel){
+          cerrar();
+          bloque.push('#'.repeat(Math.min(nivel,6)) + ' ' + limpio);
+          continue;
+        }
+
+        /* listas */
+        if(o.listas){
+          var mb = limpio.match(/^[•·▪◦‣∙●○–—-]\s+(.*)$/);
+          var mn = limpio.match(/^(\d{1,2})[.)]\s+(.*)$/);
+          if(mb){ cerrar(); bloque.push('- ' + mb[1]); continue; }
+          if(mn){ cerrar(); bloque.push(mn[1] + '. ' + mn[2]); continue; }
+        }
+
+        /* párrafos */
+        var salto = (k > 0) ? (filas[k-1].y - f.y) : 0;
+        var sangria = f.celdas[0].x0 - izq > base * 1.2;
+        var previaCorta = false;
+        if(k > 0 && !enTabla[k-1]){
+          var pf = filas[k-1];
+          var pt = pf.celdas.map(function(c){ return c.txt; }).join(' ');
+          previaCorta = (pf.celdas[pf.celdas.length-1].x1 < derecha - base * 4) && /[.!?:»"”)]$/.test(pt.trim());
+        }
+        if(parr && (salto > gapTipico * 1.55 || sangria || previaCorta)) cerrar();
+
+        if(parr){
+          if(o.guion && /[-‐‑–]$/.test(parr) && /^[a-záéíóúñü]/.test(texto)){
+            parr = parr.replace(/[-‐‑–]$/, '') + texto;
+          } else {
+            parr += ' ' + texto;
+          }
+        } else {
+          parr = texto;
+        }
+      }
+      cerrar();
+
+      var t = bloque.join('\n\n').trim();
+      if(t) partes.push(t);
+    });
+
+    return apretarListas(partes.join('\n\n').replace(/\n{3,}/g,'\n\n').trim());
+  });
+}
+
+/* listas seguidas sin línea en blanco entre ellas */
+function apretarListas(md){
+  var esItem = function(s){ return /^\s*(?:[-*+]|\d{1,2}\.)\s/.test(s || ''); };
+  var ls = md.split('\n'), out = [];
+  for(var i=0;i<ls.length;i++){
+    if(ls[i] === '' && out.length && esItem(out[out.length-1]) && esItem(ls[i+1])) continue;
+    out.push(ls[i]);
+  }
+  return out.join('\n');
+}
+
+/* ============ correr ============ */
+$('btnGo').onclick = function(){
+  if(!archivos.length) return;
+  var o = {
+    titulos:$('oTitulos').checked, tablas:$('oTablas').checked, listas:$('oListas').checked,
+    limpiar:$('oLimpiar').checked, guion:$('oGuion').checked, negritas:$('oNegritas').checked,
+    unir:$('oUnir').checked, pagina:$('oPagina').value, rango:$('rango').value
+  };
+  resultados = [];
+  $('aviso').classList.remove('on');
+  $('res').classList.remove('on');
+  $('prog').classList.add('on');
+  $('btnGo').disabled = true;
+
+  var vacios = [];
+  var cadena = Promise.resolve();
+
+  archivos.forEach(function(a, i){
+    cadena = cadena.then(function(){
+      a.estado = 'convirtiendo…'; pintarLista();
+      $('progTxt').textContent = 'Archivo ' + (i+1) + ' de ' + archivos.length + ' · ' + a.file.name;
+      return a.file.arrayBuffer()
+        .then(function(buf){ return pdfjsLib.getDocument({ data:buf }).promise; })
+        .then(function(pdf){
+          var pgs = parseRango(o.rango, pdf.numPages);
+          if(!pgs.length) pgs = parseRango('', pdf.numPages);
+          return convertir(pdf, pgs, o, function(hechas){
+            var pct = Math.round(((i + hechas/pgs.length) / archivos.length) * 100);
+            document.querySelector('.barra i').style.width = pct + '%';
+            $('progTxt').textContent = 'Archivo ' + (i+1) + ' de ' + archivos.length +
+              ' · página ' + hechas + ' de ' + pgs.length;
+          }).then(function(md){
+            a.md = md;
+            a.estado = md ? 'listo ✓' : 'sin texto';
+            if(!md) vacios.push(a.file.name);
+            resultados.push({ nombre:a.nombre, md:md || '' });
+            pintarLista();
+          });
+        })
+        .catch(function(e){
+          a.estado = 'Error: ' + (e && e.message ? e.message.slice(0,40) : 'no se pudo leer');
+          pintarLista();
+        });
+    });
+  });
+
+  cadena.then(function(){
+    document.querySelector('.barra i').style.width = '100%';
+    $('prog').classList.remove('on');
+    document.querySelector('.barra i').style.width = '0%';
+    $('btnGo').disabled = false;
+
+    if(o.unir && resultados.length > 1){
+      var todo = resultados.map(function(r){ return '# ' + r.nombre + '\n\n' + r.md; }).join('\n\n---\n\n');
+      resultados = [{ nombre:'todos-los-pdfs', md:todo }];
+    }
+    if(vacios.length){
+      $('aviso').textContent = 'Sin texto extraíble: ' + vacios.join(', ') +
+        '. Son escaneos o imágenes — para eso hace falta OCR.';
+      $('aviso').classList.add('on');
+    }
+    if(resultados.length){ activo = 0; pintarRes(); $('res').classList.add('on'); }
+  });
+};
+
+function pintarRes(){
+  var tabs = $('tabs'); tabs.innerHTML = '';
+  resultados.forEach(function(r, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = r.nombre.length > 26 ? r.nombre.slice(0,24) + '…' : r.nombre;
+    if(i === activo) b.className = 'act';
+    b.onclick = function(){ activo = i; pintarRes(); };
+    tabs.appendChild(b);
+  });
+  tabs.style.display = resultados.length > 1 ? 'flex' : 'none';
+  var md = resultados[activo].md;
+  $('salida').value = md;
+  var pal = md.trim() ? md.trim().split(/\s+/).length : 0;
+  $('meta').textContent = pal.toLocaleString('es-MX') + ' palabras · ' +
+    md.length.toLocaleString('es-MX') + ' caracteres';
+}
+
+$('btnCopy').onclick = function(){
+  var t = $('salida');
+  var fin = function(){ $('btnCopy').textContent = 'Copiado ✓';
+    setTimeout(function(){ $('btnCopy').textContent = 'Copiar'; }, 1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t.value).then(fin, function(){ t.select(); document.execCommand('copy'); fin(); });
+  } else { t.select(); document.execCommand('copy'); fin(); }
+};
+function bajar(nombre, texto){
+  var b = new Blob([texto], { type:'text/markdown;charset=utf-8' });
+  var u = URL.createObjectURL(b), a = document.createElement('a');
+  a.href = u; a.download = nombre + '.md';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(u); }, 1500);
+}
+$('btnDl').onclick = function(){ bajar(resultados[activo].nombre, resultados[activo].md); };
+$('btnDlAll').onclick = function(){
+  resultados.forEach(function(r, i){ setTimeout(function(){ bajar(r.nombre, r.md); }, i * 350); });
+};
+</script>
+</body>
+</html>
