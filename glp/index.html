@@ -358,14 +358,16 @@ nav button[aria-current=page]{color:var(--pink);font-weight:600}
 <script>
 /* ================= Estado ================= */
 const KEY='glp.v1';
+const DEFMODEL='gemini-3.8-flash';
 const DOSES=[2.5,5,7.5,10,12.5,15];
 const ALLSITES=['Abdomen izq.','Abdomen der.','Muslo izq.','Muslo der.','Brazo izq.','Brazo der.'];
 const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function def(){return{v:1,profile:{name:'Valen',goal:null,injDow:2,conDow:3,conTime:'10:00',dose:2.5,sites:ALLSITES.slice(0,4),symptoms:['Náusea','Hambre','Cansancio','Dolor de cabeza','Estreñimiento','Diarrea','Reflujo']},
-  apiKey:'',model:'gemini-2.5-flash',doses:[],consults:[],days:{},questions:[],refs:{},lastBackup:null,created:new Date().toISOString()}}
+  apiKey:'',model:DEFMODEL,doses:[],consults:[],days:{},questions:[],refs:{},lastBackup:null,created:new Date().toISOString()}}
 let S=load();
+if(!S.model||S.model==='gemini-2.5-flash')S.model=DEFMODEL;
 function load(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);const d=def();return{...d,...o,profile:{...d.profile,...(o.profile||{})}}}}catch(e){}return def()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('No se pudo guardar en este teléfono')}}
 
@@ -614,10 +616,14 @@ historial: arreglo de la sección "Cambio en la composición corporal" con objet
 async function toJpeg(file){const url=URL.createObjectURL(file);try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
   const s=Math.min(1,1800/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
   c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88).split(',')[1]}finally{URL.revokeObjectURL(url)}}
-async function readTicket(b64){
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model||'gemini-2.5-flash')}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
+async function readTicket(b64,retry=true){
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model||DEFMODEL)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
     body:JSON.stringify({contents:[{parts:[{text:PROMPT},{inline_data:{mime_type:'image/jpeg',data:b64}}]}],generationConfig:{responseMimeType:'application/json',temperature:0}})});
-  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error?.message||('Error '+r.status));
+  const j=await r.json().catch(()=>({}));if(!r.ok){const msg=j.error?.message||('Error '+r.status);
+    // si Google retira el modelo, usa el que recomienda en su mensaje y reintenta una vez
+    const sug=(msg.match(/models\/(gemini-[\w.\-]+)/g)||[]).map(x=>x.slice(7)).find(m=>m!==S.model);
+    if(retry&&sug&&/no longer|deprecat|not found|not available/i.test(msg)){S.model=sug;save();return readTicket(b64,false)}
+    throw new Error(msg)}
   const txt=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');const m=txt.match(/\{[\s\S]*\}/);if(!m)throw new Error('No se entendió la respuesta');return JSON.parse(m[0])}
 $('foto').onchange=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;
   if(!S.apiKey){$('ocrstatus').innerHTML='<div class="er">Falta tu clave de Gemini. Pégala en Ajustes (engrane en Hoy).</div>';return}
@@ -723,7 +729,7 @@ function renderAjustes(){const p=S.profile;$('a-name').value=p.name||'';$('a-goa
   $('a-last').textContent=S.lastBackup?'último: '+fd(S.lastBackup.slice(0,10)):'sin respaldo'}
 $('a-save').onclick=()=>{const p=S.profile;p.name=$('a-name').value.trim();p.goal=num($('a-goal').value);p.injDow=+$('a-inj').value;p.conDow=+$('a-con').value;p.conTime=$('a-time').value;p.dose=+$('a-dose').value;
   p.sites=[...document.querySelectorAll('[data-site]')].filter(i=>i.checked).map(i=>i.dataset.site);if(!p.sites.length)p.sites=ALLSITES.slice(0,4);
-  p.symptoms=$('a-sym').value.split(',').map(s=>s.trim()).filter(Boolean);S.apiKey=$('a-key').value.trim();S.model=$('a-model').value.trim()||'gemini-2.5-flash';save();toast('Ajustes guardados');go('hoy')};
+  p.symptoms=$('a-sym').value.split(',').map(s=>s.trim()).filter(Boolean);S.apiKey=$('a-key').value.trim();S.model=$('a-model').value.trim()||DEFMODEL;save();toast('Ajustes guardados');go('hoy')};
 $('a-exp').onclick=()=>{S.lastBackup=new Date().toISOString();save();const b=new Blob([JSON.stringify({...S,apiKey:''},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`mounjaro-respaldo-${TODAY()}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);renderAjustes()};
 $('a-imp').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const o=JSON.parse(await f.text());if(!o.profile||!Array.isArray(o.doses))throw 0;const key=S.apiKey;S={...def(),...o,profile:{...def().profile,...o.profile}};if(!S.apiKey)S.apiKey=key;save();toast('Respaldo cargado');render();renderAjustes()}catch(err){toast('Ese archivo no es un respaldo de esta app')}};
 confirmBtn($('a-wipe'),()=>{const key=S.apiKey;S=def();S.apiKey=key;save();toast('Datos borrados');go('hoy')});
