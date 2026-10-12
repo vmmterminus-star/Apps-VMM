@@ -617,9 +617,12 @@ async function toJpeg(file){const url=URL.createObjectURL(file);try{const img=aw
   const s=Math.min(1,1800/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
   c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.88).split(',')[1]}finally{URL.revokeObjectURL(url)}}
 async function readTicket(b64,retry=true){
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model||DEFMODEL)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
+  readTicket.tries=readTicket.tries||0;const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(S.model||DEFMODEL)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':S.apiKey},
     body:JSON.stringify({contents:[{parts:[{text:PROMPT},{inline_data:{mime_type:'image/jpeg',data:b64}}]}],generationConfig:{responseMimeType:'application/json',temperature:0}})});
-  const j=await r.json().catch(()=>({}));if(!r.ok){const msg=j.error?.message||('Error '+r.status);
+  const j=await r.json().catch(()=>({}));
+  if((r.status===503||r.status===429||/overload|high demand|unavailable/i.test(j.error?.message||''))&&(readTicket.tries=(readTicket.tries||0)+1)<=4){
+    await new Promise(z=>setTimeout(z,2500*readTicket.tries));return readTicket(b64,retry)}
+  readTicket.tries=0;if(!r.ok){const msg=j.error?.message||('Error '+r.status);
     // si Google retira el modelo, usa el que recomienda en su mensaje y reintenta una vez
     const sug=(msg.match(/models\/(gemini-[\w.\-]+)/g)||[]).map(x=>x.slice(7)).find(m=>m!==S.model);
     if(retry&&sug&&/no longer|deprecat|not found|not available/i.test(msg)){S.model=sug;save();return readTicket(b64,false)}
@@ -731,7 +734,14 @@ $('a-save').onclick=()=>{const p=S.profile;p.name=$('a-name').value.trim();p.goa
   p.sites=[...document.querySelectorAll('[data-site]')].filter(i=>i.checked).map(i=>i.dataset.site);if(!p.sites.length)p.sites=ALLSITES.slice(0,4);
   p.symptoms=$('a-sym').value.split(',').map(s=>s.trim()).filter(Boolean);S.apiKey=$('a-key').value.trim();S.model=$('a-model').value.trim()||DEFMODEL;save();toast('Ajustes guardados');go('hoy')};
 $('a-exp').onclick=()=>{S.lastBackup=new Date().toISOString();save();const b=new Blob([JSON.stringify({...S,apiKey:''},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`mounjaro-respaldo-${TODAY()}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);renderAjustes()};
-$('a-imp').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const o=JSON.parse(await f.text());if(!o.profile||!Array.isArray(o.doses))throw 0;const key=S.apiKey;S={...def(),...o,profile:{...def().profile,...o.profile}};if(!S.apiKey)S.apiKey=key;save();toast('Respaldo cargado');render();renderAjustes()}catch(err){toast('Ese archivo no es un respaldo de esta app')}};
+// cargar respaldo: se combina con lo que ya hay (no borra nada; si una fecha se repite, gana el archivo)
+$('a-imp').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const o=JSON.parse(await f.text());if(!Array.isArray(o.consults)&&!Array.isArray(o.doses))throw 0;
+  const byDate=(a,b)=>{const m=new Map((a||[]).map(x=>[x.date,x]));(b||[]).forEach(x=>m.set(x.date,{...(m.get(x.date)||{}),...x}));return[...m.values()]};
+  S.consults=byDate(S.consults,o.consults);S.doses=byDate(S.doses,o.doses);
+  for(const k in (o.days||{}))S.days[k]={...(S.days[k]||{}),...o.days[k],s:{...(S.days[k]?.s||{}),...(o.days[k].s||{})}};
+  const qs=new Set(S.questions.map(q=>q.t));(o.questions||[]).forEach(q=>{if(!qs.has(q.t))S.questions.push(q)});
+  S.refs={...S.refs,...(o.refs||{})};if(o.profile)for(const k in o.profile)if(S.profile[k]==null||S.profile[k]==='')S.profile[k]=o.profile[k];
+  save();toast(`Cargado: ${(o.consults||[]).length} consultas, ${(o.doses||[]).length} dosis`);render();renderAjustes()}catch(err){toast('Ese archivo no es un respaldo de esta app')}};
 confirmBtn($('a-wipe'),()=>{const key=S.apiKey;S=def();S.apiKey=key;save();toast('Datos borrados');go('hoy')});
 
 /* ================= Navegación ================= */
