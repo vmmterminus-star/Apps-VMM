@@ -124,8 +124,9 @@ td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--line)}
 .site text{font-size:8px;fill:var(--ink2);font-family:var(--fb);font-weight:600;pointer-events:none}
 .site.sel text{fill:#fff}
 .slist{display:flex;flex-direction:column;gap:6px;font-size:11.5px}
-.slist div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:5px}
-.slist span:last-child{color:var(--mut)}
+.slist div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:5px}
+.slist span:last-child{color:var(--mut);white-space:nowrap}
+.slist small{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
 .slist .sug span:first-child{font-weight:700;color:var(--lilaink)}
 .mg{font-family:var(--fd);font-size:20px}
 .btn{display:block;width:100%;background:var(--ink);color:#fff;border:0;border-radius:2px;padding:13px;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
@@ -135,7 +136,10 @@ td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--line)}
 .note{font-size:10.5px;color:var(--mut);margin-top:8px}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:12px;align-items:end}
 .form label,.fl{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-weight:600;min-width:0}
-.form input,.form select,.fl input,.fl select{border:1px solid var(--blk);border-radius:2px;padding:8px;background:var(--card);width:100%;min-width:0}
+.form input,.form select,.fl input,.fl select{border:1px solid var(--blk);border-radius:2px;padding:0 10px;background:var(--card);width:100%;min-width:0;height:44px;line-height:44px;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
+.form select,.fl select{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a8a80' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.form input[type=date],.form input[type=time]{display:block;text-align:left}
+.form input::-webkit-date-and-time-value{text-align:left;margin:0}
 .form input.ai{background:#fdf8f3;border-color:var(--lila2)}
 .form .full{grid-column:1/-1}
 details{margin-top:12px}
@@ -559,7 +563,7 @@ function renderDosis(){
     el('rect',{x:px,y:py,width:22,height:22,rx:2},g);el('text',{x:px+11,y:py+14,'text-anchor':'middle'},g).textContent=n[0]+(n.includes('izq')?'I':'D');
     g.onclick=()=>{SELSITE=n;renderDosis()}});
   const sug=suggestSite();
-  $('slist').innerHTML=ALLSITES.map(n=>`<div class="${n===SELSITE?'sug':''}"><span>${n}${n===sug?' ·  sugerido':''}</span><span>${last[n]?(diffD(TODAY(),last[n])===0?'hoy':'hace '+diffD(TODAY(),last[n])+' d'):'sin usar'}</span></div>`).join('');
+  $('slist').innerHTML=ALLSITES.map(n=>`<div class="${n===SELSITE?'sug':''}"><span>${n}${n===sug?'<small>Sugerido</small>':''}</span><span>${last[n]?(diffD(TODAY(),last[n])===0?'hoy':'hace '+diffD(TODAY(),last[n])+' d'):'sin usar'}</span></div>`).join('');
   if(!$('ddate').value)$('ddate').value=TODAY();
   $('dmg').innerHTML=DOSES.map(v=>`<option value="${v}" ${v===S.profile.dose?'selected':''}>${mgs(v)}</option>`).join('');
   $('hcount').textContent=ds.length?ds.length+(ds.length===1?' dosis':' dosis'):'';
