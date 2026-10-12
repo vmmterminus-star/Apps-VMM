@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>GLP · Inicio (muestra)</title>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff; --soft:#fff5f8; --card:#fff; --line:#f2e3ea;
+  --ink:#2b1d24; --mut:#9a8790;
+  --pink:#f0628f; --pink2:#ffd6e3;
+  --lila:#9b87f5; --lila2:#ece8ff;
+  --menta:#3fbf9b; --menta2:#dcf6ee;
+  --dur:#ff9f5a; --dur2:#ffeadb;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg)}
+body{font-family:'Alexandria',system-ui,sans-serif;color:var(--ink);font-size:13px;
+  max-width:440px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px 110px}
+input,select,textarea{font-size:16px;font-family:inherit}
+h1{font-size:22px;font-weight:600}
+.sub{color:var(--mut);font-size:12px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin-top:14px;
+  box-shadow:0 4px 14px rgba(240,98,143,.06)}
+.lbl{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+
+/* Cuenta regresiva */
+.hero{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fff0f5,#f6f2ff)}
+.ring{width:108px;height:108px;flex:none;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring b{font-size:30px;font-weight:600;line-height:1}
+.ring small{display:block;font-size:10px;color:var(--mut)}
+.hero .dosis{font-size:18px;font-weight:600;margin:4px 0}
+.chip{display:inline-block;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:500}
+.c-pink{background:var(--pink2);color:#b8325c}.c-lila{background:var(--lila2);color:#5b45c9}
+.c-menta{background:var(--menta2);color:#1f7d63}.c-dur{background:var(--dur2);color:#b4591b}
+
+/* Checklist */
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.task:first-of-type{border-top:0}
+.ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none}
+.task .t{flex:1}.task .t b{font-weight:500;display:block}.task .t span{font-size:11px;color:var(--mut)}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid var(--pink2);display:grid;place-items:center;
+  color:#fff;font-size:15px;cursor:pointer;transition:.2s}
+.chk.on{background:var(--pink);border-color:var(--pink)}
+.racha{display:flex;gap:5px;margin-top:6px}
+.racha i{width:10px;height:10px;border-radius:50%;background:var(--pink2)}
+.racha i.on{background:var(--pink)}
+
+/* Síntomas */
+.sint{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sint button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 12px;
+  font-family:inherit;font-size:12px;color:var(--ink);cursor:pointer}
+.sint button.on{background:var(--lila2);border-color:var(--lila);color:#5b45c9}
+
+/* Progreso */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.met{border-radius:16px;padding:12px}
+.met .v{font-size:20px;font-weight:600;margin-top:4px}
+.met .v small{font-size:11px;font-weight:400;color:var(--mut)}
+.met .d{font-size:11px;margin-top:2px;font-weight:500}
+.up{color:#1f7d63}.down{color:#1f7d63}.bad{color:#c2410c}
+
+/* Barra inferior */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);padding:8px 0 calc(env(safe-area-inset-bottom) + 8px)}
+nav .in{max-width:440px;margin:0 auto;display:flex;justify-content:space-around}
+nav a{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--mut);text-decoration:none}
+nav a .i{font-size:20px;filter:grayscale(1);opacity:.6}
+nav a.act{color:var(--pink);font-weight:600}nav a.act .i{filter:none;opacity:1}
+</style>
+</head>
+<body>
+
+<h1>Hola, Valen 🌷</h1>
+<p class="sub">Domingo 12 de octubre · semana 9 de tratamiento</p>
+
+<!-- Cuenta regresiva -->
+<div class="card hero">
+  <div class="ring">
+    <svg width="108" height="108"><circle cx="54" cy="54" r="46" fill="none" stroke="#ffd6e3" stroke-width="10"/>
+      <circle cx="54" cy="54" r="46" fill="none" stroke="#f0628f" stroke-width="10" stroke-linecap="round"
+        stroke-dasharray="289" stroke-dashoffset="83"/></svg>
+    <div class="n"><div><b>2</b><small>días</small></div></div>
+  </div>
+  <div>
+    <div class="lbl">Próxima dosis</div>
+    <div class="dosis">Martes · 5 mg</div>
+    <span class="chip c-lila">📍 Abdomen izq.</span>
+    <div class="sub" style="margin-top:8px">Consulta: miércoles 10:00</div>
+  </div>
+</div>
+
+<!-- Hoy -->
+<div class="card">
+  <div class="lbl">Hoy</div>
+  <div class="task">
+    <div class="ico" style="background:var(--pink2)">🥤</div>
+    <div class="t"><b>Proteína de la mañana</b>
+      <div class="racha"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+      <span>6 días seguidos</span></div>
+    <div class="chk" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':''"></div>
+  </div>
+  <div class="task">
+    <div class="ico" style="background:var(--menta2)">💉</div>
+    <div class="t"><b>Dosis</b><span>Hoy no toca · faltan 2 días</span></div>
+    <span class="chip c-menta">Al día</span>
+  </div>
+  <div class="task">
+    <div class="ico" style="background:var(--lila2)">💭</div>
+    <div class="t"><b>¿Cómo te sientes?</b><span>Toca los que apliquen</span></div>
+  </div>
+  <div class="sint">
+    <button onclick="this.classList.toggle('on')">🤢 Náusea</button>
+    <button onclick="this.classList.toggle('on')">🍽️ Hambre</button>
+    <button onclick="this.classList.toggle('on')">😴 Cansancio</button>
+    <button onclick="this.classList.toggle('on')">🤕 Dolor cabeza</button>
+    <button onclick="this.classList.toggle('on')">😣 Estreñimiento</button>
+    <button onclick="this.classList.toggle('on')">✨ Todo bien</button>
+  </div>
+</div>
+
+<!-- Progreso -->
+<div class="card">
+  <div class="lbl">Última consulta · 8 oct</div>
+  <div class="grid">
+    <div class="met" style="background:var(--pink2)"><div class="lbl">Peso</div>
+      <div class="v">72.4 <small>kg</small></div><div class="d down">↓ 0.9 kg</div></div>
+    <div class="met" style="background:var(--menta2)"><div class="lbl">Músculo</div>
+      <div class="v">26.1 <small>kg</small></div><div class="d up">= 0.0 kg</div></div>
+    <div class="met" style="background:var(--dur2)"><div class="lbl">Grasa</div>
+      <div class="v">31.2 <small>%</small></div><div class="d down">↓ 0.7 %</div></div>
+    <div class="met" style="background:var(--lila2)"><div class="lbl">Grasa visceral</div>
+      <div class="v">8 <small>nivel</small></div><div class="d down">↓ 1</div></div>
+  </div>
+</div>
+
+<nav><div class="in">
+  <a class="act" href="#"><span class="i">🏠</span>Hoy</a>
+  <a href="#"><span class="i">💉</span>Dosis</a>
+  <a href="#"><span class="i">🩺</span>Consulta</a>
+  <a href="#"><span class="i">📈</span>Progreso</a>
+</div></nav>
+</body>
+</html>
